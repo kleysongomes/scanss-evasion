@@ -1,0 +1,5 @@
+# O jogo roda apenas com a biblioteca padrão (Tkinter já vem no Python),
+# portanto não há dependências de runtime.
+
+# Desenvolvimento (testes):
+pytest>=8

@@ -1,0 +1,65 @@
+{
+  "_comment": "Catálogo de ferramentas. 'start': true = já vem com o jogador (v0.1). Ajuste preços/multiplicadores aqui para balancear sem mexer no código.",
+  "tools": [
+    {
+      "kind": "net_scanner", "name": "Net_Scanner", "version": "v0.1",
+      "price": 0, "start": true, "tier": 1,
+      "function": "Varredura da rede local: encontra IPs e portas vulneráveis."
+    },
+    {
+      "kind": "net_scanner", "name": "Net_Scanner", "version": "v0.2",
+      "price": 600, "tier": 2,
+      "function": "Alcança alvos corporativos com saldos maiores."
+    },
+    {
+      "kind": "open_ds_hacker", "name": "Open_ds_Hacker", "version": "v0.1",
+      "price": 0, "start": true,
+      "function": "Exploit: força a entrada na porta do alvo. Tempo mínimo."
+    },
+    {
+      "kind": "open_ds_hacker", "name": "Open_ds_Hacker", "version": "v0.2",
+      "price": 300, "time_factor": 0.5,
+      "function": "Conexão mais rápida e estável."
+    },
+    {
+      "kind": "find_password", "name": "find_password", "version": "v0.1",
+      "price": 0, "start": true, "time_factor": 1.0,
+      "function": "Força bruta: quebra a criptografia de arquivos trancados."
+    },
+    {
+      "kind": "find_password", "name": "find_password", "version": "v0.2",
+      "price": 350, "time_factor": 0.6,
+      "function": "Reduz drasticamente as horas de quebra."
+    },
+    {
+      "kind": "find_password", "name": "find_password", "version": "v0.3",
+      "price": 900, "time_factor": 0.4,
+      "function": "Quebra de senha em tempo recorde."
+    },
+    {
+      "kind": "protocol_mask", "name": "Protocol_mask", "version": "v1.0",
+      "price": 150, "risk_factor": 0.5, "time_factor": 2.0,
+      "function": "Camufla o IP: metade do risco, mas dobra o tempo da ação."
+    },
+    {
+      "kind": "data_leech", "name": "Data_Leech", "version": "v0.1",
+      "price": 0, "start": true, "time_factor": 1.0,
+      "function": "Criptografa o canal para baixar arquivos e extrair fundos."
+    },
+    {
+      "kind": "data_leech", "name": "Data_Leech", "version": "v0.2",
+      "price": 500, "time_factor": 0.6,
+      "function": "Transferência muito mais rápida."
+    },
+    {
+      "kind": "log_eraser", "name": "Log_Eraser", "version": "v0.1",
+      "price": 0, "start": true, "time_factor": 1.0,
+      "function": "Limpa rastro do ScanSS: gasta horas do dia (não dias)."
+    },
+    {
+      "kind": "log_eraser", "name": "Log_Eraser", "version": "v0.2",
+      "price": 400, "time_factor": 0.5,
+      "function": "Limpa rastro na metade do tempo."
+    }
+  ]
+}

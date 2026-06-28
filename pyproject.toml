@@ -1,0 +1,21 @@
+[project]
+name = "scanss-evasion"
+version = "0.1.0"
+description = "Jogo de simulacao hacker cyberpunk: invada redes, roube V-Coin e fuja do ScanSS."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []  # usa apenas a biblioteca padrão (Tkinter)
+
+[project.scripts]
+scanss-evasion = "scanss.app:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["scanss*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

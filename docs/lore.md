@@ -90,4 +90,4 @@ digital.
 
 ## Créditos (registro de ideias)
 
-Kleyson Gomes, Vitor Targino, Antonio Maycon, José Dênis, Matheus dos Santos.
+Kleyson Gomes.

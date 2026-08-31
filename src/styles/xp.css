@@ -1,0 +1,1002 @@
+/* ==========================================================================
+   Tema Luna (Windows XP) - escrito a mao para termos controle total.
+   Cores baseadas no esquema "Luna Blue" original.
+   ========================================================================== */
+
+:root {
+  --xp-face: #ece9d8;            /* cinza-bege das janelas e botoes */
+  --xp-frame: #0054e3;           /* borda azul da janela */
+  --xp-title-active: linear-gradient(180deg,
+      #0058ee 0%, #3593ff 8%, #288eff 40%, #127dff 88%,
+      #036ffc 93%, #0262ee 95%, #0054e3 100%);
+  --xp-title-inactive: linear-gradient(180deg,
+      #7697e7 0%, #94b2ee 8%, #7d9ee9 40%, #6e91e4 88%, #6d90e4 100%);
+  --xp-taskbar: linear-gradient(180deg,
+      #245edb 0%, #3f8cf3 3%, #245edb 6%, #245edb 10%, #1941a5 12%,
+      #1941a5 88%, #2458d9 92%, #2458d9 100%);
+  --xp-start: linear-gradient(180deg,
+      #388e18 0%, #55a747 8%, #3d961d 40%, #3d961d 88%, #297212 92%, #2c7a13 100%);
+  --xp-selection: #316ac5;
+  --xp-font: Tahoma, "Segoe UI", Verdana, sans-serif;
+  --xp-mono: "Lucida Console", Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--xp-font);
+  font-size: 11px;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --------------------------------------------------------------------------
+   Area de trabalho - aproximacao do papel de parede "Bliss" em CSS puro
+   -------------------------------------------------------------------------- */
+.desktop {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(180deg, #1e5799 0%, #3a7bd5 28%, #7db9e8 62%, #bfe0f5 82%, #dff0fb 100%);
+}
+/* nuvens suaves */
+.desktop::before {
+  content: "";
+  position: absolute; inset: 0 0 40% 0;
+  background:
+    radial-gradient(ellipse 22% 30% at 18% 42%, rgba(255,255,255,.55), transparent 70%),
+    radial-gradient(ellipse 30% 26% at 62% 28%, rgba(255,255,255,.45), transparent 70%),
+    radial-gradient(ellipse 18% 22% at 86% 52%, rgba(255,255,255,.40), transparent 70%);
+  pointer-events: none;
+}
+/* a colina verde */
+.desktop::after {
+  content: "";
+  position: absolute; left: -5%; right: -5%; bottom: 0; height: 46%;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  background: linear-gradient(180deg, #8bc34a 0%, #689f38 40%, #33691e 100%);
+  box-shadow: inset 0 8px 24px rgba(255,255,255,.25);
+  pointer-events: none;
+}
+
+.desktop-icons {
+  position: absolute;
+  top: 8px; left: 8px; bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 2px;
+  z-index: 1;
+}
+
+.desktop-icon {
+  width: 78px;
+  padding: 4px 2px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: default;
+  border: 1px dotted transparent;
+  text-align: center;
+  background: none;
+  font-family: var(--xp-font);
+  font-size: 11px;
+}
+.desktop-icon .glyph { font-size: 30px; line-height: 1; filter: drop-shadow(1px 1px 1px rgba(0,0,0,.5)); }
+.desktop-icon .label {
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,.9);
+  padding: 1px 3px;
+  word-break: break-word;
+  line-height: 1.25;
+}
+.desktop-icon.selected .label { background: var(--xp-selection); }
+.desktop-icon.selected { border-color: rgba(255,255,255,.6); }
+
+/* marca d'agua do canto, como a de build do XP */
+.watermark {
+  position: absolute; right: 12px; bottom: 40px;
+  text-align: right;
+  color: rgba(255,255,255,.62);
+  text-shadow: 1px 1px 2px rgba(0,0,0,.55);
+  font-size: 13px;
+  pointer-events: none;
+  line-height: 1.35;
+}
+.watermark span { font-size: 10px; opacity: .8; }
+
+/* --------------------------------------------------------------------------
+   Janela
+   -------------------------------------------------------------------------- */
+.window {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background: var(--xp-face);
+  border: 1px solid var(--xp-frame);
+  border-top: none;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 2px 2px 10px rgba(0,0,0,.45);
+  min-width: 240px;
+  min-height: 140px;
+}
+.window.inactive { box-shadow: 1px 1px 5px rgba(0,0,0,.3); }
+.window.maximized { border-radius: 0; }
+
+.title-bar {
+  height: 27px;
+  flex: 0 0 27px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 3px 0 5px;
+  background: var(--xp-title-active);
+  border-radius: 7px 7px 0 0;
+  color: #fff;
+  font-weight: bold;
+  font-size: 12px;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.55);
+  cursor: default;
+}
+.window.inactive .title-bar { background: var(--xp-title-inactive); }
+.window.maximized .title-bar { border-radius: 0; }
+.title-bar .icon { font-size: 14px; text-shadow: none; }
+.title-bar .text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.title-buttons { display: flex; gap: 2px; }
+.title-btn {
+  position: relative;          /* ancora dos ::before/::after que desenham o simbolo */
+  width: 21px; height: 21px;
+  border: 1px solid rgba(255,255,255,.65);
+  border-radius: 3px;
+  background: linear-gradient(180deg, #4a9bf5 0%, #1e6fdc 45%, #1358c4 100%);
+  color: #fff;
+  font-family: var(--xp-font);
+  font-size: 11px; font-weight: bold; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  cursor: default; padding: 0;
+}
+.title-btn:hover { filter: brightness(1.2); }
+.title-btn:active { filter: brightness(.85); }
+.title-btn.close { background: linear-gradient(180deg, #f08e6d 0%, #e2523a 45%, #c8341c 100%); }
+
+/* Os simbolos sao desenhados em CSS, nao com caracteres: no Windows os
+   dingbats (❐, ▪) caem para tofu ou viram um quadradinho minusculo. */
+.title-btn::before, .title-btn::after { content: ""; position: absolute; }
+
+.title-btn.min::before { width: 9px; height: 2px; background: #fff; bottom: 4px; left: 5px; }
+
+.title-btn.max::before {
+  width: 11px; height: 9px; left: 4px; top: 5px;
+  border: 1px solid #fff; border-top-width: 3px;
+}
+
+.title-btn.restore::before {
+  width: 8px; height: 7px; left: 7px; top: 4px;
+  border: 1px solid #fff; border-top-width: 3px;
+}
+.title-btn.restore::after {
+  width: 8px; height: 7px; left: 4px; top: 8px;
+  border: 1px solid #fff; border-top-width: 3px;
+  background: #1e6fdc;
+}
+
+.title-btn.close::before, .title-btn.close::after {
+  width: 12px; height: 2px; background: #fff; left: 4px; top: 9px;
+}
+.title-btn.close::before { transform: rotate(45deg); }
+.title-btn.close::after  { transform: rotate(-45deg); }
+
+.window-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 3px;
+}
+
+.resize-handle {
+  position: absolute; right: 0; bottom: 0;
+  width: 14px; height: 14px;
+  cursor: nwse-resize;
+}
+
+/* --------------------------------------------------------------------------
+   Controles
+   -------------------------------------------------------------------------- */
+/* Botão padrão do XP: só texto, altura fixa, largura mínima. Ícone em botão
+   é o que mais entrega interface moderna, então nenhum leva. */
+button.xp {
+  font-family: var(--xp-font);
+  font-size: 11px;
+  min-width: 75px;
+  height: 23px;
+  padding: 0 11px;
+  border: 1px solid #003c74;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #fff 0%, #f0f0ea 45%, #e2e2d4 90%, #d8d8c8 100%);
+  cursor: default;
+  white-space: nowrap;
+}
+button.xp:hover:not(:disabled) { border-color: #e5a01a; background: linear-gradient(180deg,#fff 0%,#fdf4d8 45%,#fbe9b0 100%); }
+button.xp:active:not(:disabled) { background: linear-gradient(180deg,#cfcfc2 0%,#e2e2d4 100%); }
+button.xp:disabled { color: #aca899; text-shadow: 1px 1px 0 #fff; }
+button.xp.narrow { min-width: 0; height: 20px; padding: 0 8px; }
+
+input.xp, select.xp, textarea.xp {
+  font-family: var(--xp-font);
+  font-size: 11px;
+  padding: 3px 4px;
+  border: 1px solid #7f9db9;
+  background: #fff;
+  user-select: text;
+}
+input.xp:focus, textarea.xp:focus { outline: none; border-color: #316ac5; }
+
+.sunken { border: 1px solid; border-color: #848284 #fff #fff #848284; background: #fff; }
+
+fieldset.xp { border: 1px solid #d0d0bf; border-radius: 3px; padding: 8px; margin: 0 0 8px; }
+fieldset.xp > legend { padding: 0 4px; color: #0046d5; font-weight: bold; }
+
+.statusbar {
+  flex: 0 0 20px;
+  display: flex; align-items: center; gap: 3px;
+  border-top: 1px solid #fff;
+  padding: 2px 4px 0;
+  color: #333;
+}
+.statusbar > span {
+  border: 1px solid; border-color: #aca899 #fff #fff #aca899;
+  padding: 1px 6px; height: 17px; display: flex; align-items: center;
+}
+.statusbar > span.grow { flex: 1; }
+
+/* --------------------------------------------------------------------------
+   Chroma: abas e barra de enderecos
+   -------------------------------------------------------------------------- */
+.tabstrip {
+  display: flex; align-items: flex-end; gap: 2px;
+  padding: 3px 4px 0;
+  background: #d6e3f7;
+  border-bottom: 1px solid #7f9db9;
+  overflow-x: auto;
+}
+.tabstrip::-webkit-scrollbar { height: 0; }
+
+.tab {
+  display: flex; align-items: center; gap: 5px;
+  flex: 0 1 160px; min-width: 60px; max-width: 200px;
+  padding: 4px 8px;
+  border: 1px solid #7f9db9; border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, #eaf1fb, #c8d9f0);
+  cursor: default;
+}
+.tab:hover { background: linear-gradient(180deg, #f4f8fd, #d8e6f7); }
+.tab.active {
+  background: #fff;
+  margin-bottom: -1px;
+  padding-bottom: 5px;
+  font-weight: bold;
+}
+.tab-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.tab-close {
+  position: relative;
+  width: 13px; height: 13px; flex: 0 0 13px;
+  border: 1px solid transparent; border-radius: 2px;
+  background: none; padding: 0; cursor: default;
+}
+.tab-close:hover { background: #e2523a; border-color: #c8341c; }
+.tab-close::before, .tab-close::after {
+  content: ""; position: absolute;
+  width: 9px; height: 1px; background: #4a6a90;
+  left: 1px; top: 5px;
+}
+.tab-close:hover::before, .tab-close:hover::after { background: #fff; }
+.tab-close::before { transform: rotate(45deg); }
+.tab-close::after  { transform: rotate(-45deg); }
+
+.tab-new {
+  width: 22px; height: 21px;
+  border: 1px solid #7f9db9; border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, #eaf1fb, #c8d9f0);
+  font-family: var(--xp-font); font-size: 14px; line-height: 1;
+  color: #2c5490; cursor: default; padding: 0;
+}
+.tab-new:hover { background: linear-gradient(180deg, #fff, #d8e6f7); }
+
+.browser-bar {
+  padding: 5px; gap: 5px;
+  background: #eef3fb;
+  border-bottom: 1px solid #b6c6de;
+}
+.browser-bar .nav { min-width: 26px; }
+.browser-bar .address { border-radius: 11px; padding: 4px 10px; }
+
+/* --------------------------------------------------------------------------
+   Barra de tarefas
+   -------------------------------------------------------------------------- */
+.taskbar {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: 30px;
+  display: flex; align-items: center;
+  background: var(--xp-taskbar);
+  border-top: 1px solid #1041a5;
+  z-index: 10000;
+}
+
+.start-button {
+  height: 100%;
+  display: flex; align-items: center; gap: 5px;
+  padding: 0 22px 2px 8px;
+  background: var(--xp-start);
+  border: none;
+  border-radius: 0 9px 9px 0;
+  color: #fff;
+  font-family: var(--xp-font);
+  font-size: 15px; font-style: italic; font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0,0,0,.6);
+  cursor: default;
+}
+.start-button:hover { filter: brightness(1.12); }
+.start-button.open { filter: brightness(.85); }
+.start-button .flag { font-size: 15px; font-style: normal; }
+
+.task-buttons { flex: 1; display: flex; align-items: center; gap: 3px; padding: 0 4px; overflow: hidden; }
+.task-button {
+  height: 22px;
+  min-width: 90px; max-width: 160px;
+  flex: 0 1 160px;
+  display: flex; align-items: center; gap: 5px;
+  padding: 0 7px;
+  border: none; border-radius: 2px;
+  background: #3c81f3;
+  color: #fff;
+  font-family: var(--xp-font); font-size: 11px;
+  text-align: left;
+  cursor: default;
+  overflow: hidden; white-space: nowrap;
+}
+.task-button:hover { background: #5a9bfa; }
+.task-button.active { background: #1e52b7; box-shadow: inset 1px 1px 3px rgba(0,0,0,.5); font-weight: bold; }
+.task-button .t { overflow: hidden; text-overflow: ellipsis; }
+
+.tray {
+  height: 100%;
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 8px 0 10px;
+  background: linear-gradient(180deg, #1290e9 0%, #12a1eb 8%, #0e87dd 40%, #0d7fd6 88%, #0f8ada 100%);
+  border-left: 1px solid #1042a4;
+  color: #fff;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.4);
+}
+.tray .tray-icon { cursor: default; font-size: 13px; }
+.tray .clock { font-size: 11px; }
+
+/* --------------------------------------------------------------------------
+   Menu Iniciar
+   -------------------------------------------------------------------------- */
+.start-menu {
+  position: absolute; left: 0; bottom: 30px;
+  width: 350px;
+  border: 1px solid #0b39a3;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 3px -3px 12px rgba(0,0,0,.5);
+  overflow: hidden;
+  z-index: 10001;
+  display: flex; flex-direction: column;
+}
+.start-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 10px;
+  background: var(--xp-title-active);
+  color: #fff; font-size: 14px; font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0,0,0,.5);
+  border-bottom: 2px solid #e88e17;
+}
+.start-header .avatar {
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  background: #b7c5e8; border: 2px solid #fff; border-radius: 4px;
+  text-shadow: none;
+}
+.start-columns { display: flex; background: #fff; }
+.start-col { padding: 5px; }
+.start-col.left { flex: 1; min-width: 0; }
+.start-col.right { width: 132px; background: #d3e5fa; border-left: 1px solid #aec8ec; }
+.start-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 7px; border-radius: 2px;
+  font-size: 11px; cursor: default;
+  width: 100%; border: none; background: none;
+  font-family: var(--xp-font); text-align: left;
+}
+.start-col.right .start-item { font-weight: bold; color: #12256b; }
+.start-item:hover { background: var(--xp-selection); color: #fff; }
+.start-item:hover .sub { color: #dbe6ff; }
+.start-item .glyph { font-size: 18px; width: 22px; text-align: center; flex: 0 0 22px; }
+.start-item .nm { flex: 1; min-width: 0; }
+.start-item .sub { display: block; font-weight: normal; font-size: 10px; color: #777; }
+.start-sep { height: 1px; background: #cfd8e8; margin: 4px 6px; }
+
+/* faixa do "Ajuda e suporte", entre as colunas e o rodape */
+.start-ajuda {
+  background: #fff;
+  padding: 3px 5px;
+  border-top: 1px solid #aec8ec;
+}
+.start-ajuda .start-item { font-weight: bold; color: #12256b; }
+.start-footer {
+  display: flex; justify-content: flex-end; gap: 12px;
+  padding: 5px 12px;
+  background: var(--xp-title-active);
+  color: #fff; font-size: 11px;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.5);
+  border-top: 1px solid #3c7fe0;
+}
+.start-footer .action {
+  display: flex; align-items: center; gap: 5px; padding: 3px 6px; border-radius: 3px;
+  cursor: default; border: none; background: none; color: inherit;
+  font-family: var(--xp-font); font-size: 11px;
+}
+.start-footer .action:hover { background: rgba(255,255,255,.2); }
+
+/* --------------------------------------------------------------------------
+   Balao de notificacao da bandeja
+   -------------------------------------------------------------------------- */
+.balloon {
+  position: absolute; right: 8px; bottom: 38px;
+  width: 268px; padding: 10px 12px;
+  background: #ffffe1;
+  border: 1px solid #000;
+  border-radius: 6px;
+  box-shadow: 2px 2px 8px rgba(0,0,0,.4);
+  z-index: 10002;
+  font-size: 11px;
+}
+.balloon .title { font-weight: bold; display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+
+/* --------------------------------------------------------------------------
+   NetRipper (suite de invasao)
+   -------------------------------------------------------------------------- */
+.netripper-bar {
+  padding: 4px 5px;
+  background: linear-gradient(180deg, #f4f3ec, #e2e0d0);
+  border: 1px solid #d0cdb8;
+  gap: 8px;
+  color: #4a4a3c;
+}
+
+.netripper-titulo {
+  padding: 3px 7px;
+  background: linear-gradient(180deg, #5a86c8, #2c5490);
+  color: #fff; font-weight: bold;
+}
+
+/* menu de módulos: cada programa comprado abre o próprio painel */
+.modulos {
+  width: 158px; flex: 0 0 158px;
+  background: #fff;
+}
+.modulo-item {
+  display: flex; align-items: center; gap: 7px;
+  width: 100%; padding: 7px;
+  border: none; border-bottom: 1px solid #eee;
+  background: none; cursor: default;
+  font-family: var(--xp-font); font-size: 11px; text-align: left;
+}
+.modulo-item:hover { background: #eaf1fb; }
+.modulo-item.ativo { background: var(--xp-selection); color: #fff; }
+.modulo-item.vazio { opacity: .5; }
+.modulo-item .ic { font-size: 17px; flex: 0 0 20px; text-align: center; }
+.modulo-item .info { flex: 1; min-width: 0; }
+.modulo-item .nome { display: block; font-weight: bold; }
+.modulo-item.vazio .nome { font-weight: normal; }
+.modulo-item .niveis { display: flex; gap: 1px; margin-top: 3px; }
+.modulo-item .niveis span { width: 6px; height: 5px; border: 1px solid #9a9a86; }
+.modulo-item .niveis span.on { background: linear-gradient(180deg, #6cc040, #3d961d); }
+.modulo-item .niveis span.off { background: #fff; }
+.modulo-item.ativo .niveis span { border-color: #bcd; }
+.modulo-item.ativo .niveis span.off { background: #2b5ba8; }
+
+.modulo-painel { background: #fff; padding: 12px; }
+
+/* Cabeçalho de módulo: uma faixa com filete, no lugar do ícone gigante. */
+.modulo-cabecalho {
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #d0d8e8;
+}
+.modulo-cabecalho .titulo {
+  font-size: 14px; font-weight: bold; color: #0046d5;
+}
+
+/* tabela de listagem dentro dos módulos */
+.netripper-lista { width: 100%; border-collapse: collapse; }
+.netripper-lista th {
+  /* cabeçalho de coluna do ListView: cinza com relevo, não azul chapado */
+  background: #d4d0c8;
+  border: 1px solid;
+  border-color: #fff #808080 #808080 #fff;
+  padding: 2px 6px; text-align: left; font-weight: normal;
+  color: #000;
+}
+.netripper-lista td {
+  border-bottom: 1px solid #e4e4e0; padding: 4px 6px; vertical-align: middle;
+}
+.netripper-lista tbody tr { cursor: default; }
+.netripper-lista tbody tr:hover td { background: #f0f0e8; }
+.netripper-lista tbody tr.sel td { background: var(--xp-selection); color: #fff; }
+.netripper-lista tbody tr.sel .muted { color: #cfe0ff; }
+.netripper-lista .xp.narrow { min-width: 0; padding: 1px 6px; }
+
+/* área de soltar arquivo do Decodificador */
+/* Área de soltar: caixa afundada com a moldura pontilhada de foco do Windows.
+   Sem canto arredondado e sem transição — os dois entregam design moderno. */
+.dropzone {
+  border: 2px inset #d4d0c8;
+  background: #ece9d8;
+  padding: 4px;
+  text-align: center;
+}
+.dropzone > * { position: relative; }
+.dropzone::before {
+  content: "";
+  position: absolute; inset: 6px;
+  border: 1px dotted #808080;
+  pointer-events: none;
+}
+.dropzone.sobre { background: var(--xp-selection); color: #fff; }
+.dropzone.sobre::before { border-color: #fff; }
+.dropzone.sobre .muted { color: #dbe6ff; }
+.dropzone .miolo { padding: 12px; }
+
+/* logs da Faxina */
+.faxina-logs {
+  height: 150px; overflow: auto;
+  padding: 6px 8px;
+  background: #12141a; color: #c8b88f;
+  border: 1px solid; border-color: #848284 #fff #fff #848284;
+  font-family: var(--xp-mono); font-size: 11px; line-height: 1.5;
+  user-select: text;
+}
+
+/* painel do Anonimato */
+.vpn-status {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  border: 2px groove #d4d0c8;
+  background: #eefbf0;
+}
+.vpn-status .luz {
+  width: 10px; height: 10px;
+  border: 1px solid; border-color: #666 #ddd #ddd #666;
+  background: #00c000;
+  animation: pulso 1.8s ease-in-out infinite;
+}
+@keyframes pulso { 50% { opacity: .35; } }
+
+.vpn-rota { display: flex; flex-wrap: wrap; align-items: center; gap: 3px; }
+.vpn-rota .salto {
+  display: flex; align-items: center; gap: 5px;
+  padding: 3px 7px;
+  border: 1px solid;
+  border-color: #fff #808080 #808080 #fff;
+  background: #d4d0c8;
+}
+.vpn-rota .salto + .salto { position: relative; margin-left: 12px; }
+.vpn-rota .salto + .salto::before {
+  content: "→"; position: absolute; left: -14px; color: #8aa;
+}
+.vpn-rota .salto.voce { background: #fff6df; border-color: #d9b64a; }
+.vpn-rota .salto.alvo { background: #ffeeee; border-color: #e0a0a0; }
+.vpn-rota .bolha {
+  width: 15px; height: 15px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid; border-color: #808080 #fff #fff #808080;
+  background: #ece9d8; font-size: 10px; font-weight: bold;
+}
+
+.netripper-host {
+  display: flex; align-items: center; gap: 7px;
+  width: 100%; padding: 5px 7px;
+  border: none; border-bottom: 1px solid #eee;
+  background: none; cursor: default;
+  font-family: var(--xp-font); font-size: 11px; text-align: left;
+}
+.netripper-host:hover { background: #eaf1fb; }
+.netripper-host.sel { background: var(--xp-selection); color: #fff; }
+.netripper-host .ic { font-size: 16px; flex: 0 0 18px; }
+.netripper-host .nm { flex: 1; min-width: 0; }
+.netripper-host .ip {
+  display: block; font-family: var(--xp-mono); font-size: 10px; opacity: .7;
+}
+
+/* Selo de estado. Nada de pílula arredondada: é um chip biselado com um
+   "LED" quadrado, como os indicadores de status da época. */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 1px 5px 1px 4px;
+  border: 1px solid;
+  border-color: #fff #808080 #808080 #fff;   /* relevo para fora */
+  background: #d4d0c8;
+  color: #333;
+  font-size: 10px;
+}
+.badge::before {
+  content: "";
+  width: 7px; height: 7px;
+  border: 1px solid;
+  border-color: #666 #ddd #ddd #666;         /* relevo para dentro */
+}
+.badge.novo::before      { background: #a8a8a8; }
+.badge.visto::before     { background: #ffd700; }
+.badge.aberto::before    { background: #00c000; }
+.badge.conectado::before { background: #1060e0; }
+.badge.conectado { font-weight: bold; }
+.netripper-host.sel .badge { border-color: #fff #666 #666 #fff; }
+
+.netripper-tabela { width: 100%; border-collapse: collapse; }
+.netripper-tabela td { padding: 3px 4px; vertical-align: middle; }
+.netripper-tabela td:first-child { width: 108px; color: #666; }
+
+.barra-seg {
+  display: inline-block; vertical-align: middle;
+  width: 90px; height: 9px; margin-right: 6px;
+  border: 1px solid; border-color: #848284 #fff #fff #848284;
+  background: #fff;
+}
+.barra-seg > span {
+  display: block; height: 100%;
+  background: linear-gradient(90deg, #4caf50, #ffc107 55%, #f44336);
+}
+
+.netripper-progresso {
+  padding: 5px 7px;
+  border: 1px solid #d0cdb8;
+  background: #f4f3ec;
+}
+.netripper-progresso .rotulo { margin-bottom: 4px; color: #4a4a3c; }
+.netripper-progresso .trilha {
+  height: 14px;
+  border: 1px solid; border-color: #848284 #fff #fff #848284;
+  background: #fff;
+}
+.netripper-progresso .preenchido {
+  height: 100%;
+  background: repeating-linear-gradient(90deg, #3d961d 0 9px, #fff 9px 11px);
+}
+
+.netripper-log {
+  height: 92px; flex: 0 0 92px;
+  padding: 5px 7px;
+  background: #12141a; color: #9fd88f;
+  border: 1px solid; border-color: #848284 #fff #fff #848284;
+  font-family: var(--xp-mono); font-size: 11px; line-height: 1.5;
+  user-select: text;
+}
+
+/* --------------------------------------------------------------------------
+   Explorer
+   -------------------------------------------------------------------------- */
+.explorer-item {
+  display: flex; align-items: center; gap: 7px;
+  padding: 3px 5px; cursor: default;
+}
+.explorer-item:hover { background: #eaf1fb; }
+.explorer-item.sel { background: var(--xp-selection); color: #fff; }
+.explorer-item.recortado { opacity: .5; font-style: italic; }
+.explorer-item input.xp { padding: 0 3px; }
+
+/* --------------------------------------------------------------------------
+   Arvore de upgrades (darkmarket)
+   -------------------------------------------------------------------------- */
+.arvore { display: flex; flex-direction: column; }
+
+.arvore .no { display: flex; gap: 10px; align-items: stretch; }
+
+.arvore .conector {
+  flex: 0 0 26px;
+  display: flex; flex-direction: column; align-items: center;
+}
+/* Marcador do nível: caixinha biselada, não bolinha. Círculo com borda grossa
+   é vocabulário de linha do tempo moderna. */
+.arvore .bolinha {
+  width: 19px; height: 19px; flex: 0 0 19px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid;
+  border-color: #fff #808080 #808080 #fff;
+  background: #d4d0c8;
+  font-weight: bold; font-size: 11px; color: #555;
+}
+.arvore .linha { flex: 1; width: 2px; background: #a8a8a8; margin: 2px 0; }
+
+.arvore .no.tem .bolinha { background: #cbe8c4; color: #1a6a1a; }
+.arvore .no.tem .linha { background: #6aa86a; }
+.arvore .no.liberado .bolinha { background: #ffe9a8; color: #8a6000; }
+.arvore .no.bloqueado .bolinha { color: #aaa; }
+.arvore .no.bloqueado .corpo { opacity: .55; }
+
+.arvore .corpo { flex: 1; padding: 3px 0 14px; min-width: 0; }
+.arvore .cabeca { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+/* O ganho do nível é texto, não etiqueta arredondada. */
+.arvore .efeito { color: #17458f; }
+.arvore .efeito::before { content: "— "; color: #99a; }
+.arvore .desc { color: #555; margin-top: 3px; line-height: 1.5; }
+
+.arvore .compra { flex: 0 0 116px; text-align: right; padding-top: 2px; }
+.arvore .preco { font-weight: bold; color: #cc0000; margin-bottom: 4px; }
+.arvore .instalado { color: #1a6a1a; font-weight: bold; }
+
+/* --------------------------------------------------------------------------
+   Situação (resumo da bandeja)
+   -------------------------------------------------------------------------- */
+.status-medidor {
+  position: relative;
+  height: 18px;
+  border: 1px solid; border-color: #848284 #fff #fff #848284;
+  background: #fff;
+  overflow: hidden;
+}
+.status-medidor > div { height: 100%; transition: width .3s, background .3s; }
+/* marcas dos limiares de alerta e crítico */
+.status-medidor .marca {
+  position: absolute; top: 0; bottom: 0;
+  width: 1px; background: rgba(0,0,0,.35);
+}
+
+/* a bandeja inteira e clicavel */
+.taskbar .tray {
+  border: none;
+  font-family: var(--xp-font); font-size: 11px;
+  cursor: default;
+}
+.taskbar .tray:hover { filter: brightness(1.12); }
+.taskbar .tray:active { filter: brightness(.9); }
+
+/* --------------------------------------------------------------------------
+   Ferramentas de Desenvolvedor
+   -------------------------------------------------------------------------- */
+.dev-faixa {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 8px;
+  background: repeating-linear-gradient(45deg,
+    #ffe08a 0 10px, #ffd24d 10px 20px);
+  border: 1px solid #b38f00;
+  color: #4a3a00;
+}
+.dev fieldset.xp > legend { color: #8a6a00; }
+.dev input[type="range"] { accent-color: #b38f00; }
+
+/* --------------------------------------------------------------------------
+   Painel de Controle
+   -------------------------------------------------------------------------- */
+.painel-tabela { width: 100%; border-collapse: collapse; }
+.painel-tabela td {
+  padding: 5px 4px; vertical-align: top;
+  border-bottom: 1px solid #e6e4d4;
+}
+.painel-tabela tr:last-child td { border-bottom: none; }
+
+.niveis { display: flex; gap: 3px; margin-bottom: 2px; }
+.niveis span {
+  width: 18px; height: 9px;
+  border: 1px solid #9a9a86;
+}
+.niveis span.on { background: linear-gradient(180deg, #6cc040, #3d961d); }
+.niveis span.off { background: #fff; }
+
+/* --------------------------------------------------------------------------
+   Manual do Operador
+   -------------------------------------------------------------------------- */
+.manual-toc {
+  width: 194px; flex: 0 0 194px;
+  display: flex; flex-direction: column;
+  background: #f7f7f0;
+  border: 1px solid; border-color: #848284 #fff #fff #848284;
+}
+.manual-toc .titulo {
+  padding: 5px 8px;
+  background: var(--xp-title-active);
+  color: #fff; font-weight: bold;
+  text-shadow: 1px 1px 1px rgba(0,0,0,.5);
+}
+.manual-toc .item {
+  display: flex; align-items: center; gap: 6px;
+  width: 100%; padding: 5px 7px;
+  border: none; background: none; cursor: default;
+  font-family: var(--xp-font); font-size: 11px; text-align: left;
+}
+.manual-toc .item:hover { background: #dbe6fa; }
+.manual-toc .item.ativo { background: var(--xp-selection); color: #fff; font-weight: bold; }
+.manual-toc .item .n {
+  flex: 0 0 16px; text-align: right;
+  color: #8a8a72; font-size: 10px;
+}
+.manual-toc .item.ativo .n { color: #cfe0ff; }
+.manual-toc .item .tx { flex: 1; }
+
+.manual-klipe {
+  display: flex; align-items: flex-end; gap: 4px;
+  padding: 8px 6px;
+  border-top: 1px solid #d0d0bf;
+  background: #eceada;
+}
+.manual-klipe .fala {
+  flex: 1;
+  background: #ffffe1;
+  border: 1px solid #9a9a7a;
+  border-radius: 6px;
+  padding: 6px 7px;
+  line-height: 1.45;
+  font-style: italic;
+}
+
+/* --- a pagina do capitulo ------------------------------------------------- */
+.manual-page {
+  padding: 16px 20px;
+  background: #fff;
+  user-select: text;
+  line-height: 1.6;
+}
+.manual-page h2 {
+  margin: 0 0 10px;
+  font-size: 16px; color: #0046d5;
+  border-bottom: 1px solid #d0d8e8; padding-bottom: 5px;
+}
+.manual-page h3 {
+  margin: 18px 0 6px;
+  font-size: 12px; color: #14396b;
+}
+.manual-page p { margin: 0 0 10px; }
+.manual-page b { color: #10254a; }
+
+.manual-cmd {
+  font-family: var(--xp-mono);
+  background: #22262e; color: #b8e986;
+  padding: 1px 5px; border-radius: 2px;
+  white-space: nowrap;
+}
+
+.manual-nota {
+  border: 1px solid #c8c8a8;
+  background: #ffffe1;
+  padding: 8px 10px;
+  margin: 12px 0;
+  border-left: 4px solid #e8c200;
+}
+.manual-nota.aviso {
+  background: #fff0ee; border-color: #e0b0a8; border-left-color: #cc2222;
+}
+
+.manual-passos { margin: 0 0 10px; padding-left: 22px; }
+.manual-passos li { margin-bottom: 7px; }
+
+.manual-tabela { border-collapse: collapse; width: 100%; margin: 4px 0 12px; }
+.manual-tabela th {
+  background: #dfe6f2; border: 1px solid #b8c4d8;
+  padding: 4px 7px; text-align: left; font-size: 11px;
+}
+.manual-tabela td {
+  border: 1px solid #dde3ec; padding: 4px 7px; vertical-align: top;
+}
+.manual-tabela tr:nth-child(even) td { background: #f7f9fc; }
+
+/* --- checklist do capitulo "Onde voce esta" ------------------------------- */
+.manual-progresso {
+  display: flex; align-items: center; gap: 8px; margin: 4px 0 14px;
+}
+.manual-progresso .trilha {
+  flex: 1; height: 14px;
+  border: 1px solid; border-color: #848284 #fff #fff #848284;
+  background: #fff;
+}
+.manual-progresso .preenchido {
+  height: 100%;
+  background: repeating-linear-gradient(90deg, #3d961d 0 8px, #fff 8px 10px);
+  transition: width .3s;
+}
+
+.manual-checklist { list-style: none; margin: 0; padding: 0; }
+.manual-checklist li {
+  display: flex; gap: 9px;
+  padding: 7px 9px; margin-bottom: 4px;
+  border: 1px solid #e2e6ee; background: #fafbfd;
+}
+.manual-checklist li.ok { background: #f0f8f0; border-color: #c3ddc3; color: #4a6a4a; }
+.manual-checklist li.atual { background: #fffbe6; border-color: #e0cc80; }
+.manual-checklist .marca { flex: 0 0 14px; font-weight: bold; }
+.manual-checklist li.ok .marca { color: #2a8a2a; }
+.manual-checklist li.atual .marca { color: #cc8800; }
+.manual-checklist .onde {
+  display: block; margin-top: 2px;
+  font-family: var(--xp-mono); font-size: 11px; color: #667;
+}
+
+/* --------------------------------------------------------------------------
+   Klipe, o assistente
+   -------------------------------------------------------------------------- */
+.assistente {
+  position: absolute; right: 14px; bottom: 38px;
+  z-index: 9500;
+  display: flex; align-items: flex-end; gap: 6px;
+}
+
+.balao {
+  width: 296px;
+  padding: 10px 12px;
+  background: #ffffe1;
+  border: 1px solid #000;
+  border-radius: 8px;
+  box-shadow: 3px 3px 10px rgba(0,0,0,.4);
+  animation: balao-entra .18s ease-out;
+}
+
+@keyframes balao-entra {
+  from { opacity: 0; transform: translateY(6px) scale(.96); }
+  to   { opacity: 1; transform: none; }
+}
+
+.balao-titulo { font-weight: bold; margin-bottom: 6px; font-size: 12px; }
+.balao-corpo { line-height: 1.55; }
+
+.balao-acoes {
+  display: flex; flex-wrap: wrap; gap: 5px;
+  margin-top: 10px; padding-top: 9px;
+  border-top: 1px solid #e0e0b8;
+}
+.balao-acoes .xp { min-width: 0; flex: 1; }
+
+.balao-rodape { margin-top: 8px; font-size: 10px; color: #7a7a5e; }
+
+/* o personagem */
+.klipe {
+  cursor: default;
+  filter: drop-shadow(2px 3px 3px rgba(0,0,0,.4));
+  animation: klipe-parado 3.4s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+/* acena uma vez ao aparecer e depois volta ao balancinho de espera */
+.klipe.falando {
+  animation: klipe-fala .55s ease-in-out,
+             klipe-parado 3.4s ease-in-out .55s infinite;
+}
+
+@keyframes klipe-parado {
+  0%, 92%, 100% { transform: none; }
+  96%           { transform: translateY(-3px); }
+}
+@keyframes klipe-fala {
+  0%, 100% { transform: none; }
+  25%      { transform: rotate(-6deg) translateY(-4px); }
+  75%      { transform: rotate(5deg) translateY(-2px); }
+}
+
+/* piscar: a esclera fecha, a pupila some junto */
+.klipe .olhos { animation: piscar 4.2s infinite; transform-origin: 31px 20px; }
+@keyframes piscar {
+  0%, 94%, 100% { transform: scaleY(1); }
+  97%           { transform: scaleY(.1); }
+}
+
+/* --------------------------------------------------------------------------
+   Utilitarios
+   -------------------------------------------------------------------------- */
+.row { display: flex; align-items: center; gap: 6px; }
+/* botões vizinhos sempre com o mesmo respiro, em qualquer tela */
+.row > button.xp + button.xp { margin-left: 0; }
+.col { display: flex; flex-direction: column; }
+.grow { flex: 1; min-width: 0; min-height: 0; }
+.scroll { overflow: auto; }
+.mono { font-family: var(--xp-mono); }
+.muted { color: #6b6b6b; }

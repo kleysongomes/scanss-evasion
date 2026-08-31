@@ -1,130 +1,83 @@
 # ScanSS Evasion
 
-Jogo de simulação onde você atua como hacker independente: invade sistemas e
-redes WiFi de luxo para roubar moeda virtual (V-Coin), aprimora seus malwares no
-mercado negro e tenta não ser rastreado pelo temido **ScanSS** da V-Sec.
+Simulador de hacker num **Windows XP fictício**. Você tem um micro montado de
+peças usadas, invade máquinas pela rede e rouba arquivos — mas o dinheiro só
+entra quando você abre o navegador, entra no site do banco com a senha da vítima
+e faz a transferência você mesmo.
 
-## Requisitos
+> Mundo: **2003**. O **V-Bank** lançou o V-Coin, um crédito digital que ninguém
+> entende direito, e contratou a **V-Sec** para proteger. A V-Sec opera o
+> **ScanSS**, que cruza logs de conexão e vai puxando a linha até a sua casa.
+> Narrativa completa em [docs/lore.md](docs/lore.md).
 
-- Python 3.10 ou superior
-- Windows (também funciona em Linux/macOS)
+## Rodar
 
-A interface usa **Tkinter**, que já vem com o Python — não é preciso instalar
-nada para jogar.
-
-## Instalação
-
-O projeto usa um ambiente virtual (`.venv`) para não bagunçar o Python da máquina.
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1        # Windows (PowerShell)
-# source .venv/bin/activate         # Linux/macOS
-
-pip install -r requirements.txt     # instala o pytest (dev); o jogo não tem deps
+```bash
+npm install
+npm run dev
 ```
 
-> Se o `Activate.ps1` for bloqueado pela política do Windows, rode uma vez:
-> `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
+Abre em `http://localhost:5173`. Requer Node 18+.
 
-## Como executar
-
-```powershell
-python run.py
+```bash
+npm test          # regras do jogo (sem interface)
+npm run build     # build de produção em dist/
 ```
 
-Execute pelo terminal para acompanhar mensagens e erros no console. Para sair do
-ambiente virtual depois, use `deactivate`.
+## Como se joga
 
-## Testes
+Abra o **Manual do Operador** (ícone na área de trabalho, ou **iniciar › Ajuda e
+suporte**): ele explica cada tela e cada botão, e o capítulo *Onde você está*
+mostra o seu próximo passo. O resumo:
 
-```powershell
-pytest
-```
 
-Os testes cobrem o motor do ScanSS (cálculo de rastro e punição) sem abrir a
-janela — só dependem de `scanss/core`.
+1. **NetRipper** → *Varrer rede*, clique num host, *Analisar* → *Invadir* →
+   *Conectar*. Tudo em botão, sem digitar comando. Cada varredura traz alvos
+   novos, sorteados — nem todos rendem alguma coisa.
+2. **Meu Computador** → o disco da vítima vira a unidade `Z:`. **Vasculhe as
+   pastas**: o arquivo de senhas está enterrado no meio de fotos e trabalho de
+   faculdade. Os 🔒 precisam do Decodificador no nível certo.
+3. **Bloco de Notas** → abra o arquivo de senhas. **É isto que salva a
+   credencial** no navegador.
+4. **Chroma** → `vbank.vc`, entre como a vítima, transfira para a sua conta
+   laranja (o número aparece na tela de login).
+5. **Meu Computador** de novo → **venda ou apague** o que você já usou. Arquivo
+   roubado parado no seu disco gera rastro o tempo todo: o ScanSS também varre a
+   *sua* máquina.
+6. **darkmarket.vc** → suba o nível de um dos cinco programas (dez níveis cada).
+
+Clique na bandeja (relógio/saldo/escudo) para abrir a **Situação**: o resumo de
+quanto estão te caçando, quanto o seu disco está piorando isso, e o quanto falta
+para o próximo upgrade.
+
+Fique de olho no escudo 🛡️ na bandeja: é o rastreamento do ScanSS. Chegou a
+100%, tela azul e você perde tudo. Ele cai sozinho com o tempo — a menos que
+você esteja guardando evidência.
 
 ## Estrutura
 
-Padrão de projeto baseado no **Toolza** (`core` / `features` / `ui`). Detalhes
-em [docs/arquitetura.md](docs/arquitetura.md).
+Camadas separadas: `game/` (regras, sem React), `os/` (janelas, barra de
+tarefas — não sabe nada do jogo), `apps/` (os programas) e `sites/` (as páginas
+do navegador falso). Detalhes em [docs/arquitetura.md](docs/arquitetura.md).
 
 ```
-scanss/
-├── app.py            # bootstrap (contexto + descoberta de features + janela)
-├── core/             # regras e infra (config, models, catalog, engine, context)
-├── features/         # módulos navegáveis: terminal, status, market
-└── ui/               # janela principal, tema e componentes (sidebar)
+src/
+├── game/    # regras, árvore de habilidades e conteúdo (testável sem interface)
+├── os/      # gerenciador de janelas, barra de tarefas, menu Iniciar
+├── apps/    # NetRipper, Meu Computador, Bloco de Notas, Chroma, Painel, Manual
+└── sites/   # vbank.vc, darkmarket.vc, noticias.vc, busca.vc
 ```
 
-Para adicionar um módulo novo (ex.: Missões), crie `scanss/features/missoes/`
-com `feature.py` + `view.py`. O registry descobre e a sidebar ganha o botão
-automaticamente.
+Adicionar um site novo é criar um componente e escrever uma linha em
+`sites/registry.tsx`. Os alvos são gerados por `game/generator.ts` a partir das listas de
+`game/content.ts` — adicionar um tipo de arquivo é uma linha lá. Balanceamento
+mora em `priceOf` (`skills.ts`) e nas curvas de `generator.ts`.
 
-## Capítulo 1 (atual)
+## Design
 
-O jogo é uma **história em capítulos**. Cada capítulo abre com uma tela narrativa
-(fundo preto, efeito máquina de escrever). No Capítulo 1 você é um hacker
-endividado: o **tempo** é o recurso (dia das 08:00 às 00:00), cada ação gasta
-horas e aumenta o **rastreamento** do ScanSS. Na virada do dia a **dívida** é
-deduzida; 3 dias no negativo = falência. **Sobreviver a 7 dias** conclui o
-capítulo. Detalhes em [docs/capitulo-01.md](docs/capitulo-01.md) e a narrativa
-completa em [docs/lore.md](docs/lore.md).
+O loop do jogo, o balanceamento atual e a lista do que vem em seguida: [docs/design.md](docs/design.md).
 
-## Comandos do terminal
+---
 
-Fluxo de roubo: `scan` → `connect <id>` → `ls` → `crack <arquivo>` →
-`download <arquivo>` → `read <arquivo>` → `extract_funds` (liberado só após
-baixar **e** ler o arquivo de senha).
-
-No `ls` os arquivos têm **ID** (`[1] senhas.txt`); os comandos aceitam o ID
-(`download 1`, `read 1`, `crack 1`). **TAB autocompleta** os comandos.
-
-Outros: `man` (tutorial), `my_pc`, `log_eraser` (limpa rastro: gasta horas, não
-dias), `disconnect`, `mask on|off`, `status`, `targets`, `tools`, `market`,
-`buy <n>`, `sleep`, `save [slot]`, `load [slot]`, `destroy_vm`, `clear`.
-
-O `help` é categorizado ([ INVASÃO & REDE ], [ ARQUIVOS & DADOS ],
-[ UTILITÁRIOS & STATUS ]) com descrição e custo de tempo alinhado; os comandos
-de administração ficam em `help sys`. O botão **[?] MANUAL / REGRAS** no menu (ou
-`man`) abre o guia de sobrevivência — que também abre sozinho na primeira partida.
-
-O **header** mostra `[NÍVEL] | RELÓGIO | SALDO | RASTRO`, com a cor do rastro
-mudando (verde → amarelo → vermelho). Você sobe de **nível** acumulando XP
-(fundos extraídos). A barra lateral é **contextual** e **colapsável** (**TAB**).
-O catálogo de ferramentas fica em
-[scanss/data/market.json](scanss/data/market.json) para balancear sem mexer no código.
-
-`destroy_vm` (e o botão **[X] DESTRUIR VM**) têm trava: exibem um alerta e só
-executam se você digitar exatamente **CONFIRMAR**.
-
-## Conta, boot e saves
-
-Ao abrir, o jogo mostra uma tela de carregamento cinemática (~4s, com barra de
-progresso ASCII) e pede **login/senha** (criados no primeiro acesso; a senha é
-gravada com hash, não em texto puro). A autenticação tem a regra dos **3 strikes**
-(classe `VM_Authenticator`): a cada senha errada o jogo avisa as tentativas
-restantes e, na **3ª falha, a VM é destruída e o jogo fecha**. A intro do capítulo
-aparece só na primeira vez. O menu tem **[S] GERENCIAR SAVES**: você começa com
-**2 slots grátis** e pode comprar mais por 500 VC cada, escolhendo onde
-salvar/carregar.
-
-## Modo desenvolvedor (testes)
-
-Ative com `sudo dev_mode` no terminal ou **Ctrl+D**. Comandos: `dev money <n>`,
-`dev trace <n>` (testar o limite do ScanSS), `dev level <n>`, `dev chapter <n>`,
-`dev day <n>`, `dev destroy` (Destruir VM).
-
-## Saves e configurações
-
-O progresso e as preferências ficam em um **SQLite local** no perfil do usuário
-(`%LOCALAPPDATA%/ScanSS Evasion/scanss.db`). O jogo salva sozinho na virada do
-dia; use `save`/`load` no terminal ou o botão **⟲ REINICIAR JOGO** no menu (apaga
-tudo e começa do zero — útil para testes).
-
-## Convenções
-
-- **Idioma:** identificadores e nomes de classe em inglês; todo texto de
-  interface, comentários e docstrings em **português** (mesma convenção do Toolza).
-- Toda mutação de estado passa pelo `GameEngine` (uma fonte de verdade).
+Bancos, empresas e pessoas deste jogo são fictícios. Os sites existem apenas
+dentro da janela do jogo — nenhuma rede real é acessada.

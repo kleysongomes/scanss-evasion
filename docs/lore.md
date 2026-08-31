@@ -109,4 +109,4 @@ Coisas que mantêm o jogo em 2003 e devem aparecer nos textos:
 
 ## Créditos (registro de ideias)
 
-Kleyson Gomes, Vitor Targino, Antonio Maycon, José Dênis, Matheus dos Santos.
+Kleyson Gomes.

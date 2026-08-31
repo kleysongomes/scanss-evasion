@@ -1,0 +1,96 @@
+/* ==========================================================================
+   Web de 2003 - o visual das paginas dentro do navegador do jogo.
+   Bordas biseladas, Verdana 11px, links azuis sublinhados, tabelas com grade.
+   Nada de flat design, sombra suave ou canto arredondado aqui.
+   ========================================================================== */
+
+.web {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  color: #000;
+  min-height: 100%;
+  line-height: 1.5;
+}
+
+.web a { color: #0000cc; text-decoration: underline; cursor: pointer; }
+.web a:visited { color: #551a8b; }
+.web a:hover { color: #cc0000; }
+
+.web h1 { font-size: 16px; margin: 0 0 6px; }
+.web h2 { font-size: 13px; margin: 0 0 5px; }
+.web p  { margin: 0 0 10px; }
+.web hr { border: 0; border-top: 1px solid #999; border-bottom: 1px solid #fff; margin: 10px 0; }
+
+/* --- caixa com titulo, o "modulo" onipresente dos portais da epoca --------- */
+.box {
+  border: 1px solid #7b7b7b;
+  background: #fff;
+  margin-bottom: 10px;
+}
+.box > .box-title {
+  padding: 3px 7px;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(180deg, #5a86c8 0%, #2c5490 100%);
+  border-bottom: 1px solid #7b7b7b;
+}
+.box > .box-body { padding: 9px; }
+
+/* --- botao cinza biselado (o <input type=submit> padrao do IE6) ----------- */
+.btn-old {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 11px;
+  padding: 2px 12px;
+  border: 2px outset #dcdcdc;
+  background: #dcdcdc;
+  color: #000;
+  cursor: pointer;
+}
+.btn-old:active:not(:disabled) { border-style: inset; }
+.btn-old:disabled { color: #808080; cursor: default; }
+
+/* --- campo de formulario -------------------------------------------------- */
+.fld-old {
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 11px;
+  padding: 2px 3px;
+  border: 2px inset #dcdcdc;
+  background: #fff;
+  user-select: text;
+}
+
+/* --- tabela com grade ----------------------------------------------------- */
+.tbl-old { border-collapse: collapse; width: 100%; }
+.tbl-old th {
+  background: #c0c0c0;
+  border: 1px solid #808080;
+  padding: 3px 6px;
+  text-align: left;
+  font-size: 11px;
+}
+.tbl-old td { border: 1px solid #c0c0c0; padding: 3px 6px; }
+.tbl-old tr:nth-child(even) td { background: #f2f2f2; }
+
+/* --- avisos --------------------------------------------------------------- */
+.alert-old {
+  border: 1px solid #808080;
+  background: #ffffcc;
+  padding: 6px 9px;
+  margin-bottom: 10px;
+}
+.alert-old.err { background: #ffe0e0; border-color: #cc0000; color: #cc0000; }
+.alert-old.ok  { background: #e0ffe0; border-color: #009900; color: #006600; }
+
+/* --- rodape "melhor visualizado em..." ------------------------------------ */
+.web-footer {
+  margin-top: 16px;
+  padding: 8px 0;
+  border-top: 1px solid #999;
+  text-align: center;
+  font-size: 10px;
+  color: #666;
+}
+
+/* piscar, como manda a epoca (contido: so em avisos curtos) */
+@keyframes blink-old { 50% { opacity: 0 } }
+.blink { animation: blink-old 1.1s step-end infinite; }

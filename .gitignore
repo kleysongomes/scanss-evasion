@@ -1,15 +1,7 @@
-# Python
-__pycache__/
-*.py[cod]
-*.egg-info/
-.eggs/
-build/
+# Node / Vite
+node_modules/
 dist/
-
-# Ambientes virtuais
-.venv/
-venv/
-env/
+.vite/
 
 # Editores / IDE
 .vscode/

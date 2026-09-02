@@ -9,6 +9,12 @@
  * repetir. Site de jogo funciona pelo avesso - a imagem manda e o texto se
  * encaixa nela.
  *
+ * E a pagina VESTE A LINGUAGEM DO JOGO, em vez de falar sobre ele de fora. Foi
+ * o que os sites dos jogos do genero ensinaram: monoespacada em tudo, cabecalho
+ * em forma de barra de status, rotulo de secao com prompt, cursor piscando no
+ * titulo. Uma pagina de marketing moderna sobre um jogo de 2003 sempre vai
+ * parecer site de empresa, por mais escura que fique.
+ *
  * E o texto NAO INVENTARIA. A versao anterior tinha duas colunas, "o que ja
  * esta no jogo" e "ainda nao existe", com o roteiro dos proximos capitulos
  * listado de graca para quem nem tinha comecado a jogar. Vitrine de jogo nao e
@@ -96,6 +102,9 @@ const PROMESSAS = [
   'O motivo de ele saber tanto sobre o seu micro',
 ]
 
+/** Onde o jogo roda, no lugar onde um jogo de loja poria os selos de plataforma. */
+const FICHAS = ['no navegador', 'de graça', 'sem cadastro', 'um jogador']
+
 const GALERIA = [
   '08b-missoes', '07-darkmarket', '10-defesa', '09-manual', '02-menu',
   '03-desktop',
@@ -144,22 +153,26 @@ export function Landing() {
         <div className="lp-capa-veu" />
         <div className="lp-largura lp-capa-corpo">
           <div className="lp-capa-texto">
-            <h1>ScanSS<span>Evasion</span></h1>
+            <p className="lp-prompt">C:\&gt; scanss_evasion.exe</p>
+            <h1>
+              ScanSS<span>Evasion<i className="lp-cursor" /></span>
+            </h1>
             <p className="lp-tagline">
               Um jogo sobre computadores dos outros, dinheiro e não ser pego.
             </p>
 
+            <ul className="lp-fichas">
+              {FICHAS.map((f) => <li key={f}>{f}</li>)}
+            </ul>
+
             <div className="lp-acoes">
-              <a className="lp-botao grande" href="jogo/">Jogar agora</a>
+              <a className="lp-botao grande" href="jogo/">▶ Jogar agora</a>
               <button className="lp-botao grande vazado" onClick={baixar}>
                 {instalar ? 'Instalar' : 'Baixar atalho'}
               </button>
             </div>
 
-            <p className="lp-nota">
-              No navegador, de graça, sem cadastro.
-              {baixou && <> {comoUsar(sistema)}</>}
-            </p>
+            {baixou && <p className="lp-nota">{comoUsar(sistema)}</p>}
           </div>
 
           {/* A capa tem que MOSTRAR o jogo, não só a paisagem dele. */}
@@ -197,15 +210,15 @@ export function Landing() {
       <section className="lp-regras">
         <div className="lp-largura">
           <p className="lp-etiqueta">as regras da casa</p>
-          <div className="lp-grade">
+          <ul className="lp-lista">
             {REGRAS.map((r, i) => (
-              <div key={r.titulo}>
+              <li key={r.titulo}>
                 <span className="lp-num">{String(i + 1).padStart(2, '0')}</span>
                 <h3>{r.titulo}</h3>
                 <p>{r.texto}</p>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 

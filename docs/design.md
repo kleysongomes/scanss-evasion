@@ -386,7 +386,26 @@ Ordem sugerida para as próximas rodadas:
 
 ## A vitrine
 
-A landing (`src/landing/`) segue duas regras.
+A landing (`src/landing/`) segue três regras.
+
+**A página é do mundo do jogo.** Foi a lição dos sites dos jogos do gênero: os
+que funcionam não falam *sobre* o jogo de fora, eles vestem a linguagem dele —
+o site do EXAPUNKS mistura artefatos da ficção com a divulgação, o do Hacknet
+apresenta a informação como se fosse arquivo de sistema. Aqui isso virou
+monoespaçada em tudo, cabeçalho em forma de barra de status, rótulo de seção com
+prompt (`> a ferramenta`), linha de comando acima do título e o cursor do
+prólogo piscando no fim do nome.
+
+Foi essa a correção mais importante. As versões anteriores eram *uma página de
+marketing moderna sobre um jogo de 2003*: fonte de sistema, azul neutro, botão
+arredondado, grade de quatro cartões iguais com título e parágrafo — que é,
+literalmente, o bloco de "features" de site de software. Por mais escura que a
+página ficasse, o sotaque continuava sendo o de site institucional.
+
+Daí também vem o resto: botão quadrado, amarelo, com sombra dura; a grade de
+regras virou lista numerada; e as telas **sangram pela borda** da janela em vez
+de ficarem presas dentro da coluna, que é o que separa cena de jogo de figura
+de relatório.
 
 **O print é o cenário, não a ilustração.** Cada seção ocupa a largura toda com
 uma tela do jogo ao fundo, desfocada, e o texto por cima. A primeira versão era

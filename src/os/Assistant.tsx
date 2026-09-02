@@ -31,8 +31,8 @@ export function Assistant() {
         <div className="balao-titulo">Parece que você quer roubar um banco!</div>
 
         <div className="balao-corpo">
-          Este computador é o jogo inteiro: você invade pelo Prompt de Comando,
-          pega os arquivos no Meu Computador e tira o dinheiro pelo navegador.
+          Este computador é o jogo inteiro: você invade pelo NetRipper, pega os
+          arquivos no Meu Computador e tira o dinheiro pelo navegador.
           <br /><br />
           Nunca jogou? Eu te explico tudo, tela por tela.
         </div>

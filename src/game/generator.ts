@@ -108,18 +108,22 @@ function dedup(nodes: VNode[]): VNode[] {
   })
 }
 
+/**
+ * As pastas de sistema. Tudo com nome do WinDoors, o sistema ficticio: nenhum
+ * produto de verdade aparece dentro do jogo.
+ */
 const pastasDeSistema = (): VNode[] => [
-  folder('WINDOWS', [
-    folder('system32', sample(SISTEMA, 3).map(([n, d]) =>
+  folder('WINDOORS', [
+    folder('sistema32', sample(SISTEMA, 3).map(([n, d]) =>
       arquivo(n, 'system', 45_000, `[arquivo de sistema]\n\n${d}`))),
     folder('Temp', [arquivo('~df3a91.tmp', 'text', 900,
                             'Arquivo temporário. Lixo.\n')]),
   ]),
   folder('Arquivos de programas', [
-    folder('Internet Explorer', [
-      arquivo('iexplore.exe', 'exe', 89_000, '[navegador do sistema]')]),
-    folder('Outlook Express', [
-      arquivo('msimn.exe', 'exe', 76_000, '[cliente de e-mail]')]),
+    folder('Navegador', [
+      arquivo('navega.exe', 'exe', 89_000, '[navegador do sistema]')]),
+    folder('Correio', [
+      arquivo('correio.exe', 'exe', 76_000, '[cliente de e-mail]')]),
   ]),
 ]
 

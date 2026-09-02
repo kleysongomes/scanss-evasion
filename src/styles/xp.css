@@ -112,6 +112,211 @@ html, body, #root {
 .watermark span { font-size: 10px; opacity: .8; }
 
 /* --------------------------------------------------------------------------
+   Abertura
+   -------------------------------------------------------------------------- */
+.intro {
+  position: relative;
+  height: 100%;
+  background: #000;
+  color: #d8d8d0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 40px;
+  cursor: default;
+  font-family: var(--xp-mono);
+}
+
+.intro-texto {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.9;
+  white-space: pre-wrap;
+}
+.prologo { max-width: 620px; }
+
+/* a porta de entrada: o mínimo possível, só para haver um gesto */
+.intro-entrada {
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: #6a6a62;
+  animation: intro-respira 2.2s ease-in-out infinite;
+}
+
+/* a frase da abertura: uma linha só, centralizada */
+.intro-frase {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.8;
+  text-align: center;
+  max-width: 620px;
+  white-space: pre-wrap;
+}
+
+.intro-cartela {
+  font-size: 17px;
+  letter-spacing: 2px;
+  color: #b8b8b0;
+  animation: intro-surge .5s ease-out;
+}
+
+.intro-titulo { text-align: center; animation: intro-surge .7s ease-out; }
+.intro-titulo .nome {
+  font-family: var(--xp-font);
+  font-size: 40px; font-weight: bold; letter-spacing: -1px;
+  color: #fff;
+}
+.intro-titulo .chamada {
+  margin-top: 22px;
+  font-size: 12px; letter-spacing: 1px;
+  color: #7a7a72;
+  animation: intro-respira 2s ease-in-out infinite;
+}
+
+@keyframes intro-surge { from { opacity: 0 } to { opacity: 1 } }
+@keyframes intro-respira { 50% { opacity: .4 } }
+
+/* o cursor de carregamento, entre as cartelas */
+.intro .cursor {
+  display: inline-block;
+  width: 8px; height: 15px;
+  margin-left: 3px;
+  vertical-align: text-bottom;
+  background: #d8d8d0;
+  animation: intro-pisca 1s step-end infinite;
+}
+.intro .cursor.solto { margin: 0; }
+@keyframes intro-pisca { 50% { opacity: 0 } }
+
+.intro-pular {
+  position: absolute; right: 16px; bottom: 14px;
+  font-size: 10px; color: #4a4a44;
+  font-family: var(--xp-font);
+}
+
+/* --------------------------------------------------------------------------
+   Lobby (tela de boas-vindas, como o logon do XP)
+   -------------------------------------------------------------------------- */
+.lobby {
+  position: relative;
+  height: 100%;
+  display: flex; flex-direction: column;
+  background: linear-gradient(180deg, #5a7edc 0%, #4a6fd0 42%, #375fc4 100%);
+  color: #fff;
+}
+/* as duas faixas horizontais que o XP tinha em cima e embaixo */
+.lobby-faixa {
+  flex: 0 0 60px;
+  background: linear-gradient(180deg, #3a63c8, #2b4fb0);
+  border-top: 1px solid rgba(255,255,255,.35);
+  border-bottom: 1px solid rgba(0,0,0,.25);
+  display: flex; align-items: center; justify-content: center;
+  color: #cfe0ff; font-size: 12px;
+}
+.lobby-faixa.topo { border-top: none; }
+
+.lobby-corpo {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  gap: 40px; padding: 20px; flex-wrap: wrap;
+}
+
+.lobby-marca { text-align: right; min-width: 220px; }
+.lobby-marca .nome {
+  font-size: 34px; font-weight: bold; letter-spacing: -1px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,.35);
+}
+.lobby-marca .xpzinho { color: #ffcc00; margin-left: 3px; }
+.lobby-marca .sub { color: #cfe0ff; font-size: 13px; margin-top: 2px; }
+.lobby-marca .versao { color: rgba(255,255,255,.45); font-size: 10px; margin-top: 6px; }
+
+.lobby-divisor {
+  width: 1px; align-self: stretch; max-height: 300px;
+  background: linear-gradient(180deg, transparent, rgba(255,255,255,.5), transparent);
+}
+
+.lobby-painel { width: 360px; }
+.lobby-titulo { font-size: 15px; font-weight: bold; margin-bottom: 8px; }
+.lobby-texto { color: #cfe0ff; line-height: 1.55; margin: 0 0 12px; }
+
+/* as opções do menu principal */
+.lobby-menu { display: flex; flex-direction: column; gap: 4px; }
+
+.lobby-opcao {
+  display: block; width: 100%;
+  padding: 8px 11px;
+  border: 1px solid transparent;
+  background: rgba(255,255,255,.08);
+  color: #fff; text-align: left; cursor: default;
+  font-family: var(--xp-font); font-size: 11px;
+}
+.lobby-opcao:hover:not(:disabled) {
+  background: rgba(255,255,255,.22);
+  border-color: rgba(255,255,255,.55);
+}
+.lobby-opcao:disabled { opacity: .45; }
+.lobby-opcao .rotulo { display: block; font-size: 14px; font-weight: bold; }
+.lobby-opcao .detalhe {
+  display: block; color: #cfe0ff; margin-top: 2px; line-height: 1.45;
+}
+/* "Continuar" é a ação padrão: ganha a faixa amarela do XP */
+.lobby-opcao.destaque:not(:disabled) { border-left: 3px solid #ffcc00; }
+
+.lobby-passos { margin: 0 0 12px; padding-left: 20px; color: #e2ecff; }
+.lobby-passos li { margin-bottom: 5px; line-height: 1.5; }
+
+.lobby-campo { width: 100%; font-size: 14px; padding: 5px 7px; }
+.lobby-acoes { display: flex; align-items: center; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.lobby-perigo { color: #ffd0d0; flex: 1 1 100%; }
+.lobby-aviso {
+  margin-top: 10px; padding: 7px 9px;
+  background: rgba(0,0,0,.25); border-left: 3px solid #ffcc00;
+  line-height: 1.5;
+}
+
+/* O aviso de ficção. Fica aqui e no manual, e em nenhuma tela de jogo: dentro
+   dos sites ele poluía a ambientação de 2003. */
+.lobby-nota {
+  position: absolute; left: 0; right: 0; bottom: 5px;
+  text-align: center;
+  font-size: 10px;
+  color: rgba(255,255,255,.55);
+}
+
+/* --------------------------------------------------------------------------
+   Aviso de e-mail (o jogo fica pausado enquanto ele esta na tela)
+   -------------------------------------------------------------------------- */
+.mail-alert {
+  position: absolute; right: 14px; bottom: 38px;
+  width: 262px; z-index: 9600;
+  padding: 10px 12px;
+  background: #ffffe1;
+  border: 1px solid #000;
+  box-shadow: 3px 3px 10px rgba(0,0,0,.45);
+  animation: balao-entra .18s ease-out;
+}
+.mail-alert .cabeca {
+  display: flex; align-items: center; gap: 6px; margin-bottom: 7px;
+}
+.mail-alert .assunto { font-weight: bold; color: #10254a; }
+.mail-alert .de { color: #7a7a5e; margin-top: 1px; }
+.mail-alert .pausado {
+  margin: 9px 0; padding: 4px 7px;
+  background: #fff3d0; border: 1px solid #d9b64a;
+  color: #8a6a00;
+}
+.mail-alert .acoes { display: flex; gap: 5px; }
+.mail-alert .acoes .xp { flex: 1; min-width: 0; }
+
+/* corpo do e-mail no webmail: texto puro, respeitando as quebras do arquivo */
+.vmail-corpo {
+  white-space: pre-wrap;
+  line-height: 1.65;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid #d5d5c8;
+  font-family: Verdana, Arial, sans-serif;
+}
+
+/* --------------------------------------------------------------------------
    Janela
    -------------------------------------------------------------------------- */
 .window {
@@ -685,6 +890,21 @@ fieldset.xp > legend { padding: 0 4px; color: #0046d5; font-weight: bold; }
   font-family: var(--xp-mono); font-size: 11px; line-height: 1.5;
   user-select: text;
 }
+
+/* painel de Defesa */
+.defesa-status {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; margin-bottom: 10px;
+  border: 2px groove #d4d0c8;
+  background: #eefbf0;
+}
+.defesa-status.nu { background: #fff0ee; }
+.defesa-status .luz {
+  width: 10px; height: 10px; flex: 0 0 10px;
+  border: 1px solid; border-color: #666 #ddd #ddd #666;
+  background: #00c000;
+}
+.defesa-status.nu .luz { background: #cc2222; animation: pulso 1.2s ease-in-out infinite; }
 
 /* --------------------------------------------------------------------------
    Explorer

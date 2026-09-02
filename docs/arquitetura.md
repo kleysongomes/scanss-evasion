@@ -5,8 +5,16 @@ sistema operacional; o estado do jogo vive fora da UI.
 
 ```
 scanss-evasion/
-├── index.html
+├── index.html                # a LANDING, em /
+├── jogo/index.html           # o JOGO, em /jogo/
+├── scripts/prints.ts         # joga o jogo num navegador e fotografa as telas
+├── public/prints/            # as imagens geradas, usadas pela landing
 ├── src/
+│   ├── landing/              # a vitrine: fora da ficção, explica e convence
+│   │   ├── Landing.tsx
+│   │   ├── atalho.ts         # gera o atalho de área de trabalho (.url/.webloc/.desktop)
+│   │   └── landing.css
+│   │
 │   ├── main.tsx              # ponto de entrada
 │   ├── App.tsx               # relógio do jogo + escolhe Desktop ou tela azul
 │   ├── styles/
@@ -21,6 +29,8 @@ scanss-evasion/
 │   │   ├── content.ts        # matéria-prima: nomes, pastas e arquivos possíveis
 │   │   ├── generator.ts      # monta os alvos sorteando de content.ts
 │   │   ├── progress.ts       # marcos do loop, para o checklist do manual
+│   │   ├── story.ts          # lê story/*.txt e decide quando cada e-mail chega
+│   │   ├── story/            # O ROTEIRO — um .txt por e-mail, editável à mão
 │   │   ├── store.ts          # estado + todas as ações (fonte única da verdade)
 │   │   └── *.test.ts         # testam o loop inteiro sem abrir a interface
 │   │
@@ -30,6 +40,8 @@ scanss-evasion/
 │   │   ├── Desktop.tsx       # ícones + janelas abertas
 │   │   ├── Taskbar.tsx       # barra de tarefas + bandeja (medidor do ScanSS)
 │   │   ├── StartMenu.tsx     # menu Iniciar
+│   │   ├── Lobby.tsx         # tela de boas-vindas: continuar, recomeçar, apelido
+│   │   ├── MailAlert.tsx     # aviso de e-mail novo (pausa o jogo)
 │   │   ├── Bsod.tsx          # tela azul = fim de jogo
 │   │   └── launch.ts         # abrir um app por id (usado em 3 lugares)
 │   │
@@ -50,6 +62,7 @@ scanss-evasion/
 │       ├── Portal.tsx        # busca.vc (página inicial)
 │       ├── VBank.tsx         # vbank.vc — login e transferência
 │       ├── DarkMarket.tsx    # darkmarket.vc — loja de exploits
+│       ├── VMail.tsx         # vmail.vc — o webmail por onde a história chega
 │       └── News.tsx          # noticias.vc — manchetes que reagem ao seu rastro
 │
 └── docs/                     # arquitetura, design e lore
@@ -107,6 +120,7 @@ progressão inteira sem tocar em nenhuma ação do store.
 | Um tipo de arquivo/pasta novo | uma linha nas listas de `game/content.ts` — o gerador passa a sorteá-lo |
 | Mudar a chance de loot | os pesos de `sorte` em `game/generator.ts` |
 | Um upgrade | uma linha em `SKILLS` (`game/skills.ts`) e o efeito lido pelas regras |
+| Um e-mail da história | um `.txt` em `game/story/` — nada de código |
 | Balancear rastro | as constantes `HEAT` e `EVIDENCE_RATE` no topo de `game/store.ts` |
 | Balancear economia | `priceOf` (`skills.ts`) e `saldoDoTier`/`valorDoTier` (`generator.ts`) |
 

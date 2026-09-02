@@ -1,0 +1,14 @@
+id: 02-achou
+assunto: viu so
+quando: marco:scan
+objetivo: Invadir uma maquina e montar o disco dela
+---
+Falei ou nao falei.
+
+Cada um daqueles IPs e uma pessoa que clicou em "lembrar senha" e nunca
+mais pensou no assunto. Escolhe o mais fraquinho, analisa a porta e entra.
+
+Depois conecta pra montar o disco. Invadir e conectar sao coisas
+diferentes, antes que voce me pergunte de novo.
+
+-- 3stagiario

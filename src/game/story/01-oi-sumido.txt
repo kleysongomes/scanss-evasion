@@ -1,0 +1,17 @@
+id: 01-oi-sumido
+assunto: e ai, sumido
+quando: inicio
+objetivo: Varrer a rede no NetRipper e achar o primeiro alvo
+---
+Iae {apelido}, quanto tempo.
+
+Fiquei sabendo que voce ta na pior. Sem julgamento, tambem to.
+
+Escuta: aquele seu computador de brinquedo ainda liga, ne? Entao.
+Instalei umas
+coisinhas nele semana passada quando voce foi buscar cafe. Tem um
+NetRipper no desktop. Abre e manda varrer a rede.
+
+Voce vai se assustar com a quantidade de gente que nao poe senha em nada.
+
+-- 3stagiario

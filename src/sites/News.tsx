@@ -152,11 +152,6 @@ export function News(_props: SiteProps) {
           </tr>
         </tbody>
       </table>
-
-      <div className="web-footer">
-        © 2003 notícias.vc · Melhor visualizado em 1024x768<br />
-        Este portal existe apenas dentro do jogo
-      </div>
     </div>
   )
 }

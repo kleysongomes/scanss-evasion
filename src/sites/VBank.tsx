@@ -56,11 +56,6 @@ export function VBank(_props: SiteProps) {
       <div style={{ padding: 14 }}>
         {user ? <LoggedIn user={user} /> : <LoginPage />}
       </div>
-
-      <div className="web-footer">
-        V-Bank S.A. — instituição fictícia · Este site existe apenas dentro do jogo<br />
-        Melhor visualizado em 800x600 com Chroma 1.0 ou superior
-      </div>
     </div>
   )
 }

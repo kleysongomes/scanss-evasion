@@ -10,6 +10,7 @@ import { DarkMarket } from './DarkMarket'
 import { News } from './News'
 import { Portal } from './Portal'
 import { VBank } from './VBank'
+import { VMail } from './VMail'
 
 export interface SiteProps {
   /** Navegar para outro dominio a partir da propria pagina. */
@@ -42,6 +43,11 @@ export const SITES: Record<string, SiteDef> = {
     title: 'darkmarket', favicon: '🕷️', listed: true,
     blurb: 'Exploits, utilitários e o que mais você não deveria comprar.',
     component: DarkMarket,
+  },
+  'vmail.vc': {
+    title: 'VMail · Caixa de entrada', favicon: '✉️', listed: true,
+    blurb: 'Seu e-mail. Alguém chamado 3stagiario não para de escrever.',
+    component: VMail,
   },
   'noticias.vc': {
     title: 'O Diário da Rede', favicon: '📰', listed: true,

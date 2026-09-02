@@ -1,0 +1,14 @@
+id: 09-firewall
+assunto: boa
+quando: defesa:1
+---
+Otimo. Agora voce tem uma porta.
+
+Ela e de madeira e eles tem pe, entao va subindo o nivel quando der. E
+pega um Antivirus tambem - firewall segura quem bate na porta, antivirus
+tira quem ja entrou.
+
+Sim, sao duas compras. Bem-vindo a seguranca da informacao, onde nada
+resolve tudo e todo mundo vende metade da solucao.
+
+-- 3stagiario

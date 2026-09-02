@@ -81,16 +81,6 @@
 .alert-old.err { background: #ffe0e0; border-color: #cc0000; color: #cc0000; }
 .alert-old.ok  { background: #e0ffe0; border-color: #009900; color: #006600; }
 
-/* --- rodape "melhor visualizado em..." ------------------------------------ */
-.web-footer {
-  margin-top: 16px;
-  padding: 8px 0;
-  border-top: 1px solid #999;
-  text-align: center;
-  font-size: 10px;
-  color: #666;
-}
-
 /* piscar, como manda a epoca (contido: so em avisos curtos) */
 @keyframes blink-old { 50% { opacity: 0 } }
 .blink { animation: blink-old 1.1s step-end infinite; }

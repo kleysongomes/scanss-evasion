@@ -1,0 +1,16 @@
+id: 08-coletivo
+assunto: pare de ler isso e escuta
+quando: contas:4
+objetivo: Comprar um Firewall antes que eles cheguem
+---
+{apelido}, presta atencao porque isso e serio.
+
+Tem um pessoal num canal de IRC que eu nao vou nomear aqui. Eles se
+chamam de Coletivo. Eles notaram voce.
+
+Nao ficaram impressionados. Ficaram irritados. Tem uma diferenca.
+
+Compra um Firewall AGORA. Voce passou o jogo inteiro entrando na casa
+dos outros e nunca pensou que a sua tinha porta.
+
+-- 3stagiario

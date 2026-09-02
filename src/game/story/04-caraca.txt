@@ -1,0 +1,14 @@
+id: 04-caraca
+assunto: CARACA FUNCIONOU
+quando: marco:transfer
+objetivo: Vender ou apagar o que ja usou, antes que pese
+---
+Eu vi o extrato. Voce e oficialmente um criminoso.
+
+Parabens? Sei la, e estranho comemorar isso.
+
+Conselho de amigo: apaga o que voce baixou. Serio. Aquele monte de
+arquivo roubado parado no seu disco e prova, e o ScanSS le o SEU
+computador tambem. Formata que resolve, mas vamos comecar apagando.
+
+-- 3stagiario

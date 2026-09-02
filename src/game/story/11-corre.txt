@@ -1,0 +1,16 @@
+id: 11-corre
+assunto: CORRE
+quando: rastro:85
+objetivo: Sobreviver: derrubar o rastro para menos de 60%
+---
+NAO E BRINCADEIRA AGORA.
+
+85%. O ScanSS ja sabe a sua faixa. Falta o endereço.
+
+Faxina. Ja. Se nao tiver Faxina, fecha tudo e nao toca em nada. E se
+tiver arquivo roubado no disco, apaga - aquilo alimenta o rastro sozinho
+e voce nem percebe.
+
+Eu avisei no e-mail passado. Voce leu? Ninguem le.
+
+-- 3stagiario

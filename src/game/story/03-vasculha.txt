@@ -1,0 +1,15 @@
+id: 03-vasculha
+assunto: agora vem a parte chata
+quando: marco:connect
+objetivo: Achar o arquivo de senhas e ler no Bloco de Notas
+---
+Ta dentro. Agora vasculha.
+
+Ninguem guarda senha num lugar sensato. Procura em Meus Documentos, na
+Area de trabalho, numa pasta chamada "Pessoal" com underline na frente.
+E sempre um .txt. Sempre.
+
+E {apelido}: baixar nao adianta. Voce tem que ABRIR e LER. Dois cliques.
+Eu sei que parece obvio. Nao e, ja vi gente travar ai.
+
+-- 3stagiario

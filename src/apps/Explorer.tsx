@@ -293,7 +293,7 @@ function Unidade(props: {
   return (
     <div
       onClick={props.onClick}
-      className="row"
+      className="row explorer-unidade"
       style={{
         padding: '4px 5px', gap: 7, cursor: 'default',
         opacity: props.desabilitado ? .45 : 1,

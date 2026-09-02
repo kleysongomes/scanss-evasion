@@ -208,6 +208,91 @@ ação `dev*` enquanto `devMode` estiver desligado, então o botão não é
 decorativo — a garantia está na camada de regras, não na interface. A partida
 também registra `devUsed`, para ficar honesto que aquele save foi alterado.
 
+## A abertura e o prólogo
+
+São duas coisas separadas, e a separação é o ponto.
+
+**A abertura** roda toda visita, então é curta: tela preta, uma frase sobre o
+jogo escrita letra a letra, e três cartelas com cursor piscando entre elas —
+*um jogo independente*, *por Kleyson Gomes*, o título. Qualquer tecla entra no
+menu, Esc pula.
+
+**O prólogo** é a ambientação — 2003, a internet que chia, quem é o protagonista
+— e só toca ao **começar uma partida nova**. A primeira versão colocava esse
+texto na abertura, e o problema apareceu na hora: um texto de ambientação que se
+repete a cada visita deixa de ambientar e vira obstáculo. Aqui ele é a primeira
+coisa que o jogador vê do personagem, já chamando pelo apelido que ele acabou de
+escolher.
+
+A escrita é lenta de propósito (~48ms por letra, com respiro extra depois de
+ponto). Texto que aparece rápido informa, não ambienta.
+
+**Tela cheia** acontece antes de tudo. A abertura abre numa tela preta com um
+*clique para iniciar* e nada mais — e é esse clique que dispara o pedido, antes
+do primeiro texto.
+
+Essa porta de entrada não é decoração: navegador nenhum aceita entrar em tela
+cheia ao carregar a página, o pedido precisa vir de um gesto. Como o jogo tem
+que estar em tela cheia antes de qualquer texto, o gesto precisa ser a primeira
+coisa que existe. Dela em diante o jogo não pede mais nada — F11 resolve o
+resto.
+
+## O lobby
+
+Abrir a URL cai na **tela de boas-vindas do XP**, não direto no desktop. Ela
+resolve duas coisas de uma vez: é onde se escolhe entre continuar e recomeçar
+(mostrando saldo, rastro e invasões da partida salva), e é onde o jogador digita
+o **apelido** que o 3stagiario vai usar nos e-mails.
+
+`started` e `paused` são deliberadamente **não persistidos**: recarregar a página
+sempre volta ao lobby, e um jogo salvo pausado não faz sentido.
+
+## A história chega por e-mail
+
+Um personagem chamado **3stagiario** manda e-mail para o jogador em
+`vmail.vc` — um webmail de 2003 dentro do Chroma. É por ele que a narrativa e as
+missões acontecem, sem nenhuma tela de "missão" fora do mundo do jogo.
+
+**O roteiro mora em arquivos de texto**, um por e-mail, em
+[`src/game/story/`](../src/game/story/). Cada arquivo tem um cabeçalho com o
+gatilho de entrega (`quando: marco:transfer`, `quando: rastro:55`,
+`quando: contas:4`…) e o corpo. Adicionar um `.txt` na pasta é suficiente para
+ele entrar no jogo — o formato está documentado em `story/LEIA-ME.md`.
+
+### A pausa
+
+Quando um e-mail chega, **o jogo pausa** e um aviso aparece no canto inferior
+direito. O relógio para, o rastro não cai, ataques não acontecem. É o único
+momento em que a narrativa tem prioridade sobre a jogatina — e é justamente por
+isso que os textos precisam ser curtos. O jogador está parado esperando para
+voltar a jogar.
+
+### O tom
+
+O 3stagiario nunca dá ordem: sugere, alfineta e some. Piada de informática de
+2003 (computador de brinquedo, formata que resolve, modem que chia), três a seis
+linhas por
+e-mail, uma ideia por vez. Ele também comenta quando o jogador ignora o aviso
+anterior — *"Eu avisei no e-mail passado. Você leu? Ninguém lê."*
+
+## Defesa: eles também invadem você
+
+Dois ramos novos na árvore, com os mesmos dez níveis:
+
+| Ramo | O que faz |
+|---|---|
+| 🧱 **Firewall** | Segura ataques de força até o nível dele. Sem ele, tudo passa. |
+| 🩺 **Antivírus** | Recupera 10% por nível do que foi levado pelo que passou. |
+
+São duas compras porque são dois problemas — firewall segura na porta,
+antivírus limpa a casa. Ataques só começam **depois de 4 contas zeradas**: antes
+disso ninguém tem motivo para bater na porta de quem não incomodou ninguém. A
+força escala com quantas contas o jogador zerou, então **roubar menos também é
+uma forma de defesa**.
+
+Um ataque que passa leva uma fatia do saldo e **soma rastro** — a invasão
+sofrida entra no log do ScanSS como qualquer outra ação.
+
 ## O que ainda não existe
 
 Ordem sugerida para as próximas rodadas:

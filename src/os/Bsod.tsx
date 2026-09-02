@@ -32,9 +32,10 @@ export function Bsod() {
       </p>
 
       <p style={{ marginLeft: 24 }}>
-        · Limpe os logs antes que o rastro passe de 60%.<br />
-        · Compre o Proxy_Chain: ele corta pela metade todo rastro gerado.<br />
-        · Não leve o saldo inteiro de uma conta só de uma vez.
+        · Limpe os logs com a Faxina antes que o rastro passe de 60%.<br />
+        · Suba o Anonimato: ele reduz todo rastro que você gera.<br />
+        · Não leve o saldo inteiro de uma conta só de uma vez.<br />
+        · Apague o que baixou: arquivo roubado no disco queima sozinho.
       </p>
 
       <p style={{ marginTop: 26 }}>

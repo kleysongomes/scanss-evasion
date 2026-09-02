@@ -1,0 +1,13 @@
+id: 05-jornal
+assunto: voce viu o jornal?
+quando: contas:2
+---
+Da uma olhada no noticias.vc.
+
+Ja tem materia sobre correntista com a conta zerada. Ainda nao falaram
+seu nome, obvio, porque ninguem sabe seu nome. Mas falaram.
+
+Isso e bom e ruim. Bom porque significa que funcionou. Ruim porque
+agora tem gente sendo paga pra descobrir quem fez.
+
+-- 3stagiario

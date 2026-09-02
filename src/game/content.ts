@@ -91,18 +91,24 @@ export const NOMES_SENHAS = [
   'logins.txt', 'deploy.conf',
 ]
 
-/** Palavras usadas para montar senhas de 2003 - fracas, como eram. */
+/**
+ * Palavras usadas para montar senhas de 2003 - fracas, como eram.
+ * Tudo generico de proposito: nada de time, marca ou pessoa que exista.
+ */
 export const PALAVRAS_SENHA = [
-  'vasco', 'flamengo', 'girassol', 'estrela', 'cachorro', 'brasil',
-  'familia', 'amor', 'sucesso', 'trabalho', 'liberdade', 'saudade',
-  'primavera', 'guitarra', 'oceano', 'montanha',
+  'girassol', 'estrela', 'cachorro', 'foguete', 'familia', 'amor',
+  'sucesso', 'trabalho', 'liberdade', 'saudade', 'primavera', 'guitarra',
+  'oceano', 'montanha', 'tigre', 'veludo', 'cometa', 'bicicleta',
 ]
 
-/** Sistema: sempre presente, nunca util. E o ruido que faz vasculhar valer. */
+/**
+ * Sistema: sempre presente, nunca util. E o ruido que faz vasculhar valer.
+ * Os nomes sao do WinDoors, o sistema ficticio - nao de nenhum de verdade.
+ */
 export const SISTEMA: readonly (readonly [string, string])[] = [
-  ['kernel32.dll', 'Biblioteca do sistema.'],
-  ['user32.dll', 'Biblioteca do sistema.'],
-  ['hal.dll', 'Camada de abstração de hardware.'],
-  ['gdi32.dll', 'Biblioteca gráfica do sistema.'],
-  ['win.ini', 'Configuração do sistema.'],
+  ['wdcore32.dll', 'Biblioteca do sistema.'],
+  ['wdshell.dll', 'Biblioteca da interface.'],
+  ['wdgraf.dll', 'Biblioteca gráfica do sistema.'],
+  ['wdaudio.dll', 'Driver de som.'],
+  ['wdoors.ini', 'Configuração do sistema.'],
 ]

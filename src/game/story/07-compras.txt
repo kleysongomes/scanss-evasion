@@ -1,0 +1,15 @@
+id: 07-compras
+assunto: boas compras
+quando: marco:buy
+---
+Vi que voce mexeu no darkmarket.
+
+Dica: nao sai comprando nivel 1 de tudo. Escolhe um ramo e sobe. O
+Rastreador e a Intrusao andam em par - de nada adianta enxergar um
+escritorio que voce nao consegue abrir.
+
+E o Anonimato e caro pra caramba, mas e o unico que melhora TUDO que
+voce faz. Pensa nele como aquele upgrade de RAM: ninguem ve, todo mundo
+sente.
+
+-- 3stagiario

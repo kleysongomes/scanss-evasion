@@ -1,0 +1,313 @@
+/* ==========================================================================
+   A landing.
+
+   O print e o cenario, nao a ilustracao: cada secao ocupa a largura toda com
+   uma tela do jogo ao fundo e o texto por cima. E por isso que quase tudo aqui
+   e camada - imagem, veu de gradiente, conteudo.
+   ========================================================================== */
+
+:root {
+  --lp-fundo: #070a0e;
+  --lp-fundo-2: #0d1219;
+  --lp-borda: #1e2733;
+  --lp-texto: #eef1f6;
+  --lp-fraco: #9aa6ba;
+  --lp-azul: #2f7fe0;
+  --lp-amarelo: #ffcc00;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { margin: 0; background: var(--lp-fundo); }
+
+body {
+  color: var(--lp-texto);
+  font-family: "Segoe UI", Tahoma, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.lp-largura { width: min(1140px, 90vw); margin: 0 auto; position: relative; }
+
+/* Rotulozinho de secao: o "capitulo" acima de cada titulo. */
+.lp-etiqueta {
+  margin: 0 0 12px;
+  font-family: "Lucida Console", Consolas, monospace;
+  font-size: 12px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--lp-amarelo);
+}
+
+/* ------------------------------------------------------------------ topo -- */
+.lp-topo {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+  background: linear-gradient(180deg, rgba(7,10,14,.92), rgba(7,10,14,0));
+}
+.lp-topo-linha {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 0;
+}
+.lp-marca { font-weight: 800; letter-spacing: -.4px; font-size: 17px; }
+.lp-marca em { font-style: normal; color: var(--lp-amarelo); }
+
+/* ---------------------------------------------------------------- botoes -- */
+.lp-botao {
+  display: inline-block;
+  padding: 12px 26px;
+  border: 2px solid transparent;
+  background: var(--lp-azul);
+  color: #fff;
+  font: inherit; font-weight: 700;
+  letter-spacing: .3px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: filter .15s, transform .12s;
+}
+.lp-botao:hover { filter: brightness(1.2); }
+.lp-botao:active { transform: translateY(1px); }
+.lp-botao.grande { padding: 16px 40px; font-size: 17px; }
+.lp-botao.pequeno { padding: 7px 18px; font-size: 14px; }
+.lp-botao.vazado {
+  background: rgba(0,0,0,.35);
+  border-color: rgba(255,255,255,.35);
+  backdrop-filter: blur(4px);
+}
+.lp-botao.vazado:hover { border-color: #fff; filter: none; background: rgba(0,0,0,.55); }
+
+.lp-acoes { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 34px; }
+
+/* ------------------------------------------------------------------ capa -- */
+.lp-capa {
+  position: relative;
+  min-height: 100vh;
+  display: flex; align-items: center;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+/* O véu é o que torna o print legível como fundo. */
+.lp-capa-veu {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, rgba(7,10,14,.92) 0%, rgba(7,10,14,.55) 42%, rgba(7,10,14,0) 78%),
+    linear-gradient(180deg, rgba(7,10,14,.5) 0%, transparent 30%, rgba(7,10,14,.85) 100%);
+}
+.lp-capa-corpo {
+  padding: 110px 0 90px;
+  display: grid;
+  grid-template-columns: minmax(300px, 42%) 1fr;
+  gap: 40px;
+  align-items: center;
+}
+/* A tela do jogo, levemente inclinada, saindo da margem — o jogo aparece
+   antes de qualquer texto explicar o que ele é. */
+.lp-capa-tela {
+  margin: 0;
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 40px 90px rgba(0,0,0,.8);
+  overflow: hidden;
+  line-height: 0;
+  transform: perspective(1400px) rotateY(-9deg) rotateX(2deg);
+}
+.lp-capa-tela img { display: block; width: 100%; height: auto; }
+
+.lp-capa h1 {
+  margin: 0;
+  font-size: clamp(44px, 8vw, 96px);
+  line-height: .96;
+  letter-spacing: -3px;
+  font-weight: 800;
+  text-shadow: 0 6px 40px rgba(0,0,0,.7);
+}
+.lp-capa h1 span { display: block; color: var(--lp-amarelo); }
+
+.lp-tagline {
+  margin: 24px 0 0;
+  font-size: clamp(17px, 2.2vw, 24px);
+  line-height: 1.4;
+  color: #dbe3ef;
+  max-width: 22ch;
+  text-shadow: 0 2px 16px rgba(0,0,0,.8);
+}
+.lp-nota { margin: 18px 0 0; color: #7c889d; font-size: 14px; max-width: 46ch; }
+
+.lp-capa-desce {
+  position: absolute; left: 50%; bottom: 24px;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,.35);
+  animation: lp-desce 2.2s ease-in-out infinite;
+}
+@keyframes lp-desce {
+  0%, 100% { transform: translate(-50%, 0); opacity: .3 }
+  50%      { transform: translate(-50%, 7px); opacity: .8 }
+}
+
+/* ----------------------------------------------------------------- cenas -- */
+.lp-cena {
+  position: relative;
+  padding: 110px 0;
+  background-size: cover;
+  overflow: hidden;
+  border-top: 1px solid var(--lp-borda);
+}
+/* O fundo entra desfocado: a tela crespa fica no quadro, na frente. */
+.lp-cena::before {
+  content: "";
+  position: absolute; inset: -40px;
+  background: inherit;
+  background-size: cover;
+  filter: blur(10px) saturate(1.05) brightness(.85);
+  transform: scale(1.08);
+}
+/* Escurece forte do lado do texto e deixa o cenário respirar do outro. */
+.lp-cena-veu {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(7,10,14,.95) 6%, rgba(7,10,14,.55) 46%,
+                                     rgba(7,10,14,.25) 100%);
+}
+.lp-cena.dir .lp-cena-veu {
+  background: linear-gradient(270deg, rgba(7,10,14,.95) 6%, rgba(7,10,14,.55) 46%,
+                                      rgba(7,10,14,.25) 100%);
+}
+
+/* O print manda: fica com quase dois terços da largura. */
+.lp-cena-corpo {
+  display: grid;
+  grid-template-columns: minmax(260px, 30%) 1fr;
+  gap: 48px;
+  align-items: center;
+}
+.lp-cena.dir .lp-cena-corpo { grid-template-columns: 1fr minmax(260px, 30%); }
+.lp-cena.dir .lp-cena-texto { order: 2; }
+
+.lp-cena h2 {
+  margin: 0 0 16px;
+  font-size: clamp(28px, 3.6vw, 42px);
+  line-height: 1.06;
+  letter-spacing: -1.4px;
+  white-space: pre-line;
+  text-shadow: 0 4px 24px rgba(0,0,0,.7);
+}
+.lp-cena-texto p:last-child { margin: 0; color: #b9c4d6; }
+
+.lp-cena-quadro {
+  margin: 0;
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 30px 70px rgba(0,0,0,.75);
+  overflow: hidden;
+  line-height: 0;
+}
+.lp-cena-quadro img {
+  display: block; width: 100%; height: auto;
+  aspect-ratio: 16 / 10;
+}
+
+/* --------------------------------------------------------------- pilares -- */
+.lp-pilares {
+  padding: 96px 0;
+  background: var(--lp-fundo-2);
+  border-top: 1px solid var(--lp-borda);
+}
+.lp-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1px;
+  background: var(--lp-borda);
+  border: 1px solid var(--lp-borda);
+}
+.lp-grade > div { padding: 26px; background: var(--lp-fundo-2); }
+.lp-grade h3 { margin: 0 0 10px; font-size: 17px; line-height: 1.3; }
+.lp-grade p { margin: 0; color: var(--lp-fraco); font-size: 15px; }
+
+/* --------------------------------------------------------------- derrota -- */
+/* A tela azul é o próprio assunto, então ela vira o quadro — não o fundo.
+   Como fundo, o texto dela competia com o título e nenhum dos dois lia. */
+.lp-derrota {
+  position: relative;
+  padding: 110px 0;
+  background: linear-gradient(180deg, #060a14, #0a1024 60%, #060a14);
+  border-top: 1px solid var(--lp-borda);
+  overflow: hidden;
+}
+.lp-derrota::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 70% at 70% 45%,
+              rgba(0,0,170,.30), transparent 70%);
+}
+.lp-derrota-corpo {
+  display: grid;
+  grid-template-columns: minmax(260px, 36%) 1fr;
+  gap: 48px; align-items: center;
+}
+.lp-derrota h2 {
+  margin: 0 0 18px;
+  font-size: clamp(28px, 3.8vw, 44px);
+  line-height: 1.06; letter-spacing: -1.5px;
+}
+.lp-linha { margin: 0; color: #b9c4d6; font-size: 17px; }
+.lp-derrota .lp-etiqueta { color: #ff9d9d; }
+
+/* --------------------------------------------------------------- galeria -- */
+.lp-galeria { padding: 80px 0; border-top: 1px solid var(--lp-borda); }
+.lp-tira {
+  display: flex; gap: 14px;
+  margin-top: 22px; padding: 0 max(24px, 5vw) 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+}
+.lp-tira img {
+  flex: 0 0 auto;
+  height: clamp(180px, 26vw, 320px);
+  width: auto;
+  aspect-ratio: 16 / 10;
+  border: 1px solid var(--lp-borda);
+  scroll-snap-align: center;
+}
+
+/* ----------------------------------------------------------------- fecho -- */
+.lp-fecho {
+  position: relative;
+  padding: 140px 0;
+  background-size: cover; background-position: center;
+  text-align: center;
+}
+.lp-fecho-veu {
+  position: absolute; inset: 0;
+  backdrop-filter: blur(3px);
+  background: linear-gradient(180deg, rgba(7,10,14,.86), rgba(7,10,14,.72));
+}
+.lp-fecho h2 {
+  margin: 0;
+  font-size: clamp(26px, 4.4vw, 46px);
+  line-height: 1.08; letter-spacing: -1.4px;
+}
+.lp-fecho .lp-acoes { justify-content: center; }
+
+.lp-rodape {
+  padding: 36px 0 52px;
+  border-top: 1px solid var(--lp-borda);
+  color: var(--lp-fraco);
+  font-size: 14px;
+}
+.lp-rodape p { margin: 0 0 6px; }
+.lp-ficcao { color: #5b6577; font-size: 13px; }
+
+/* -------------------------------------------------------------- estreito -- */
+@media (max-width: 860px) {
+  .lp-cena { padding: 70px 0; }
+  .lp-cena-corpo,
+  .lp-cena.dir .lp-cena-corpo { grid-template-columns: 1fr; gap: 28px; }
+  .lp-cena.dir .lp-cena-texto { order: 0; }
+  .lp-derrota-corpo { grid-template-columns: 1fr; gap: 26px; }
+  .lp-cena-veu,
+  .lp-cena.dir .lp-cena-veu {
+    background: linear-gradient(180deg, rgba(7,10,14,.93), rgba(7,10,14,.82));
+  }
+  .lp-capa-veu {
+    background: linear-gradient(180deg, rgba(7,10,14,.7) 0%, rgba(7,10,14,.92) 70%);
+  }
+  .lp-capa-corpo { padding: 110px 0 80px; grid-template-columns: 1fr; gap: 34px; }
+  .lp-capa-tela { transform: none; }
+  .lp-capa { min-height: 0; }
+}

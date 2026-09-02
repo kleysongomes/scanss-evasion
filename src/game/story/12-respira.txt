@@ -1,0 +1,13 @@
+id: 12-respira
+assunto: ok, respira
+quando: email:11-corre
+---
+Deu tempo. Boa.
+
+Anota isso em algum lugar: o rastro nao e um numero, e um cronometro. Ele
+sobe rapido e desce devagar, e quanto mais alto ele esta, mais devagar
+desce.
+
+O jogo nao e roubar mais. E roubar sem ficar quente.
+
+-- 3stagiario

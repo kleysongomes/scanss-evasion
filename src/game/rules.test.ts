@@ -13,7 +13,7 @@ import { BRANCHES, MAX_LEVEL, SKILL_BY_ID, levelOf, skillsOf } from './skills'
 import {
   DOWNLOADS, decayPerMinute, evidenceHeatPerHour, useGame,
 } from './store'
-import type { BankAccount, Machine, VFile, VNode } from './types'
+import type { BankAccount, GameState, Machine, VFile, VNode } from './types'
 
 const g = () => useGame.getState()
 
@@ -507,6 +507,136 @@ describe('arvore de habilidades', () => {
     useGame.setState((s) => ({ player: { ...s.player, heat: 90 } }))
     g().cleanLogs()
     expect(g().player.heat).toBeLessThan(nivel1)
+  })
+})
+
+describe('defesa', () => {
+  it('ninguem ataca quem ainda nao incomodou ninguem', () => {
+    // Com menos de 4 contas zeradas, o Coletivo nao tem motivo.
+    for (let i = 0; i < 3000; i++) g().rollAttack()
+    expect(g().attacks).toHaveLength(0)
+  })
+
+  /** Força ataques até sair um, para testar a resolução sem depender da sorte. */
+  function ateAtacarem(): void {
+    useGame.setState({ drained: ['a', 'b', 'c', 'd', 'e', 'f'] })
+    for (let i = 0; i < 20000 && g().attacks.length === 0; i++) g().rollAttack()
+    if (g().attacks.length === 0) throw new Error('nenhum ataque em 20000 tentativas')
+  }
+
+  it('sem Firewall, o ataque passa', () => {
+    comSaldo(10_000)
+    ateAtacarem()
+    expect(g().attacks[0].bloqueado).toBe(false)
+    expect(g().player.balance).toBeLessThan(10_000)
+  })
+
+  it('Firewall no maximo segura qualquer ataque', () => {
+    comSaldo(9_999_999)
+    for (let n = 1; n <= MAX_LEVEL; n++) g().buySkill(`firewall${n}`)
+    expect(g().level('firewall')).toBe(MAX_LEVEL)
+
+    const saldo = g().player.balance
+    ateAtacarem()
+    expect(g().attacks.every((a) => a.bloqueado)).toBe(true)
+    expect(g().player.balance).toBe(saldo)
+  })
+
+  it('o Antivirus devolve parte do que passou', () => {
+    comSaldo(9_999_999)
+    for (let n = 1; n <= MAX_LEVEL; n++) g().buySkill(`antivirus${n}`)
+    comSaldo(10_000)
+    ateAtacarem()
+    // Nivel 10 devolve 100%: o ataque passa, mas nao leva nada.
+    expect(g().attacks.some((a) => !a.bloqueado)).toBe(true)
+    expect(g().player.balance).toBe(10_000)
+  })
+
+  it('o ataque sofrido entra no log do ScanSS', () => {
+    comSaldo(10_000)
+    ateAtacarem()
+    expect(g().trail.some((t) => t.text.includes('SOFRIDA'))).toBe(true)
+  })
+
+  it('nao ataca com o jogo pausado', () => {
+    useGame.setState({ drained: ['a', 'b', 'c', 'd'], paused: true })
+    for (let i = 0; i < 5000; i++) g().rollAttack()
+    expect(g().attacks).toHaveLength(0)
+  })
+})
+
+describe('lobby', () => {
+  it('a partida so comeca depois do menu', () => {
+    expect(g().started).toBe(false)
+    g().start('ana')
+    expect(g().started).toBe(true)
+    expect(g().player.handle).toBe('ana')
+  })
+
+  it('apelido vazio cai no padrao', () => {
+    g().start('   ')
+    expect(g().player.handle).toBe('operador')
+  })
+
+  it('sem partida nunca jogada, nao ha o que continuar', () => {
+    expect(g().hasSave).toBe(false)
+  })
+
+  it('comecar marca que existe save - mesmo antes de fazer qualquer coisa', () => {
+    // O menu precisa saber disso ANTES do primeiro marco: quem entrou e nao
+    // agiu ainda tem uma partida para continuar.
+    g().start('ana')
+    expect(g().hasSave).toBe(true)
+    expect(g().milestones).toHaveLength(0)
+  })
+
+  it('o save sobrevive ao que o jogador faz', () => {
+    g().start('ana')
+    g().scan()
+    expect(g().hasSave).toBe(true)
+    expect(g().player.handle).toBe('ana')
+  })
+
+  it('reiniciar apaga o save', () => {
+    g().start('ana')
+    g().scan()
+    g().reset()
+    expect(g().hasSave).toBe(false)
+    expect(g().started).toBe(false)
+    expect(g().milestones).toHaveLength(0)
+  })
+
+  it('jogo novo toca o prologo; continuar nao', () => {
+    // O prólogo é ambientação de uma vez só: quem continua já viu.
+    g().startNew('ana')
+    expect(g().prologue).toBe(true)
+    g().endPrologue()
+    expect(g().prologue).toBe(false)
+
+    g().start('ana')
+    expect(g().prologue).toBe(false)
+  })
+
+  it('jogo novo apaga a partida anterior', () => {
+    g().start('joao')
+    g().scan()
+    expect(g().milestones).toContain('scan')
+
+    g().startNew('ana')
+    expect(g().player.handle).toBe('ana')
+    expect(g().milestones).toHaveLength(0)
+    expect(g().hasSave).toBe(true)
+  })
+
+  it('o estado salvo nao carrega started, prologue nem paused', () => {
+    // Abrir a url tem que cair sempre no menu, nunca direto no desktop.
+    g().start('ana')
+    useGame.setState({ paused: true })
+    const salvo = useGame.persist.getOptions().partialize!(g()) as GameState
+    expect(salvo.started).toBe(false)
+    expect(salvo.paused).toBe(false)
+    expect(salvo.prologue).toBe(false)
+    expect(salvo.hasSave).toBe(true)
   })
 })
 

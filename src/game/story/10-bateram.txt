@@ -1,0 +1,13 @@
+id: 10-bateram
+assunto: eles bateram na porta
+quando: ataques:1
+---
+Viu o log da Defesa? Bateram.
+
+Se o Firewall segurou, respira. Se nao segurou, confere seu saldo e seus
+arquivos, porque eles nao vieram fazer visita.
+
+E {apelido}: isso nao foi aviso. Foi teste. Eles estao medindo quanto
+voce aguenta antes de vir de verdade.
+
+-- 3stagiario

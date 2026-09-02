@@ -80,6 +80,24 @@ export const BRANCHES: BranchInfo[] = [
              'Nunca estive aqui'],
   },
   {
+    id: 'firewall', name: 'Firewall', icon: '🧱', cost: 1.15,
+    role: 'Segura quem bate na sua porta. Sem ele, qualquer um entra no seu micro.',
+    scale: (n) => `bloqueia ataques de força até ${n}`,
+    titles: ['Filtro de porta', 'Regras por IP', 'Inspeção de pacote',
+             'Bloqueio adaptativo', 'Lista negra viva', 'Detecção de varredura',
+             'Isolamento de sessão', 'Análise de comportamento',
+             'Contramedida ativa', 'Muralha'],
+  },
+  {
+    id: 'antivirus', name: 'Antivírus', icon: '🩺', cost: 0.95,
+    role: 'Tira quem já entrou. Firewall segura na porta; antivírus limpa a casa.',
+    scale: (n) => `remove implantes e devolve ${n * 10}% do que foi levado`,
+    titles: ['Varredura manual', 'Assinaturas básicas', 'Varredura agendada',
+             'Heurística', 'Quarentena', 'Monitor em tempo real',
+             'Análise de memória', 'Remoção profunda', 'Vacina',
+             'Nada passa'],
+  },
+  {
     id: 'ghost', name: 'Anonimato', icon: '🛰️', cost: 1.7,
     role: 'Esconde a sua origem. Reduz TODO rastro que você gera, para sempre.',
     scale: (n) => `todo rastro gerado −${Math.round((1 - heatFactorAt(n)) * 100)}%`,
@@ -91,6 +109,14 @@ export const BRANCHES: BranchInfo[] = [
 ]
 
 export const BRANCH_BY_ID = Object.fromEntries(BRANCHES.map((b) => [b.id, b]))
+
+/** Os ramos que servem para invadir. */
+export const ATAQUE: Branch[] = ['scanner', 'breaker', 'crypto', 'cleaner', 'ghost']
+/** Os ramos que servem para nao ser invadido. */
+export const DEFESA: Branch[] = ['firewall', 'antivirus']
+
+export const branchesDe = (grupo: Branch[]): BranchInfo[] =>
+  BRANCHES.filter((b) => grupo.includes(b.id))
 
 /** Quanto a Faxina derruba num nivel. */
 export function cleanPowerAt(level: number): number {
@@ -160,6 +186,19 @@ export function heatFactor(owned: string[]): number {
 /** Quanto a Faxina derruba por uso (0 = nao possui). */
 export function cleanPower(owned: string[]): number {
   return cleanPowerAt(levelOf(owned, 'cleaner'))
+}
+
+/** Forca que o Firewall consegue segurar (0 = nao possui). */
+export function shieldPower(owned: string[]): number {
+  return levelOf(owned, 'firewall')
+}
+
+/**
+ * Fracao do prejuizo que o Antivirus recupera depois de um ataque que passou.
+ * Nivel 10 devolve o dano inteiro.
+ */
+export function recoveryRate(owned: string[]): number {
+  return levelOf(owned, 'antivirus') / 10
 }
 
 /** Quantos hosts cabem na lista do NetRipper com o Rastreador atual. */

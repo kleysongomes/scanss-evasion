@@ -108,11 +108,6 @@ export function Portal({ navigate }: SiteProps) {
           )}
         </tbody>
       </table>
-
-      <div className="web-footer" style={{ width: 'min(560px, 88%)', margin: '16px auto 0' }}>
-        busca.vc · Melhor visualizado em 1024x768<br />
-        Todos os sites deste índice são ficcionais
-      </div>
     </div>
   )
 }

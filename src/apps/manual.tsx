@@ -106,6 +106,12 @@ const Bemvindo = () => (
       O resto do manual explica cada tela, botão por botão. Se quiser ir direto
       ao ponto, pule para <b>Onde você está</b>: mostra o seu próximo passo.
     </p>
+
+    <Nota>
+      <b>Isto aqui é ficção.</b> O V-Bank, o darkmarket, o VMail, as empresas e
+      as pessoas são todos inventados, e o navegador do jogo não acessa a
+      internet — só as páginas que existem dentro desta janela.
+    </Nota>
   </>
 )
 
@@ -437,6 +443,90 @@ const BlocoDeNotas = () => (
   </>
 )
 
+const Correio = () => {
+  const game = useGame()
+  return (
+    <>
+      <h2>O correio e a história</h2>
+      <p>
+        Alguém que se chama <b>3stagiario</b> te manda e-mail. Ninguém sabe quem
+        é, nem como ele sabe tanto sobre o seu computador. Ele diz que instalou
+        umas coisas nele "semana passada, quando você foi buscar café", e nunca
+        explica isso.
+      </p>
+      <p>
+        É por ele que a história acontece e que as missões chegam. Abra o
+        <b> Chroma</b> e vá em <b>vmail.vc</b>.
+      </p>
+
+      <h3>O jogo pausa quando chega e-mail</h3>
+      <Aviso>
+        Quando uma mensagem nova chega, um aviso aparece no canto inferior
+        direito e <b>o relógio para</b>. O rastro não cai, nada acontece. É de
+        propósito: é o único momento em que a história tem prioridade sobre a
+        jogatina.
+      </Aviso>
+      <p>
+        Você pode abrir na hora ou clicar em <B>Depois</B> — o jogo volta a
+        rodar e a mensagem fica esperando na caixa.
+      </p>
+
+      <h3>Missões</h3>
+      <p>
+        Alguns e-mails abrem uma <b>missão</b>, que fica no topo do webmail. Não
+        existe botão de "entregar": a missão se cumpre jogando, e o próximo
+        e-mail chega quando você faz o que ele pediu.
+      </p>
+
+      {game.inbox.length > 0 && (
+        <Nota>
+          Você tem <b>{game.inbox.length}</b> mensagem(ns) na caixa
+          {game.inbox.some((e) => !e.lido) && ', e alguma ainda não foi lida'}.
+          {game.objetivo && <><br />Missão atual: <b>{game.objetivo}</b></>}
+        </Nota>
+      )}
+    </>
+  )
+}
+
+const Defesa = () => (
+  <>
+    <h2>Defesa: eles também invadem você</h2>
+    <p>
+      Você passa o começo do jogo entrando na casa dos outros sem nunca pensar
+      que a sua tem porta. Depois de <b>4 contas zeradas</b>, um grupo chamado
+      <b> O Coletivo</b> nota você — e a partir daí começam a bater.
+    </p>
+
+    <h3>Os dois programas</h3>
+    <Botoes linhas={[
+      [<>🧱 <b>Firewall</b></>, <>Segura quem bate na porta. Bloqueia ataques de
+        força até o nível dele. Sem Firewall, <b>tudo passa</b>.</>],
+      [<>🩺 <b>Antivírus</b></>, <>Tira quem já entrou. Recupera 10% por nível do
+        que foi levado — no nível 10, devolve tudo.</>],
+    ]} />
+    <Nota>
+      São duas compras porque são dois problemas. Firewall sem Antivírus deixa
+      você exposto ao que passar; Antivírus sem Firewall é enxugar gelo.
+    </Nota>
+
+    <h3>Como o ataque é resolvido</h3>
+    <Passos itens={[
+      <>Um ataque tem uma <b>força</b>, que cresce com o número de contas que
+        você zerou. Roubar menos também é uma forma de defesa.</>,
+      <>Se o nível do Firewall for <b>maior ou igual</b> à força, ele segura.</>,
+      <>Se passar, leva uma fatia do seu saldo e ainda soma rastro — a invasão
+        sofrida aparece no log do ScanSS como qualquer outra.</>,
+      <>O Antivírus devolve a parte dele do que foi levado.</>,
+    ]} />
+
+    <p>
+      O módulo <b>Defesa</b> no NetRipper mostra a sua exposição, a força
+      esperada do próximo ataque e o log de todas as tentativas.
+    </p>
+  </>
+)
+
 const Navegador = () => (
   <>
     <h2>Chroma</h2>
@@ -461,6 +551,7 @@ const Navegador = () => (
             <td>Página inicial, lista todos os outros.</td></tr>
         <tr><td><b>vbank.vc</b></td><td>O banco. Onde o roubo vira dinheiro.</td></tr>
         <tr><td><b>darkmarket.vc</b></td><td>A loja de atualizações.</td></tr>
+        <tr><td><b>vmail.vc</b></td><td>Seu e-mail. É por onde a história chega.</td></tr>
         <tr><td><b>noticias.vc</b></td><td>O jornal — publica sobre os <i>seus</i> roubos.</td></tr>
       </tbody>
     </table>
@@ -797,6 +888,10 @@ export const CHAPTERS: Chapter[] = [
     klipe: 'Aqui você vasculha as pastas da vítima. E arruma as suas.' },
   { id: 'notepad', title: 'Bloco de Notas', Body: BlocoDeNotas,
     klipe: 'O programa mais bobo do jogo é o que destrava o banco. Sério.' },
+  { id: 'correio', title: 'O correio e a história', Body: Correio,
+    klipe: 'Tem um cara te mandando e-mail. Eu também não sei quem é.' },
+  { id: 'defesa', title: 'Defesa', Body: Defesa,
+    klipe: 'Você invadiu meio bairro. Achou que ninguém ia revidar?' },
   { id: 'chroma', title: 'O navegador', Body: Navegador,
     klipe: 'Quatro sites, um navegador. É por aqui que o dinheiro anda.' },
   { id: 'banco', title: 'O banco: o roubo', Body: Banco,

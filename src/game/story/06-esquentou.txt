@@ -1,0 +1,16 @@
+id: 06-esquentou
+assunto: opa opa opa
+quando: rastro:55
+objetivo: Derrubar o rastro abaixo de 30%
+---
+{apelido}. Olha o escudo ali embaixo.
+
+Passou da metade. A partir daqui ele esfria devagar de proposito - quem
+ta sendo investigado nao sai da mira so ficando quieto.
+
+Compra a Faxina no darkmarket e limpa os log. Ou para tudo e vai tomar
+um cafe, que tambem funciona, so demora uns quarenta minutos.
+
+Sua escolha. Mas escolhe rapido.
+
+-- 3stagiario

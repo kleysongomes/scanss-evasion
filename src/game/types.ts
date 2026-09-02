@@ -94,8 +94,16 @@ export interface BankAccount {
 // Arvore de habilidades
 // ---------------------------------------------------------------------------
 
-/** Os cinco programas que evoluem por niveis. */
-export type Branch = 'scanner' | 'breaker' | 'crypto' | 'cleaner' | 'ghost'
+/**
+ * Os programas que evoluem por niveis: cinco de ataque, dois de defesa.
+ *
+ * Ate o Capitulo 1 o jogador só invade. Quando o Coletivo aparece, ele descobre
+ * que passou o jogo entrando na casa dos outros sem nunca pensar que a dele
+ * tinha porta.
+ */
+export type Branch =
+  | 'scanner' | 'breaker' | 'crypto' | 'cleaner' | 'ghost'
+  | 'firewall' | 'antivirus'
 
 export interface Skill {
   id: string
@@ -124,6 +132,30 @@ export interface TrailEntry {
   heat: number
 }
 
+/** Um e-mail que chegou na caixa do jogador. */
+export interface Email {
+  id: string
+  de: string
+  assunto: string
+  corpo: string
+  /** Minuto do jogo em que chegou. */
+  em: number
+  lido: boolean
+}
+
+/** Uma tentativa de invasao CONTRA o jogador. */
+export interface Attack {
+  em: number
+  /** Quem tentou. */
+  de: string
+  /** Forca do ataque, comparada com o seu Firewall. */
+  forca: number
+  /** O Firewall segurou? */
+  bloqueado: boolean
+  /** O que aconteceu, em uma linha. */
+  efeito: string
+}
+
 export type HeatLevel = 'calmo' | 'atencao' | 'alerta' | 'critico'
 
 export interface Player {
@@ -137,6 +169,32 @@ export interface Player {
 }
 
 export interface GameState {
+  /**
+   * Existe partida salva para continuar?
+   *
+   * E um campo proprio, e nao "milestones.length > 0", porque o menu precisa
+   * saber disso ANTES de o jogador fazer qualquer coisa - quem comecou e nao
+   * agiu ainda tem uma partida.
+   */
+  hasSave: boolean
+  /** A partida ja foi iniciada no lobby? Nao e salvo: abrir a url cai no menu. */
+  started: boolean
+  /**
+   * Mostrar o prologo? So em jogo novo - quem continua ja viu. Nao e salvo:
+   * e ambientacao de uma vez so, nao progresso.
+   */
+  prologue: boolean
+  /**
+   * Jogo pausado. Fica verdadeiro quando um e-mail chega: e o unico momento em
+   * que a narrativa tem prioridade sobre a jogatina.
+   */
+  paused: boolean
+  /** Caixa de entrada, do mais antigo ao mais recente. */
+  inbox: Email[]
+  /** A missao aberta agora, vinda do ultimo e-mail que trouxe uma. */
+  objetivo: string | null
+  /** Tentativas de invasao sofridas. */
+  attacks: Attack[]
   player: Player
   /** Ids de habilidades compradas (`game/skills.ts`). */
   skills: string[]

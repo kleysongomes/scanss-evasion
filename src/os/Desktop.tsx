@@ -5,6 +5,7 @@ import { APP_META } from '@/apps/catalog'
 import { APP_COMPONENTS, Missing } from '@/apps/registry'
 import { useGame } from '@/game/store'
 import { Assistant } from './Assistant'
+import { MailAlert } from './MailAlert'
 import { appLabel, launchApp } from './launch'
 import { Taskbar } from './Taskbar'
 import { Window } from './Window'
@@ -15,6 +16,7 @@ export function Desktop() {
   const activeId = useWindows((s) => s.activeId)
   const setStart = useWindows((s) => s.setStart)
   const assistantOpen = useWindows((s) => s.assistantOpen)
+  const paused = useGame((s) => s.paused)
   const setAssistant = useWindows((s) => s.setAssistant)
   const assistantSeen = useGame((s) => s.assistantSeen)
   const [selected, setSelected] = useState<string | null>(null)
@@ -57,9 +59,10 @@ export function Desktop() {
         )
       })}
 
-      {assistantOpen && <Assistant />}
+      {/* O aviso de e-mail tem prioridade sobre o Klipe: o jogo esta parado. */}
+      {paused ? <MailAlert /> : assistantOpen && <Assistant />}
 
-      {!assistantOpen && (
+      {!assistantOpen && !paused && (
         <div className="watermark">
           WinDoors XP<br />
           <span>Edição Doméstica · build 2600 · sem registro</span>

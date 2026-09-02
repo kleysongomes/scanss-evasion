@@ -94,11 +94,6 @@ export function DarkMarket(_props: SiteProps) {
           />
         ))}
       </div>
-
-      <div className="web-footer">
-        darkmarket.vc · sem afiliação com ninguém · melhor visualizado em 1024x768<br />
-        Loja fictícia — existe apenas dentro do jogo
-      </div>
     </div>
   )
 }

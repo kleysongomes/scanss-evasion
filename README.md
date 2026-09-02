@@ -10,6 +10,16 @@ e faz a transferência você mesmo.
 > **ScanSS**, que cruza logs de conexão e vai puxando a linha até a sua casa.
 > Narrativa completa em [docs/lore.md](docs/lore.md).
 
+## Duas páginas
+
+| URL | O que é |
+|---|---|
+| `/` | A **landing**: vitrine com prints, botão de jogar e de baixar atalho. |
+| `/jogo/` | O **jogo**. É esta URL que o atalho da área de trabalho aponta. |
+
+São duas páginas HTML de verdade (multi-page do Vite, sem roteador), o que
+mantém a URL do jogo estável e funciona em qualquer host estático.
+
 ## Rodar
 
 ```bash
@@ -22,7 +32,50 @@ Abre em `http://localhost:5173`. Requer Node 18+.
 ```bash
 npm test          # regras do jogo (sem interface)
 npm run build     # build de produção em dist/
+npm run prints    # regera os prints da landing (servidor de dev rodando)
 ```
+
+### Os prints são gerados, não feitos à mão
+
+`npm run prints` abre o jogo num navegador de verdade, **joga** até cada tela
+interessante e fotografa — varre a rede, invade uma máquina, monta o disco, abre
+o banco. As imagens saem em `public/prints/`.
+
+Print feito à mão envelhece na primeira mudança de layout; este regenera com um
+comando. Se o script quebrar, é sinal de que algum fluxo do jogo quebrou junto —
+ele é um teste de interface disfarçado.
+
+## Abertura, prólogo e tela cheia
+
+Abrir a URL cai numa **abertura** curta: tela preta, uma frase sobre o jogo
+escrita letra a letra, e três cartelas separadas por escuro com um cursor
+piscando — *um jogo independente*, *por Kleyson Gomes*, o título. Qualquer tecla
+entra no menu; **Esc pula**.
+
+Ela é curta de propósito, porque roda **toda visita**. A ambientação de verdade
+(2003, quem é o protagonista) é o **prólogo**, que só toca ao começar uma
+partida nova — e já usando o apelido escolhido.
+
+**Tela cheia** acontece logo na primeira tela — a abertura começa com um
+*clique para iniciar*, e é esse clique que dispara o pedido, antes de qualquer
+texto do jogo aparecer. Essa porta de entrada existe por necessidade técnica:
+navegador nenhum permite tela cheia ao carregar a página, o pedido tem que vir
+de um gesto do jogador. Quem chega pela landing já resolve isso no botão
+*Jogar*. Depois disso, F11 alterna.
+
+> **Se for embutir o jogo num site**, o `<iframe>` precisa de
+> `allow="fullscreen"` — sem isso o navegador recusa o pedido em silêncio e o
+> jogo continua em janela (o que funciona, só não expande).
+
+## A história
+
+Abrir o jogo cai num **lobby** onde você escolhe continuar ou começar de novo, e
+dá um apelido. A partir daí, alguém chamado **3stagiario** começa a te mandar
+e-mail em `vmail.vc` — é por ele que a história e as missões chegam. Quando uma
+mensagem nova cai, **o jogo pausa** até você ler.
+
+O roteiro inteiro vive em [`src/game/story/`](src/game/story/), um arquivo de
+texto por e-mail. Dá para reescrever a história sem tocar em código.
 
 ## Como se joga
 
@@ -44,7 +97,9 @@ mostra o seu próximo passo. O resumo:
 5. **Meu Computador** de novo → **venda ou apague** o que você já usou. Arquivo
    roubado parado no seu disco gera rastro o tempo todo: o ScanSS também varre a
    *sua* máquina.
-6. **darkmarket.vc** → suba o nível de um dos cinco programas (dez níveis cada).
+6. **darkmarket.vc** → suba o nível de um dos sete programas (dez níveis cada).
+   Cinco são de ataque; dois são de **defesa** — porque depois de umas quantas
+   contas zeradas, alguém vai bater na sua porta também.
 
 Clique na bandeja (relógio/saldo/escudo) para abrir a **Situação**: o resumo de
 quanto estão te caçando, quanto o seu disco está piorando isso, e o quanto falta

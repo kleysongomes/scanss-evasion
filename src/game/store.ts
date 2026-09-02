@@ -15,12 +15,13 @@ import {
 } from './fs'
 import {
   MAX_LEVEL, SKILL_BY_ID, STARTING_SKILLS, canBuy, cleanPower, heatFactor,
-  levelOf, skillsOf, targetCapacity,
+  levelOf, recoveryRate, shieldPower, skillsOf, targetCapacity,
 } from './skills'
-import { int } from './rng'
+import { chance, int, pick } from './rng'
+import { pendentes, personalizar } from './story'
 import type {
-  BankAccount, Branch, Credential, GameState, HeatLevel, Machine, TrailEntry,
-  VFile, VNode, VPath,
+  Attack, BankAccount, Branch, Credential, Email, GameState, HeatLevel,
+  Machine, TrailEntry, VFile, VNode, VPath,
 } from './types'
 
 /** Custo de rastreamento de cada acao (antes do Anonimato). */
@@ -66,9 +67,30 @@ export function decayPerHour(heat: number): number {
 /** Pasta onde tudo que voce baixa cai primeiro. */
 export const DOWNLOADS = 'Baixados'
 
+/** Nomes dos atacantes, para o log de defesa ter cara de gente. */
+const INVASORES = [
+  'coletivo.irc', 'v0id@coletivo', 'n3mesis', 'kr0w', 'sombra_br',
+  'anon@irc.undernet', 'zer0cool',
+]
+
+/**
+ * Chance de sofrer um ataque por minuto de jogo.
+ *
+ * So vale depois que o Coletivo notou o jogador (4 contas zeradas): antes
+ * disso, ninguem tem motivo para bater na porta dele.
+ */
+const CHANCE_ATAQUE = 0.0025
+
 function initialState(): GameState {
   const { machines, accounts } = alvosIniciais()
   return {
+    hasSave: false,
+    started: false,
+    prologue: false,
+    paused: false,
+    inbox: [],
+    objetivo: null,
+    attacks: [],
     player: {
       handle: 'operador',
       balance: START_BALANCE,
@@ -187,6 +209,21 @@ const ok = (message: string): Result => ({ ok: true, message })
 const no = (message: string): Result => ({ ok: false, message })
 
 export interface GameActions {
+  /** Continua a partida salva. */
+  start: (apelido: string) => void
+  /** Apaga tudo e comeca do zero - e so aqui que o prologo toca. */
+  startNew: (apelido: string) => void
+  endPrologue: () => void
+  /** Retoma o jogo pausado por um e-mail. */
+  resume: () => void
+
+  /** Entrega os e-mails cujo gatilho foi atendido. Pausa o jogo se entregar. */
+  deliverMail: () => Email[]
+  readMail: (id: string) => void
+
+  /** Sorteia um ataque contra o jogador, se for a hora. */
+  rollAttack: () => Attack | null
+
   tick: (deltaMinutes: number) => void
   /**
    * Soma rastro. `reason` vira uma linha no log do ScanSS - toda acao que
@@ -276,8 +313,101 @@ export const useGame = create<GameStore>()(
       // ------------------------------------------------------------------
       // Nucleo
       // ------------------------------------------------------------------
+      start: (apelido) => set((s) => ({
+        started: true,
+        hasSave: true,
+        player: { ...s.player, handle: apelido.trim() || 'operador' },
+      })),
+
+      startNew: (apelido) => {
+        get().reset()
+        set((s) => ({
+          started: true,
+          hasSave: true,
+          prologue: true,
+          player: { ...s.player, handle: apelido.trim() || 'operador' },
+        }))
+      },
+
+      endPrologue: () => set({ prologue: false }),
+
+      resume: () => set({ paused: false }),
+
+      /**
+       * Entrega o que o roteiro liberou. Um e-mail novo PAUSA o jogo: e o unico
+       * momento em que a narrativa tem prioridade sobre a jogatina.
+       */
+      deliverMail: () => {
+        const novos = pendentes(get())
+        if (novos.length === 0) return []
+
+        const apelido = get().player.handle
+        const emails: Email[] = novos.map((r) => ({
+          id: r.id,
+          de: r.de,
+          assunto: personalizar(r.assunto, apelido),
+          corpo: personalizar(r.corpo, apelido),
+          em: get().minutes,
+          lido: false,
+        }))
+
+        // O objetivo do e-mail mais recente que trouxe um substitui o anterior.
+        const comObjetivo = [...novos].reverse().find((r) => r.objetivo)
+
+        set((s) => ({
+          inbox: [...s.inbox, ...emails],
+          paused: true,
+          objetivo: comObjetivo
+            ? personalizar(comObjetivo.objetivo!, apelido)
+            : s.objetivo,
+        }))
+        return emails
+      },
+
+      readMail: (id) => set((s) => ({
+        inbox: s.inbox.map((e) => (e.id === id ? { ...e, lido: true } : e)),
+      })),
+
+      /**
+       * Um ataque contra o jogador. O Firewall segura pela forca; o Antivirus
+       * devolve parte do prejuizo do que passou.
+       */
+      rollAttack: () => {
+        const s = get()
+        // Ninguem bate na porta de quem ainda nao incomodou ninguem.
+        if (s.drained.length < 4 || s.busted || s.paused) return null
+        if (!chance(CHANCE_ATAQUE)) return null
+
+        // Ataques escalam com o quanto o jogador se expos.
+        const forca = Math.min(10, 1 + Math.floor(s.drained.length / 2) + int(0, 2))
+        const bloqueado = shieldPower(s.skills) >= forca
+
+        let efeito = 'Tentativa bloqueada pelo Firewall.'
+        if (!bloqueado) {
+          const bruto = Math.round(s.player.balance * (0.05 + forca * 0.02))
+          const devolvido = Math.round(bruto * recoveryRate(s.skills))
+          const perda = Math.max(0, bruto - devolvido)
+
+          set((st) => ({
+            player: { ...st.player, balance: Math.max(0, st.player.balance - perda) },
+          }))
+          get().addHeat(forca, `intrusão SOFRIDA: implante de ${forca} de força`)
+
+          efeito = perda > 0
+            ? `Passou. −${perda} VC` +
+              (devolvido > 0 ? ` (o Antivírus recuperou ${devolvido})` : '')
+            : 'Passou, mas o Antivírus recuperou tudo.'
+        }
+
+        const ataque: Attack = {
+          em: get().minutes, de: pick(INVASORES), forca, bloqueado, efeito,
+        }
+        set((st) => ({ attacks: [...st.attacks, ataque].slice(-40) }))
+        return ataque
+      },
+
       tick: (deltaMinutes) => set((s) => {
-        if (s.busted) return s
+        if (s.busted || s.paused) return s
 
         // Minuto a minuto, porque a queda muda de faixa conforme esfria.
         const sujeiraPorMin = totalEvidence(s.disk) * EVIDENCE_RATE
@@ -739,7 +869,7 @@ export const useGame = create<GameStore>()(
     {
       name: 'scanss-evasion-save',
       // ATENCAO: subir sempre que o formato de GameState mudar.
-      version: 4,
+      version: 5,
       storage: saveStorage,
       // Acoes nao vao pro localStorage - so o estado.
       partialize: (s): GameState => ({
@@ -752,6 +882,16 @@ export const useGame = create<GameStore>()(
         nextMachine: s.nextMachine,
         credentials: s.credentials,
         sessions: s.sessions,
+        hasSave: s.hasSave,
+        // `started`, `prologue` e `paused` NAO sao salvos de proposito: abrir a
+        // url cai sempre no menu, o prologo e de uma vez so, e jogo salvo
+        // pausado nao faz sentido.
+        started: false,
+        prologue: false,
+        paused: false,
+        inbox: s.inbox,
+        objetivo: s.objetivo,
+        attacks: s.attacks,
         drained: s.drained,
         trail: s.trail,
         milestones: s.milestones,

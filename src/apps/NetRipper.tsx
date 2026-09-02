@@ -9,7 +9,8 @@
 
 import { useEffect, useRef, useState } from 'react'
 import {
-  BRANCHES, cleanPower, heatFactor, levelOf, nextSkill, skillsOf,
+  ATAQUE, BRANCHES, DEFESA, branchesDe, cleanPower, heatFactor, levelOf,
+  nextSkill, recoveryRate, shieldPower, skillsOf,
 } from '@/game/skills'
 import { clockOf, heatColor, useGame, type Result } from '@/game/store'
 import type { Branch, Machine, VFile } from '@/game/types'
@@ -104,8 +105,32 @@ export function NetRipper() {
       <div className="row grow" style={{ alignItems: 'stretch', gap: 3 }}>
         {/* menu de módulos */}
         <div className="sunken col modulos">
-          <div className="netripper-titulo">Módulos</div>
-          {BRANCHES.map((b) => {
+          <div className="netripper-titulo">Invasão</div>
+          {branchesDe(ATAQUE).map((b) => {
+            const n = levelOf(game.skills, b.id)
+            return (
+              <button
+                key={b.id}
+                className={`modulo-item${modulo === b.id ? ' ativo' : ''}` +
+                           `${n === 0 ? ' vazio' : ''}`}
+                onClick={() => setModulo(b.id)}
+                title={b.role}
+              >
+                <span className="ic">{b.icon}</span>
+                <span className="info">
+                  <span className="nome">{b.name}</span>
+                  <span className="niveis">
+                    {Array.from({ length: skillsOf(b.id).length }, (_, i) => (
+                      <span key={i} className={i < n ? 'on' : 'off'} />
+                    ))}
+                  </span>
+                </span>
+              </button>
+            )
+          })}
+
+          <div className="netripper-titulo">Defesa</div>
+          {branchesDe(DEFESA).map((b) => {
             const n = levelOf(game.skills, b.id)
             return (
               <button
@@ -138,7 +163,8 @@ export function NetRipper() {
               : modulo === 'breaker' ? <Intrusao {...props} />
               : modulo === 'crypto' ? <Decodificador {...props} />
               : modulo === 'cleaner' ? <Faxina {...props} />
-              : <Anonimato />}
+              : modulo === 'ghost' ? <Anonimato />
+              : <Defesa />}
           </div>
 
           {op && (
@@ -623,6 +649,110 @@ function Anonimato() {
  * Cabecalho de modulo. Sem icone: o item aceso no menu da esquerda ja diz onde
  * voce esta, e enfeitar cabecalho com emoji foge do visual do XP.
  */
+// --------------------------------------------------------------- 🧱 🩺 ---
+
+/**
+ * Painel de defesa. Serve os dois ramos defensivos de uma vez, porque a
+ * pergunta que o jogador tem e uma so: "eu aguento o proximo ataque?".
+ */
+function Defesa() {
+  const game = useGame()
+  const firewall = game.level('firewall')
+  const antivirus = game.level('antivirus')
+  const escudo = shieldPower(game.skills)
+  const recuperacao = Math.round(recoveryRate(game.skills) * 100)
+
+  const ataques = [...game.attacks].reverse()
+  const passaram = game.attacks.filter((a) => !a.bloqueado).length
+  const exposicao = game.drained.length
+
+  return (
+    <>
+      <Cabecalho titulo="Defesa"
+                 sub={`Firewall nível ${firewall} · Antivírus nível ${antivirus}`} />
+
+      <div className={`defesa-status${escudo === 0 ? ' nu' : ''}`}>
+        <span className="luz" />
+        <div className="grow">
+          <b>{escudo === 0 ? 'MICRO EXPOSTO' : 'PROTEÇÃO ATIVA'}</b>
+          <div className="muted">
+            {escudo === 0
+              ? 'Sem Firewall, qualquer tentativa entra direto.'
+              : `Segura ataques de força até ${escudo}.`}
+            {antivirus > 0 &&
+              ` O Antivírus recupera ${recuperacao}% do que passar.`}
+          </div>
+        </div>
+      </div>
+
+      <fieldset className="xp">
+        <legend>Sua exposição</legend>
+        <table className="netripper-tabela">
+          <tbody>
+            <tr>
+              <td>Contas que você zerou</td>
+              <td>
+                <b>{exposicao}</b>
+                <span className="muted">
+                  {exposicao < 4
+                    ? ' — ninguém está te procurando ainda'
+                    : ' — o Coletivo já notou você'}
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td>Força esperada</td>
+              <td>
+                {exposicao < 4
+                  ? <span className="muted">—</span>
+                  : <>até <b>{Math.min(10, 3 + Math.floor(exposicao / 2))}</b>
+                      {escudo >= 3 + Math.floor(exposicao / 2)
+                        ? <span style={{ color: '#087' }}> ✔ você segura</span>
+                        : <span style={{ color: '#c00' }}> ✖ pode passar</span>}
+                    </>}
+              </td>
+            </tr>
+            <tr>
+              <td>Ataques sofridos</td>
+              <td>
+                <b>{game.attacks.length}</b>
+                {game.attacks.length > 0 &&
+                  <span className="muted"> · {passaram} passaram</span>}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div className="muted" style={{ marginTop: 6, lineHeight: 1.5 }}>
+          Quanto mais contas você zera, mais forte vem o próximo ataque. Roubar
+          menos também é uma forma de defesa.
+        </div>
+      </fieldset>
+
+      <fieldset className="xp">
+        <legend>Tentativas contra você ({ataques.length})</legend>
+        <div className="faxina-logs">
+          {ataques.length === 0
+            ? <div style={{ opacity: .6 }}>
+                nenhuma tentativa registrada — ainda
+              </div>
+            : ataques.map((a, i) => (
+                <div key={i}>
+                  {clockOf(a.em)}{'  '}
+                  <span style={{ color: a.bloqueado ? '#7ee787' : '#ff8f8f' }}>
+                    {a.bloqueado ? 'BLOQ' : 'PASSOU'}
+                  </span>
+                  {'  '}força {a.forca}{'  '}{a.de}
+                  <div style={{ paddingLeft: 62, opacity: .75 }}>{a.efeito}</div>
+                </div>
+              ))}
+        </div>
+      </fieldset>
+    </>
+  )
+}
+
+// ---------------------------------------------------------------------------
+
 function Cabecalho({ titulo, sub }: { titulo: string; sub: string }) {
   return (
     <div className="modulo-cabecalho">

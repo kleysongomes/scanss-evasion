@@ -82,30 +82,16 @@ h1, h2, h3 { font-family: var(--lp-display); font-weight: 400; }
   display: flex; align-items: center; gap: 16px;
   padding: 9px 0;
 }
-/* A marca repete o MESMO desenho do título, em miniatura: primeira palavra
-   solta, segunda na chapa. Logo que muda de forma conforme o lugar não é logo,
-   é decoração. */
-.lp-marca {
-  display: flex; align-items: center; gap: 5px;
-  font-family: var(--lp-display);
-  font-size: 14px; letter-spacing: -.3px;
-  text-transform: uppercase;
-}
-.lp-marca em {
-  font-style: normal;
-  padding: 3px 7px 4px;
-  background: var(--lp-amarelo);
-  color: #0a0c0e;
-  box-shadow: 2px 2px 0 rgba(0,0,0,.55);
-}
-
 .lp-build {
   margin-right: auto;
   display: flex; align-items: center; gap: 10px;
   font-size: 11px; color: var(--lp-fraco);
 }
+/* Mesma altura e mesmo respiro da chapa da logo, ao lado. Duas caixinhas
+   quase iguais lado a lado ficam pior do que duas bem diferentes. */
 .lp-build b {
-  padding: 2px 7px;
+  display: inline-flex; align-items: center;
+  height: 26px; padding: 0 8px;
   border: 1px solid var(--lp-amarelo);
   color: var(--lp-amarelo);
   font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
@@ -196,50 +182,8 @@ h1, h2, h3 { font-family: var(--lp-display); font-weight: 400; }
   font-size: 13px; color: var(--lp-verde);
 }
 
-/*
- * A logo: SCANSS solto em branco, EVASION numa chapa amarela.
- *
- * Só a segunda palavra é chapada. Com as duas dentro do retângulo a marca
- * virava um bloco só, sem hierarquia; assim a primeira linha respira e o olho
- * cai na segunda, que é a que carrega a cor.
- *
- * A sombra dura é a mesma dos botões — é o que amarra a marca ao resto da
- * página em vez de deixá-la parecendo um adesivo colado por cima.
- */
-.lp-capa h1 {
-  margin: 0;
-  font-size: clamp(42px, 7vw, 86px);
-  line-height: .96;
-  letter-spacing: -2px;
-  text-transform: uppercase;
-  text-shadow: 0 6px 40px rgba(0,0,0,.85);
-}
-.lp-capa h1 span {
-  display: inline-block;
-  margin-top: .08em;
-  padding: .08em .18em .13em;
-  background: var(--lp-amarelo);
-  color: #0a0c0e;
-  box-shadow: 9px 9px 0 rgba(0,0,0,.6);
-  /* A sombra difusa serve para o branco sobre a imagem; sobre a chapa ela só
-     sujaria as letras pretas. */
-  text-shadow: none;
-}
-
-/*
- * O traço da marca.
- *
- * Não pisca: dentro do jogo o cursor piscando é animação de terminal, mas aqui
- * ele é parte do desenho do nome — logo que aparece e some pela metade do tempo
- * não é logo. Herda a cor do texto para funcionar tanto sobre a chapa amarela
- * quanto sobre fundo escuro.
- */
-.lp-cursor {
-  display: inline-block;
-  width: .44em; height: .15em;
-  margin-left: .08em;
-  background: currentColor;
-}
+/* O desenho da marca mora em `styles/logo.css`, compartilhado com o jogo. */
+.lp-titulo { margin: 0; }
 
 .lp-tagline {
   margin: 22px 0 0;

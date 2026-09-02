@@ -25,6 +25,7 @@
  */
 
 import { useEffect, useState } from 'react'
+import { Logo } from '@/ui/Logo'
 import { BUILD, ETIQUETA } from '@/version'
 import { baixarAtalho, comoUsar, detectarSistema } from './atalho'
 
@@ -139,9 +140,7 @@ export function Landing() {
     <div className="lp">
       <header className="lp-topo">
         <div className="lp-largura lp-topo-linha">
-          <span className="lp-marca">
-            ScanSS<em>Evasion<i className="lp-cursor" /></em>
-          </span>
+          <Logo tamanho="pequeno" linha />
           <span className="lp-build">
             <b>{ETIQUETA}</b>
             <span>build de {BUILD}</span>
@@ -156,9 +155,7 @@ export function Landing() {
         <div className="lp-largura lp-capa-corpo">
           <div className="lp-capa-texto">
             <p className="lp-prompt">C:\&gt; scanss_evasion.exe</p>
-            <h1>
-              ScanSS<span>Evasion<i className="lp-cursor" /></span>
-            </h1>
+            <h1 className="lp-titulo"><Logo tamanho="grande" /></h1>
             <p className="lp-tagline">
               Um jogo sobre computadores dos outros, dinheiro e não ser pego.
             </p>

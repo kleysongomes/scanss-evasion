@@ -9,6 +9,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react'
+import { Logo } from '@/ui/Logo'
 import { Datilografa } from './Datilografa'
 import { entrarEmTelaCheia } from './fullscreen'
 
@@ -100,9 +101,7 @@ export function Intro({ onDone }: { onDone: () => void }) {
 
       {noFim && (
         <div className="intro-titulo">
-          <div className="nome">
-            ScanSS Evasion<span className="cursor marca" />
-          </div>
+          <Logo tamanho="medio" />
           <div className="chamada">
             pressione qualquer tecla
             <span className="cursor" />

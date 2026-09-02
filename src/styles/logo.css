@@ -1,0 +1,72 @@
+/* ==========================================================================
+   A logo do jogo.
+
+   Fica num arquivo só, carregado tanto pela vitrine quanto pelo jogo, porque
+   uma marca desenhada duas vezes em dois CSS parecidos deixa de ser a mesma
+   marca no primeiro ajuste que alguém fizer em um dos lados.
+
+   O desenho: SCANSS solto em branco, EVASION numa chapa amarela com o traço.
+   Tudo em `em`, então o tamanho inteiro sai do `font-size` da variante — a
+   chapa, o respiro, a sombra e o traço crescem juntos.
+   ========================================================================== */
+
+.logo {
+  display: inline-block;
+  font-family: "Archivo Black", "Arial Black", Impact, sans-serif;
+  font-weight: 400;
+  line-height: .96;
+  letter-spacing: -.035em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.logo-a {
+  display: block;
+  color: #fff;
+  /* Sombra em `em` para acompanhar o tamanho: a marca vive sobre print e sobre
+     papel de parede, e o branco puro some nos dois. */
+  text-shadow: 0 .05em .3em rgba(0, 0, 0, .75);
+}
+
+.logo-b {
+  display: inline-block;
+  margin-top: .08em;
+  padding: .08em .18em .13em;
+  background: #ffcc00;
+  color: #0a0c0e;
+  box-shadow: .1em .1em 0 rgba(0, 0, 0, .6);
+}
+
+/*
+ * O traço não pisca.
+ *
+ * O cursor que pisca em pé, na abertura, é máquina digitando. Este é parte do
+ * desenho do nome — marca que some pela metade do tempo não é marca.
+ */
+.logo-traco {
+  display: inline-block;
+  width: .44em; height: .15em;
+  margin-left: .08em;
+  background: currentColor;
+}
+
+/* Numa linha só, para caber em cabeçalho e rodapé de menu. */
+.logo.linha .logo-a { display: inline; }
+.logo.linha .logo-b { margin: 0 0 0 .4em; }
+
+/* --------------------------------------------------------------- tamanhos -- */
+.logo.grande { font-size: clamp(42px, 7vw, 86px); }
+.logo.medio  { font-size: 40px; }
+
+/*
+ * No tamanho pequeno a chapa ganha altura fixa em vez de respiro proporcional:
+ * é ela que dita a altura das etiquetas ao lado (a de versão, no cabeçalho da
+ * vitrine), e casar caixinhas por padding em `em` nunca fecha no pixel.
+ */
+.logo.pequeno { font-size: 14px; }
+.logo.pequeno .logo-b {
+  display: inline-flex; align-items: center;
+  height: 26px; padding: 0 8px;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, .55);
+}
+.logo.pequeno .logo-traco { width: 6px; height: 3px; margin-left: 4px; }

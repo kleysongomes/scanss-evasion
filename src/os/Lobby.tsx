@@ -14,6 +14,7 @@
 import { useState } from 'react'
 import { totalEvidence } from '@/game/fs'
 import { clockOf, heatColor, useGame } from '@/game/store'
+import { Logo } from '@/ui/Logo'
 import { BUILD, ETIQUETA } from '@/version'
 
 type Tela = 'menu' | 'novo' | 'ajuda' | 'creditos'
@@ -30,9 +31,7 @@ export function Lobby() {
           <div className="nome">
             WinDoors<span className="xpzinho">XP</span>
           </div>
-          <div className="sub">
-            ScanSS Evasion<span className="cursor-marca" />
-          </div>
+          <div className="sub"><Logo tamanho="pequeno" linha /></div>
           <div className="versao">{ETIQUETA} · build {BUILD}</div>
         </div>
 

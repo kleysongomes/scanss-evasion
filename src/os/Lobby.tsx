@@ -14,7 +14,7 @@
 import { useEffect, useState } from 'react'
 import { totalEvidence } from '@/game/fs'
 import { clockOf, heatColor, useGame } from '@/game/store'
-import { sairDaTelaCheia } from './fullscreen'
+import { comoAplicativo, sairDoJogo } from './saida'
 import { Logo } from '@/ui/Logo'
 import { BUILD, ETIQUETA } from '@/version'
 
@@ -120,9 +120,8 @@ function Menu({ ir }: { ir: (t: Tela) => void }) {
         <button className="lobby-opcao" onClick={() => ir('saiu')}>
           <span className="rotulo">Sair</span>
           <span className="detalhe">
-            {temSave
-              ? 'Fecha o jogo. A partida fica salva.'
-              : 'Fecha o jogo.'}
+            {comoAplicativo() ? 'Fecha o jogo.' : 'Volta para o site do jogo.'}
+            {temSave && ' A partida fica salva.'}
           </span>
         </button>
       </div>
@@ -141,23 +140,15 @@ function Menu({ ir }: { ir: (t: Tela) => void }) {
 /**
  * A saida.
  *
- * Fechar aba nao e coisa que pagina possa fazer: `window.close()` so funciona
- * quando foi um script que abriu aquela janela - ou quando o jogo esta
- * instalado como aplicativo, que e uma janela propria. Entao a saida tenta, e
- * quando nao consegue faz a unica coisa honesta: sai da tela cheia, avisa que
- * esta tudo salvo e deixa a pessoa fechar.
- *
- * O jogador nao precisa saber de nada disso. Ele so nao pode ficar preso na
- * tela cheia sem achar a saida, que era o que acontecia antes.
+ * Numa aba, isto some quase na hora: o navegador ja esta indo para a vitrine. A
+ * tela existe para o aplicativo instalado, onde o fechamento pode ser recusado
+ * sem nenhum aviso - e ai a pessoa nao pode ficar olhando para um botao que nao
+ * fez nada.
  */
 function Saiu({ voltar }: { voltar: () => void }) {
   const game = useGame()
 
-  useEffect(() => {
-    void sairDaTelaCheia()
-    // Fora do aplicativo instalado isto e ignorado, e a tela abaixo fica.
-    window.close()
-  }, [])
+  useEffect(() => { void sairDoJogo() }, [])
 
   return (
     <>
@@ -166,15 +157,17 @@ function Saiu({ voltar }: { voltar: () => void }) {
         {game.hasSave ? (
           <>
             A partida de <b>{game.player.handle}</b> está salva neste navegador.
-            É só voltar a este endereço e escolher <b>Continuar</b> — está tudo
-            onde você deixou.
+            É só voltar e escolher <b>Continuar</b> — está tudo onde você
+            deixou.
           </>
         ) : (
           <>Nenhuma partida em andamento. Volte quando quiser.</>
         )}
       </p>
       <p className="lobby-texto">
-        Pode fechar a aba.
+        {comoAplicativo()
+          ? 'Pode fechar esta janela.'
+          : 'Levando você de volta ao site…'}
       </p>
       <div className="lobby-acoes">
         <button className="xp" onClick={voltar}>Voltar ao menu</button>

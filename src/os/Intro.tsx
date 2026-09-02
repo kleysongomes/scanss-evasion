@@ -100,7 +100,9 @@ export function Intro({ onDone }: { onDone: () => void }) {
 
       {noFim && (
         <div className="intro-titulo">
-          <div className="nome">ScanSS Evasion</div>
+          <div className="nome">
+            ScanSS Evasion<span className="cursor marca" />
+          </div>
           <div className="chamada">
             pressione qualquer tecla
             <span className="cursor" />

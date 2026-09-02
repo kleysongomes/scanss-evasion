@@ -139,7 +139,9 @@ export function Landing() {
     <div className="lp">
       <header className="lp-topo">
         <div className="lp-largura lp-topo-linha">
-          <span className="lp-marca">ScanSS<em>Evasion</em></span>
+          <span className="lp-marca">
+            ScanSS<em>Evasion<i className="lp-cursor" /></em>
+          </span>
           <span className="lp-build">
             <b>{ETIQUETA}</b>
             <span>build de {BUILD}</span>

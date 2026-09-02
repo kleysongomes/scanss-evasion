@@ -226,16 +226,20 @@ h1, h2, h3 { font-family: var(--lp-display); font-weight: 400; }
   text-shadow: none;
 }
 
-/* O cursor do prólogo, aqui também. Herda a cor do texto para funcionar tanto
-   sobre a chapa quanto sobre fundo escuro. */
+/*
+ * O traço da marca.
+ *
+ * Não pisca: dentro do jogo o cursor piscando é animação de terminal, mas aqui
+ * ele é parte do desenho do nome — logo que aparece e some pela metade do tempo
+ * não é logo. Herda a cor do texto para funcionar tanto sobre a chapa amarela
+ * quanto sobre fundo escuro.
+ */
 .lp-cursor {
   display: inline-block;
-  width: .42em; height: .1em;
+  width: .44em; height: .15em;
   margin-left: .08em;
   background: currentColor;
-  animation: lp-pisca 1.05s step-end infinite;
 }
-@keyframes lp-pisca { 50% { opacity: 0 } }
 
 .lp-tagline {
   margin: 22px 0 0;

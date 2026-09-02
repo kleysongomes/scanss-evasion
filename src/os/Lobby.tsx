@@ -30,7 +30,9 @@ export function Lobby() {
           <div className="nome">
             WinDoors<span className="xpzinho">XP</span>
           </div>
-          <div className="sub">ScanSS Evasion</div>
+          <div className="sub">
+            ScanSS Evasion<span className="cursor-marca" />
+          </div>
           <div className="versao">{ETIQUETA} · build {BUILD}</div>
         </div>
 

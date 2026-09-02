@@ -186,6 +186,35 @@ html, body, #root {
 .intro .cursor.solto { margin: 0; }
 @keyframes intro-pisca { 50% { opacity: 0 } }
 
+/*
+ * O cursor faz parte da MARCA, e não da animação da abertura.
+ *
+ * Onde o nome do jogo aparece como logo - a cartela do título, o menu, a
+ * vitrine - ele vem junto. Onde o nome aparece no meio de uma frase (créditos,
+ * manual, rodapé), não: ali é palavra, não marca.
+ */
+/*
+ * O traço é deitado, como um underscore, e NÃO pisca.
+ *
+ * O cursor que pisca em pé é o da abertura: aquilo é máquina digitando. Este é
+ * parte do desenho do nome, e marca que some pela metade do tempo não é marca.
+ */
+.intro-titulo .cursor.marca {
+  width: 22px; height: 5px;
+  margin-left: 7px;
+  background: #ffcc00;
+  vertical-align: baseline;
+  animation: none;
+}
+
+.cursor-marca {
+  display: inline-block;
+  width: 9px; height: 3px;
+  margin-left: 4px;
+  background: #ffcc00;
+  vertical-align: baseline;
+}
+
 .intro-pular {
   position: absolute; right: 16px; bottom: 14px;
   font-size: 10px; color: #4a4a44;

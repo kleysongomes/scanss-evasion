@@ -11,13 +11,14 @@
  *    com o apelido, entao passar pela tela de apelido apagava o save.
  */
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { totalEvidence } from '@/game/fs'
 import { clockOf, heatColor, useGame } from '@/game/store'
+import { sairDaTelaCheia } from './fullscreen'
 import { Logo } from '@/ui/Logo'
 import { BUILD, ETIQUETA } from '@/version'
 
-type Tela = 'menu' | 'novo' | 'ajuda' | 'creditos'
+type Tela = 'menu' | 'novo' | 'ajuda' | 'creditos' | 'saiu'
 
 export function Lobby() {
   const [tela, setTela] = useState<Tela>('menu')
@@ -42,6 +43,7 @@ export function Lobby() {
           {tela === 'novo' && <NovoJogo voltar={() => setTela('menu')} />}
           {tela === 'ajuda' && <Ajuda voltar={() => setTela('menu')} />}
           {tela === 'creditos' && <Creditos voltar={() => setTela('menu')} />}
+          {tela === 'saiu' && <Saiu voltar={() => setTela('menu')} />}
         </div>
       </div>
 
@@ -114,6 +116,15 @@ function Menu({ ir }: { ir: (t: Tela) => void }) {
           <span className="rotulo">Créditos</span>
           <span className="detalhe">Quem fez e do que se trata.</span>
         </button>
+
+        <button className="lobby-opcao" onClick={() => ir('saiu')}>
+          <span className="rotulo">Sair</span>
+          <span className="detalhe">
+            {temSave
+              ? 'Fecha o jogo. A partida fica salva.'
+              : 'Fecha o jogo.'}
+          </span>
+        </button>
       </div>
 
       {game.busted && (
@@ -121,6 +132,53 @@ function Menu({ ir }: { ir: (t: Tela) => void }) {
           A última partida acabou: o ScanSS chegou até você.
         </div>
       )}
+    </>
+  )
+}
+
+// ---------------------------------------------------------------------------
+
+/**
+ * A saida.
+ *
+ * Fechar aba nao e coisa que pagina possa fazer: `window.close()` so funciona
+ * quando foi um script que abriu aquela janela - ou quando o jogo esta
+ * instalado como aplicativo, que e uma janela propria. Entao a saida tenta, e
+ * quando nao consegue faz a unica coisa honesta: sai da tela cheia, avisa que
+ * esta tudo salvo e deixa a pessoa fechar.
+ *
+ * O jogador nao precisa saber de nada disso. Ele so nao pode ficar preso na
+ * tela cheia sem achar a saida, que era o que acontecia antes.
+ */
+function Saiu({ voltar }: { voltar: () => void }) {
+  const game = useGame()
+
+  useEffect(() => {
+    void sairDaTelaCheia()
+    // Fora do aplicativo instalado isto e ignorado, e a tela abaixo fica.
+    window.close()
+  }, [])
+
+  return (
+    <>
+      <div className="lobby-titulo">Até logo</div>
+      <p className="lobby-texto">
+        {game.hasSave ? (
+          <>
+            A partida de <b>{game.player.handle}</b> está salva neste navegador.
+            É só voltar a este endereço e escolher <b>Continuar</b> — está tudo
+            onde você deixou.
+          </>
+        ) : (
+          <>Nenhuma partida em andamento. Volte quando quiser.</>
+        )}
+      </p>
+      <p className="lobby-texto">
+        Pode fechar a aba.
+      </p>
+      <div className="lobby-acoes">
+        <button className="xp" onClick={voltar}>Voltar ao menu</button>
+      </div>
     </>
   )
 }

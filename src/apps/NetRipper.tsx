@@ -9,10 +9,12 @@
 
 import { useEffect, useRef, useState } from 'react'
 import {
-  ATAQUE, BRANCHES, DEFESA, branchesDe, cleanPower, heatFactor, levelOf,
-  nextSkill, recoveryRate, shieldPower, skillsOf,
+  ATAQUE, BRANCHES, DEFESA, branchesDe, cleanPower, esperaDeFaxina, heatFactor,
+  levelOf, nextSkill, recoveryRate, shieldPower, skillsOf,
 } from '@/game/skills'
-import { clockOf, heatColor, useGame, type Result } from '@/game/store'
+import {
+  clockOf, emHoras, faltaParaFaxina, heatColor, useGame, type Result,
+} from '@/game/store'
 import type { Branch, Machine, VFile } from '@/game/types'
 import { launchApp } from '@/os/launch'
 import { getDragFile } from './dnd'
@@ -515,6 +517,8 @@ function Faxina({ op, operar }: ModuloProps) {
   const nivel = game.level('cleaner')
   const poder = cleanPower(game.skills)
   const heat = game.player.heat
+  const falta = faltaParaFaxina(game)
+  const espera = esperaDeFaxina(game.skills)
 
   // O log e o registro real do que voce fez, guardado no estado. Ele so muda
   // quando voce age ou quando limpa - nunca sozinho.
@@ -522,14 +526,25 @@ function Faxina({ op, operar }: ModuloProps) {
 
   return (
     <>
-      <Cabecalho titulo="Faxina"
-                 sub={`nível ${nivel} · apaga ${poder} pontos de rastro por uso`} />
+      <Cabecalho
+        titulo="Faxina"
+        sub={`nível ${nivel} · apaga ${poder} pontos de rastro · ` +
+             `uma vez a cada ${emHoras(espera)} de jogo`}
+      />
 
       <div className="row" style={{ marginBottom: 10 }}>
-        <button className="xp" disabled={!!op || registros.length === 0}
-                onClick={() => operar('Sobrescrevendo logs', 1100,
-                                      () => game.cleanLogs())}>
-          Limpar registros (−{poder})
+        <button
+          className="xp"
+          disabled={!!op || registros.length === 0 || falta > 0}
+          title={falta > 0
+            ? `O programa reescreve os índices depois de cada uso. ` +
+              `Pronto em ${emHoras(falta)} de jogo.`
+            : `Sobrescreve os logs mais antigos: −${poder} de rastro`}
+          onClick={() => operar('Sobrescrevendo logs', 1100,
+                                () => game.cleanLogs())}>
+          {falta > 0
+            ? `Reescrevendo índices… ${emHoras(falta)}`
+            : `Limpar registros (−${poder})`}
         </button>
         <span className="grow" />
         <span>

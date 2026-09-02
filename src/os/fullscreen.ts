@@ -10,6 +10,16 @@
  * sem `allow="fullscreen"`, por exemplo), o jogo continua em janela.
  */
 
+/** Devolve a janela ao tamanho normal, para quem esta saindo do jogo. */
+export async function sairDaTelaCheia(): Promise<void> {
+  if (!document.fullscreenElement) return
+  try {
+    await document.exitFullscreen()
+  } catch {
+    // Alguns navegadores recusam fora de um gesto. Nao e grave.
+  }
+}
+
 export async function entrarEmTelaCheia(): Promise<void> {
   if (document.fullscreenElement) return
   try {

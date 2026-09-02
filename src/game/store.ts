@@ -14,8 +14,8 @@ import {
   unlockAt, walk,
 } from './fs'
 import {
-  MAX_LEVEL, SKILL_BY_ID, STARTING_SKILLS, canBuy, cleanPower, heatFactor,
-  levelOf, recoveryRate, shieldPower, skillsOf, targetCapacity,
+  MAX_LEVEL, SKILL_BY_ID, STARTING_SKILLS, canBuy, cleanPower, esperaDeFaxina,
+  heatFactor, levelOf, recoveryRate, shieldPower, skillsOf, targetCapacity,
 } from './skills'
 import { chance, int, pick } from './rng'
 import { pendentes, recemAbertas, recemConcluidas } from './missions'
@@ -59,20 +59,47 @@ const START_BALANCE = 250
  * Quanto o rastro cai por minuto de jogo.
  *
  * Nao e linear de proposito: quanto mais quente, MAIS DEVAGAR ele esfria -
- * quem esta sendo investigado nao sai da mira so por ficar quieto. Sair do
- * vermelho so esperando leva dezenas de minutos reais, e e isso que faz o ramo
- * Faxina valer o preco.
+ * quem esta sendo investigado nao sai da mira so por ficar quieto.
+ *
+ * Os numeros ja foram um terco mais generosos, e o resultado era um jogo sem
+ * estrategia: dava para agir sem pensar, esperar pouco e seguir.
+ *
+ * Com estes, cair de 100 a zero so esperando custa umas 55 horas de jogo, que
+ * sao quase 55 minutos de relogio de verdade. O trecho que importa e o do meio:
+ * sair de 60 para 30 leva 11 minutos reais parado, e e essa a conta que faz o
+ * jogador escolher o que fazer enquanto esta quente.
  */
 export function decayPerMinute(heat: number): number {
-  if (heat >= 85) return 0.02
-  if (heat >= 60) return 0.04
-  if (heat >= 30) return 0.07
-  return 0.10
+  if (heat >= 85) return 0.012
+  if (heat >= 60) return 0.025
+  if (heat >= 30) return 0.045
+  return 0.075
 }
 
 /** Queda por hora de jogo na faixa atual, para a UI explicar. */
 export function decayPerHour(heat: number): number {
   return decayPerMinute(heat) * 60
+}
+
+/**
+ * Quantos minutos de jogo faltam para a Faxina poder rodar de novo.
+ *
+ * Zero quer dizer pronta. A interface precisa deste numero, e nao so de um
+ * "nao pode": botao desabilitado sem dizer ate quando e a diferenca entre uma
+ * regra e um bug, do lado de la da tela.
+ */
+export function faltaParaFaxina(s: GameState): number {
+  const espera = esperaDeFaxina(s.skills)
+  return Math.max(0, espera - (s.minutes - s.lastClean))
+}
+
+/** Minutos de jogo em "3h20" ou "40min", para caber num botao. */
+export function emHoras(minutos: number): string {
+  const m = Math.ceil(minutos)
+  if (m < 60) return `${m}min`
+  const h = Math.floor(m / 60)
+  const resto = m % 60
+  return resto === 0 ? `${h}h` : `${h}h${String(resto).padStart(2, '0')}`
 }
 
 /** Pasta onde tudo que voce baixa cai primeiro. */
@@ -122,6 +149,7 @@ function initialState(): GameState {
     drained: [],
     trail: [],
     milestones: [],
+    lastClean: 0,
     assistantSeen: false,
     busted: false,
     minutes: 8 * 60,
@@ -232,6 +260,13 @@ export interface GameActions {
   endPrologue: () => void
   /** Retoma o jogo pausado por um e-mail. */
   resume: () => void
+  /**
+   * Volta ao menu principal sem apagar nada.
+   *
+   * Diferente de `reset`, que formata o micro: aqui a partida continua
+   * inteirinha no armazenamento, e o menu volta a mostrar "Continuar".
+   */
+  logoff: () => void
 
   /** Entrega os e-mails cujo gatilho foi atendido. Pausa o jogo se entregar. */
   deliverMail: () => Email[]
@@ -358,6 +393,8 @@ export const useGame = create<GameStore>()(
       endPrologue: () => set({ prologue: false }),
 
       resume: () => set({ paused: false }),
+
+      logoff: () => set({ started: false, paused: false }),
 
       /**
        * Entrega o que o roteiro liberou. Um e-mail novo PAUSA o jogo: e o unico
@@ -823,6 +860,12 @@ export const useGame = create<GameStore>()(
         const poder = cleanPower(get().skills)
         if (!poder) return no('Você não tem o programa de Faxina. Compre no darkmarket.vc.')
 
+        const falta = faltaParaFaxina(get())
+        if (falta > 0) {
+          return no(`O programa ainda está reescrevendo os índices. ` +
+                    `Pronto em ${emHoras(falta)}.`)
+        }
+
         const antes = get().player.heat
         let restante = poder
         const trail = [...get().trail]
@@ -835,6 +878,7 @@ export const useGame = create<GameStore>()(
 
         set((s) => ({
           trail,
+          lastClean: s.minutes,
           player: { ...s.player, heat: Math.max(0, s.player.heat - poder) },
         }))
         get().mark('clean')
@@ -881,16 +925,32 @@ export const useGame = create<GameStore>()(
         get().addHeat(HEAT.transfer * (amount / acc.balance),
                       `TED de ${acc.number} para ${toAccount}: ${amount} VC`)
         get().mark('transfer')
+
+        /*
+         * O dinheiro SAI da conta da vitima.
+         *
+         * Faltava esta linha, e a falta dela era dinheiro infinito: o saldo do
+         * alvo nunca mudava, entao dava para tirar um VC de cada vez, para
+         * sempre, do mesmo primeiro computador. So a raspagem completa marcava
+         * a conta como zerada, e quem levava menos que tudo nunca chegava la.
+         *
+         * Fatiar tambem nao compensa: o rastro e proporcional a fatia do que
+         * AINDA tem na conta, entao levar metade e depois o resto sai mais caro
+         * do que levar tudo de uma vez.
+         */
+        const sobra = acc.balance - amount
         set((s) => ({
           player: {
             ...s.player,
             balance: s.player.balance + amount,
             xp: s.player.xp + Math.floor(amount / 100),
           },
-          drained: amount >= acc.balance ? [...s.drained, fromUser] : s.drained,
+          accounts: { ...s.accounts, [fromUser]: { ...acc, balance: sobra } },
+          drained: sobra <= 0 ? [...s.drained, fromUser] : s.drained,
           recordes: { ...s.recordes, roubado: s.recordes.roubado + amount },
         }))
-        return ok(`Transferência de ${amount} VC concluída.`)
+        return ok(`Transferência de ${amount} VC concluída.` +
+                  (sobra > 0 ? ` Restam ${sobra} VC na conta.` : ''))
       },
 
       // ------------------------------------------------------------------
@@ -994,6 +1054,7 @@ export const useGame = create<GameStore>()(
         drained: s.drained,
         trail: s.trail,
         milestones: s.milestones,
+        lastClean: s.lastClean,
         assistantSeen: s.assistantSeen,
         busted: s.busted,
         minutes: s.minutes,

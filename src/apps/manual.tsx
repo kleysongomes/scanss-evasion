@@ -10,9 +10,10 @@
 
 import type { ComponentType, ReactNode } from 'react'
 import { DESAFIOS, missaoAtual, placar } from '@/game/missions'
+import { cleanPowerAt, esperaDeFaxinaAt } from '@/game/skills'
 import { STEPS, isDone, progress } from '@/game/progress'
 import { BRANCHES, MAX_LEVEL, skillsOf } from '@/game/skills'
-import { evidenceHeatPerHour, useGame } from '@/game/store'
+import { decayPerHour, emHoras, evidenceHeatPerHour, useGame } from '@/game/store'
 import { totalEvidence } from '@/game/fs'
 
 export interface Chapter {
@@ -154,6 +155,10 @@ const AreaDeTrabalho = () => (
   </>
 )
 
+/** A queda por hora naquela faixa, com vírgula decimal. */
+const decayPerHora = (heat: number) =>
+  decayPerHour(heat).toFixed(1).replace('.', ',')
+
 const Rastro = () => (
   <>
     <h2>O rastro do ScanSS</h2>
@@ -200,29 +205,40 @@ const Rastro = () => (
     <Passos itens={[
       <><b>Esperar</b> — mas cada vez menos. A queda <b>não é constante</b>:
         quanto mais quente, mais devagar ele esfria.</>,
-      <><b>Faxina.</b> O programa de limpeza derruba de 23 a 68 pontos de uma
-        vez, conforme o nível dele. É o único jeito rápido.</>,
+      <><b>Faxina.</b> O programa de limpeza derruba de {cleanPowerAt(1)} a{' '}
+        {cleanPowerAt(MAX_LEVEL)} pontos de uma vez, conforme o nível dele. É o
+        único jeito rápido — mas ele <b>não pode rodar em seguida</b>: depois de
+        cada uso passa {emHoras(esperaDeFaxinaAt(1))} de jogo reescrevendo os
+        índices, e no nível {MAX_LEVEL} isso cai para{' '}
+        {emHoras(esperaDeFaxinaAt(MAX_LEVEL))}.</>,
       <><b>Anonimato.</b> Não limpa nada, mas corta até 70% de todo rastro que
         você <i>gerar</i> daí em diante.</>,
     ]} />
 
     <h3>A curva de esfriamento</h3>
+    {/* Os números saem da própria regra: tabela escrita à mão envelhece calada
+        no primeiro reequilíbrio. */}
     <table className="manual-tabela">
       <tbody>
-        <tr><td style={{ width: 116 }}><b style={{ color: '#2a8a2a' }}>abaixo de 30%</b></td>
-            <td>−6 por hora</td></tr>
-        <tr><td><b style={{ color: '#b39000' }}>30 a 59%</b></td>
-            <td>−4,2 por hora</td></tr>
-        <tr><td><b style={{ color: '#cc6600' }}>60 a 84%</b></td>
-            <td>−2,4 por hora</td></tr>
-        <tr><td><b style={{ color: '#cc0000' }}>85% ou mais</b></td>
-            <td>−1,2 por hora</td></tr>
+        {[
+          { faixa: 'abaixo de 30%', em: 10, cor: '#2a8a2a' },
+          { faixa: '30 a 59%', em: 45, cor: '#b39000' },
+          { faixa: '60 a 84%', em: 70, cor: '#cc6600' },
+          { faixa: '85% ou mais', em: 95, cor: '#cc0000' },
+        ].map((l) => (
+          <tr key={l.faixa}>
+            <td style={{ width: 116 }}>
+              <b style={{ color: l.cor }}>{l.faixa}</b>
+            </td>
+            <td>−{decayPerHora(l.em)} por hora</td>
+          </tr>
+        ))}
       </tbody>
     </table>
 
     <Aviso>
-      Quem está sendo investigado não sai da mira só por ficar quieto. Sair do
-      vermelho apenas esperando leva <b>mais de trinta horas de jogo</b> — por
+      Quem está sendo investigado não sai da mira só por ficar quieto. Zerar o
+      rastro apenas esperando leva <b>umas cinquenta horas de jogo</b> — por
       isso o ramo <b>Faxina</b> vale o preço, e por isso deixar o rastro chegar
       lá em cima é o erro mais caro do jogo.
     </Aviso>

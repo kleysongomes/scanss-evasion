@@ -43,14 +43,33 @@ Chegar a **100 de rastro** = tela azul e micro apreendido. É o único fim de jo
 
 ### O esfriamento é não-linear
 
-A queda do rastro **desacelera conforme ele sobe**: −6/hora no verde, −1,2/hora
-no vermelho. Sair de 90% só esperando leva mais de trinta horas de jogo.
+A queda do rastro **desacelera conforme ele sobe**: −4,5/hora no verde,
+−0,7/hora no vermelho. Zerar do topo só esperando custa umas 55 horas de jogo,
+que são quase 55 minutos de relógio.
 
-A primeira versão usava queda constante e generosa, e o resultado era que ficar
-alguns segundos com o jogo aberto zerava o rastro — o recurso central não
-custava nada. Agora ficar quieto ainda é jogada válida no verde e no amarelo,
-mas deixar chegar no vermelho é um erro caro, e é o que dá razão de existir ao
-ramo **Faxina**.
+Isso já foi apanhado duas vezes. A primeira versão usava queda constante e
+generosa, e ficar alguns segundos com o jogo aberto zerava o rastro. A segunda
+ficou não-linear, mas ainda dava para agir sem pensar, esperar pouco e seguir.
+Os números de hoje são um terço mais lentos que os dela.
+
+O trecho que o jogador sente é o do meio: **sair de 60 para 30 leva onze minutos
+reais parado**. É essa conta que faz ele escolher o que fazer enquanto está
+quente, em vez de só esperar.
+
+### A Faxina tem hora marcada
+
+O programa de limpeza derruba de 23 a 68 pontos de uma vez — e por muito tempo
+podia ser usado **em seguida, sem limite**. Três cliques zeravam o rastro, o que
+apagava a única pressão que o jogo tem.
+
+Agora ele espera entre um uso e o outro: **seis horas de jogo no nível 1, uma
+hora no nível 10**. Isso dá ao ramo um segundo motivo para subir — não é só
+limpar mais, é poder limpar de novo mais cedo — e transforma cada limpeza numa
+decisão: gastar agora, ou guardar para quando apertar de verdade.
+
+A espera que falta aparece no próprio botão, no NetRipper e na tela de Situação.
+Botão desabilitado sem dizer até quando é, do lado de lá da tela, a diferença
+entre uma regra e um bug.
 
 ### A evidência no disco
 
@@ -139,7 +158,7 @@ criar pasta, renomear, recortar/colar, excluir.
 
 Clicar em qualquer parte da bandeja (relógio, saldo ou escudo) abre um resumo:
 o medidor de rastro em tamanho grande com o diagnóstico em texto, **a conta de
-quanto sobe e quanto desce por hora** (queda natural −15 contra a evidência do
+quanto sobe e quanto desce por hora** (queda natural contra a evidência do
 disco), dinheiro, contas zeradas, senhas guardadas, hosts na lista e o nível dos
 programas.
 
@@ -509,6 +528,25 @@ começar uma partida nova não pode religar o som de quem desligou.
 E tudo degrada em silêncio. Sem Web Audio — navegador antigo, áudio bloqueado,
 os testes rodando em Node — as funções simplesmente não fazem nada. Som é
 enfeite: nada aqui pode derrubar o jogo por causa de um "toc" de tecla.
+
+## Sair, e ter certeza de que salvou
+
+Duas portas de saída, porque o jogo abre em tela cheia e sem barra de navegação
+— quem entra não tem onde clicar para sair.
+
+**Fazer logoff**, no menu Iniciar, volta ao menu principal sem apagar nada. É
+diferente de *Desligar*, que formata o micro: aqui a partida continua inteira, e
+o menu volta a mostrar "Continuar" com o saldo, o rastro e o relógio de onde
+parou. Essa linha é a confirmação de que salvou — vale mais que um aviso
+dizendo "salvo".
+
+**Sair**, no menu principal, sai da tela cheia e tenta fechar. Fechar aba não é
+coisa que página possa fazer: `window.close()` só funciona quando foi um script
+que abriu aquela janela, ou quando o jogo está instalado como aplicativo. Então
+quando não consegue, faz a única coisa honesta — sai da tela cheia, diz que a
+partida de fulano está salva neste navegador, e deixa a pessoa fechar. O jogador
+não precisa saber de nada disso; ele só não pode ficar preso na tela cheia sem
+achar a saída, que era o que acontecia antes.
 
 ## Instalar, e não baixar um `.exe`
 

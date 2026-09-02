@@ -12,7 +12,8 @@ import { totalEvidence } from '@/game/fs'
 import { missaoAtual, placar } from '@/game/missions'
 import { BRANCHES, cleanPower, levelOf, nextSkill, skillsOf } from '@/game/skills'
 import {
-  clockOf, decayPerHour, evidenceHeatPerHour, heatColor, heatLevel, useGame,
+  clockOf, decayPerHour, emHoras, evidenceHeatPerHour, faltaParaFaxina,
+  heatColor, heatLevel, useGame,
 } from '@/game/store'
 import { launchApp } from '@/os/launch'
 
@@ -32,6 +33,7 @@ export function Status() {
   const porHora = evidenceHeatPerHour(game.disk)
   const queda = decayPerHour(heat)
   const poderDeFaxina = cleanPower(game.skills)
+  const faltaFaxina = faltaParaFaxina(game)
   const liquido = porHora - queda
 
   const naLista = game.machines.filter((m) => m.found).length
@@ -98,14 +100,18 @@ export function Status() {
         <div className="row" style={{ marginTop: 8, flexWrap: 'wrap' }}>
           <button
             className="xp"
-            disabled={!poderDeFaxina || heat <= 0}
-            title={poderDeFaxina
-              ? `Sobrescreve os logs: −${poderDeFaxina} de rastro`
-              : 'Você não tem o programa de Faxina. Compre no darkmarket.vc.'}
+            disabled={!poderDeFaxina || heat <= 0 || faltaFaxina > 0}
+            title={!poderDeFaxina
+              ? 'Você não tem o programa de Faxina. Compre no darkmarket.vc.'
+              : faltaFaxina > 0
+                ? `O programa reescreve os índices depois de cada uso. ` +
+                  `Pronto em ${emHoras(faltaFaxina)} de jogo.`
+                : `Sobrescreve os logs: −${poderDeFaxina} de rastro`}
             onClick={() => setAviso(game.cleanLogs().message)}
           >
-            Limpar rastros
-            {poderDeFaxina > 0 && ` (−${poderDeFaxina})`}
+            {faltaFaxina > 0
+              ? `Faxina pronta em ${emHoras(faltaFaxina)}`
+              : `Limpar rastros${poderDeFaxina > 0 ? ` (−${poderDeFaxina})` : ''}`}
           </button>
 
           {evidencia > 0 && (

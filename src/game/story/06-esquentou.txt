@@ -10,8 +10,12 @@ feito: abaixo:30
 Passou da metade. A partir daqui ele esfria devagar de proposito - quem
 ta sendo investigado nao sai da mira so ficando quieto.
 
-Compra a Faxina no darkmarket e limpa os log. Ou para tudo e vai tomar
-um cafe, que tambem funciona, so demora uns quarenta minutos.
+Compra a Faxina no darkmarket e limpa os log. So que ela nao roda duas
+vezes seguidas - depois de usar, o programa passa horas remontando os
+indice. Uma limpeza por vez, e escolhe bem a hora.
+
+Ou para tudo e espera esfriar sozinho, que tambem funciona. So que ai
+sao horas, nao minutos.
 
 Sua escolha. Mas escolhe rapido.
 

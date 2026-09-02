@@ -9,9 +9,12 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { listAt, totalEvidence, walk } from './fs'
 import { gerarAlvo } from './generator'
-import { BRANCHES, MAX_LEVEL, SKILL_BY_ID, levelOf, skillsOf } from './skills'
 import {
-  DOWNLOADS, decayPerMinute, evidenceHeatPerHour, useGame,
+  BRANCHES, MAX_LEVEL, SKILL_BY_ID, esperaDeFaxina, esperaDeFaxinaAt, levelOf,
+  skillsOf,
+} from './skills'
+import {
+  DOWNLOADS, decayPerMinute, evidenceHeatPerHour, faltaParaFaxina, useGame,
 } from './store'
 import type { BankAccount, GameState, Machine, VFile, VNode } from './types'
 
@@ -377,15 +380,85 @@ describe('banco', () => {
 
   it('levar tudo de uma vez gera mais rastro que levar um pedaco', () => {
     const c = logado()
-    const fatia = Math.max(1, Math.floor(c.account.balance / 10))
+    const cheio = c.account.balance
+    const fatia = Math.max(1, Math.floor(cheio / 10))
 
-    useGame.setState((s) => ({ player: { ...s.player, heat: 0 } }))
+    /** Devolve a conta ao estado cheio, para medir as duas jogadas iguais. */
+    const recarregar = () => useGame.setState((s) => ({
+      player: { ...s.player, heat: 0 },
+      drained: [],
+      accounts: { ...s.accounts, [c.account.user]: { ...c.account, balance: cheio } },
+    }))
+
+    recarregar()
     g().transfer(c.account.user, g().player.muleAccount, fatia)
     const pouco = g().player.heat
 
-    useGame.setState((s) => ({ player: { ...s.player, heat: 0 }, drained: [] }))
-    g().transfer(c.account.user, g().player.muleAccount, c.account.balance)
+    recarregar()
+    g().transfer(c.account.user, g().player.muleAccount, cheio)
     expect(g().player.heat).toBeGreaterThan(pouco)
+  })
+
+  /**
+   * O dinheiro tem que SAIR da conta da vitima.
+   *
+   * Sem isso o saldo do alvo nunca mudava, e dava para tirar um VC de cada vez,
+   * para sempre, do mesmo primeiro computador - dinheiro infinito no primeiro
+   * quarto de hora de jogo.
+   */
+  describe('a conta da vitima esvazia', () => {
+    it('transferencia parcial desconta do alvo', () => {
+      const c = logado()
+      const cheio = c.account.balance
+      const fatia = Math.max(1, Math.floor(cheio / 4))
+
+      g().transfer(c.account.user, g().player.muleAccount, fatia)
+      expect(g().accounts[c.account.user].balance).toBe(cheio - fatia)
+    })
+
+    it('nao da para farmar a mesma conta em fatias', () => {
+      const c = logado()
+      const cheio = c.account.balance
+      const fatia = Math.max(1, Math.floor(cheio / 4))
+
+      let levado = 0
+      // Muito mais tentativas do que a conta aguenta.
+      for (let i = 0; i < 40; i++) {
+        const r = g().transfer(c.account.user, g().player.muleAccount, fatia)
+        if (r.ok) levado += fatia
+      }
+      expect(levado).toBeLessThanOrEqual(cheio)
+      expect(g().accounts[c.account.user].balance).toBeGreaterThanOrEqual(0)
+      expect(g().recordes.roubado).toBeLessThanOrEqual(cheio)
+    })
+
+    it('raspar a conta marca ela como zerada', () => {
+      const c = logado()
+      g().transfer(c.account.user, g().player.muleAccount, c.account.balance)
+      expect(g().accounts[c.account.user].balance).toBe(0)
+      expect(g().drained).toContain(c.account.user)
+      expect(g().transfer(c.account.user, g().player.muleAccount, 1).ok).toBe(false)
+    })
+
+    it('fatiar sai mais caro em rastro do que levar tudo', () => {
+      const c = logado()
+      const cheio = c.account.balance
+      const metade = Math.floor(cheio / 2)
+
+      useGame.setState((s) => ({ player: { ...s.player, heat: 0 } }))
+      g().transfer(c.account.user, g().player.muleAccount, metade)
+      g().transfer(c.account.user, g().player.muleAccount, cheio - metade)
+      const fatiado = g().player.heat
+
+      // A mesma conta, cheia de novo, levada de uma vez só.
+      useGame.setState((s) => ({
+        player: { ...s.player, heat: 0 },
+        drained: [],
+        accounts: { ...s.accounts, [c.account.user]: { ...c.account, balance: cheio } },
+      }))
+      g().transfer(c.account.user, g().player.muleAccount, cheio)
+      expect(fatiado).toBeGreaterThan(g().player.heat)
+    })
   })
 })
 
@@ -504,9 +577,86 @@ describe('arvore de habilidades', () => {
     const nivel1 = g().player.heat
 
     g().buySkill('cleaner2')
-    useGame.setState((s) => ({ player: { ...s.player, heat: 90 } }))
+    // Zera a espera: aqui o que se mede e a forca, nao o intervalo.
+    useGame.setState((s) => ({ player: { ...s.player, heat: 90 }, lastClean: 0 }))
     g().cleanLogs()
     expect(g().player.heat).toBeLessThan(nivel1)
+  })
+
+  /**
+   * A Faxina sem espera era o botao de "cancelar o jogo": tres cliques
+   * seguidos zeravam o rastro e apagavam a unica pressao que existe aqui.
+   */
+  describe('a espera entre faxinas', () => {
+    beforeEach(() => {
+      comSaldo(9_999_999)
+      g().buySkill('cleaner1')
+      useGame.setState((s) => ({ player: { ...s.player, heat: 90 } }))
+    })
+
+    it('a segunda limpeza seguida e recusada', () => {
+      expect(g().cleanLogs().ok).toBe(true)
+      const depoisDaPrimeira = g().player.heat
+
+      const segunda = g().cleanLogs()
+      expect(segunda.ok).toBe(false)
+      expect(segunda.message).toMatch(/pronto em/i)
+      expect(g().player.heat).toBe(depoisDaPrimeira)
+    })
+
+    it('espera cumprida, libera de novo', () => {
+      g().cleanLogs()
+      expect(faltaParaFaxina(g())).toBeGreaterThan(0)
+
+      g().tick(esperaDeFaxina(g().skills))
+      expect(faltaParaFaxina(g())).toBe(0)
+      expect(g().cleanLogs().ok).toBe(true)
+    })
+
+    it('subir o nivel encurta a espera, e nunca abaixo de uma hora', () => {
+      const nivel1 = esperaDeFaxinaAt(1)
+      const nivel10 = esperaDeFaxinaAt(10)
+      expect(nivel10).toBeLessThan(nivel1)
+      expect(nivel10).toBe(60)
+      // Monotonica: cada nivel espera menos que o anterior.
+      for (let n = 2; n <= 10; n++) {
+        expect(esperaDeFaxinaAt(n)).toBeLessThan(esperaDeFaxinaAt(n - 1))
+      }
+    })
+
+    it('a primeira faxina da partida ja nasce liberada', () => {
+      g().reset()
+      comSaldo(9_999_999)
+      g().buySkill('cleaner1')
+      expect(faltaParaFaxina(g())).toBe(0)
+    })
+  })
+})
+
+describe('esfriar sozinho', () => {
+  /**
+   * O decaimento ja foi um terco mais generoso, e dava para jogar sem pensar:
+   * agir, esperar pouco, seguir. Zerar do vermelho tem que custar perto de uma
+   * hora de relogio de verdade.
+   */
+  it('zerar so esperando custa quase uma hora real', () => {
+    useGame.setState((s) => ({ player: { ...s.player, heat: 100 } }))
+    // Um segundo real = um minuto de jogo: 3000 sao 50 minutos de relogio.
+    g().tick(3000)
+    expect(g().player.heat).toBeGreaterThan(0)
+  })
+
+  /** O trecho do meio e o que o jogador sente: sair do alerta demora. */
+  it('sair de 60 para 30 leva mais de dez minutos reais', () => {
+    useGame.setState((s) => ({ player: { ...s.player, heat: 60 } }))
+    g().tick(600)                                  // dez minutos reais
+    expect(g().player.heat).toBeGreaterThan(30)
+  })
+
+  it('uma hora de jogo parado quase nao ajuda quando esta no vermelho', () => {
+    useGame.setState((s) => ({ player: { ...s.player, heat: 90 } }))
+    g().tick(60)
+    expect(g().player.heat).toBeGreaterThan(88)
   })
 })
 

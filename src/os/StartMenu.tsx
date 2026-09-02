@@ -12,6 +12,7 @@ export function StartMenu() {
   const handle = useGame((s) => s.player.handle)
   const skills = useGame((s) => s.skills)
   const reset = useGame((s) => s.reset)
+  const logoff = useGame((s) => s.logoff)
 
   const pinned = APP_META.filter((a) => a.start && a.id !== 'tutorial')
 
@@ -77,7 +78,11 @@ export function StartMenu() {
           Desenvolvedor
         </button>
         <span style={{ flex: 1 }} />
-        <button className="action" onClick={() => { closeAll(); setStart(false) }}>
+        <button
+          className="action"
+          title="Volta ao menu principal. A partida fica salva."
+          onClick={() => { closeAll(); setStart(false); logoff() }}
+        >
           Fazer logoff
         </button>
         <button

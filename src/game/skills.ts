@@ -74,7 +74,8 @@ export const BRANCHES: BranchInfo[] = [
   {
     id: 'cleaner', name: 'Faxina', icon: '🧹', cost: 0.7,
     role: 'Apaga os logs e derruba o rastreamento já acumulado.',
-    scale: (n) => `−${cleanPowerAt(n)} de rastro por uso`,
+    scale: (n) => `−${cleanPowerAt(n)} de rastro por uso · pronta de novo em ` +
+                  `${(esperaDeFaxinaAt(n) / 60).toFixed(1)}h de jogo`,
     titles: ['Limpador de logs', 'Sobrescrita simples', 'Sobrescrita dupla',
              'Limpeza de cache', 'Sobrescrita profunda', 'Logs do provedor',
              'Rotação forjada', 'Carimbo de tempo falso', 'Faxina total',
@@ -122,6 +123,31 @@ export const branchesDe = (grupo: Branch[]): BranchInfo[] =>
 /** Quanto a Faxina derruba num nivel. */
 export function cleanPowerAt(level: number): number {
   return level <= 0 ? 0 : 18 + level * 5
+}
+
+/**
+ * Quanto tempo de jogo a Faxina precisa esfriar entre um uso e o outro.
+ *
+ * Sem espera ela era o botao de "cancelar o jogo": dava para clicar tres vezes
+ * seguidas e zerar o rastro na hora, o que apagava a unica pressao que existe
+ * aqui. Com espera, cada limpeza vira uma DECISAO - gastar agora, ou guardar
+ * para quando a coisa apertar de verdade.
+ *
+ * Seis horas de jogo no nivel 1, uma hora no nivel 10. E o segundo motivo para
+ * subir o ramo: nao e so limpar mais, e poder limpar de novo mais cedo.
+ */
+export const ESPERA_MAXIMA = 360
+export const ESPERA_MINIMA = 60
+
+export function esperaDeFaxinaAt(level: number): number {
+  if (level <= 0) return ESPERA_MAXIMA
+  const passo = (ESPERA_MAXIMA - ESPERA_MINIMA) / (MAX_LEVEL - 1)
+  return Math.round(ESPERA_MINIMA + (MAX_LEVEL - level) * passo)
+}
+
+/** A espera com o nivel atual do jogador. */
+export function esperaDeFaxina(owned: string[]): number {
+  return esperaDeFaxinaAt(levelOf(owned, 'cleaner'))
 }
 
 /** Multiplicador de rastro gerado num nivel de Anonimato. */

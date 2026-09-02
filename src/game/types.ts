@@ -283,6 +283,14 @@ export interface GameState {
   busted: boolean
   /** Minutos desde o inicio da partida (relogio do XP). */
   minutes: number
+  /**
+   * Minuto de jogo da ultima faxina.
+   *
+   * Zero significa "nunca", e como o relogio comeca as 8h (minuto 480) a
+   * primeira limpeza ja nasce liberada. Save antigo que nao tem o campo cai
+   * nesse mesmo zero, entao ninguem e punido pela mudanca.
+   */
+  lastClean: number
   /** Modo desenvolvedor ligado agora? */
   devMode: boolean
   /** Ja foi usado alguma vez nesta partida (fica registrado, por honestidade). */

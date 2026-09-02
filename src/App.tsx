@@ -12,6 +12,7 @@ import { Desktop } from '@/os/Desktop'
 import { Intro } from '@/os/Intro'
 import { Lobby } from '@/os/Lobby'
 import { Prologo } from '@/os/Prologo'
+import { Som } from '@/os/Som'
 
 /** 1 segundo real = 1 minuto no jogo. */
 const TICK_MS = 1000
@@ -53,8 +54,11 @@ export default function App() {
     if (started && !busted) deliverMail()
   }, [started, busted, deliverMail])
 
-  if (abertura) return <Intro onDone={() => setAbertura(false)} />
-  if (!started) return <Lobby />
-  if (prologue) return <Prologo />
-  return busted ? <Bsod /> : <Desktop />
+  // A ponte de som acompanha o estado o tempo todo, em qualquer tela.
+  const tela = abertura ? <Intro onDone={() => setAbertura(false)} />
+    : !started ? <Lobby />
+    : prologue ? <Prologo />
+    : busted ? <Bsod /> : <Desktop />
+
+  return <><Som />{tela}</>
 }

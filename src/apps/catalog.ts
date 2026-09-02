@@ -38,6 +38,11 @@ export const APP_META: AppMeta[] = [
     size: { w: 780, h: 500 }, singleton: true, desktop: true, start: true,
   },
   {
+    id: 'audio', name: 'Sons e dispositivos de áudio', icon: '🔊',
+    description: 'Volume da música e dos efeitos.',
+    size: { w: 520, h: 560 }, singleton: true, start: true,
+  },
+  {
     id: 'painel', name: 'Painel de Controle', icon: '⚙️',
     description: 'Programas instalados e manutenção do micro.',
     size: { w: 560, h: 440 }, singleton: true, start: true,

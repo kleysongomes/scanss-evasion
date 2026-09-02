@@ -701,9 +701,20 @@ const Painel = () => (
       Embaixo tem <B>Formatar o micro</B>: apaga saldo, arquivos, senhas e
       programas, e recomeça do zero. Pede confirmação.
     </p>
+    <h3>Som</h3>
+    <p>
+      Em <B>iniciar › Sons e dispositivos de áudio</B> ficam os volumes: música
+      e efeitos separados, e uma caixa de <B>Sem áudio</B> para desligar tudo.
+      A lista de baixo toca cada som, para você regular ouvindo.
+    </p>
+    <p>
+      A música acompanha o rastreamento — quanto mais perto eles chegam, mais
+      apressada ela fica. Vale prestar atenção nela antes de olhar o número.
+    </p>
     <Nota>
       O jogo salva sozinho no navegador. Pode fechar a aba e voltar depois que
-      está tudo onde você deixou.
+      está tudo onde você deixou. O volume fica guardado à parte: começar uma
+      partida nova não devolve o som que você desligou.
     </Nota>
   </>
 )

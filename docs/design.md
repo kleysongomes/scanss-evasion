@@ -424,6 +424,45 @@ contar o final. Vitrine de jogo não é catálogo.
 O que fica explícito é o **estado**: versão e data da build no cabeçalho, vindas
 do `package.json` e do último commit.
 
+## Som
+
+Todo som é **sintetizado na hora**, com Web Audio. Não existe um arquivo de
+áudio no projeto, e a razão principal não é peso: som de sistema de verdade é
+marca registrada, e o jogo inteiro se cuida para não usar nome nem cara de
+produto real — sairia estranho quebrar isso justamente no "toc" de uma tecla.
+De quebra, bipe de oscilador **é** o som da época, então a limitação vira
+sotaque, e não sobra nada para baixar nem para guardar em cache.
+
+A regra de desenho: som de jogo é pontuação, não trilha. Nada passa de meio
+segundo, exceto a sirene — o único aviso que precisa assustar, e mesmo ela
+dura 0,6s, porque alarme que se arrasta faz o jogador desligar o som e perder
+justamente o aviso que importava.
+
+**A trilha acompanha o rastreamento.** Um sequenciador de dezesseis passos toca
+um baixo lento em tom menor, e acelera conforme o jogador esquenta. É o único
+jeito honesto de uma música de fundo participar do jogo: dá para perceber que
+apertou antes de olhar o número.
+
+Quem dispara os sons é a interface, nunca as regras — `game/` não sabe que
+existe tela, e não pode passar a saber que existe alto-falante. Um componente
+(`os/Som.tsx`) assina o estado e compara o antes com o depois: roubo é o total
+roubado que subiu, prisão é o `busted` que virou verdadeiro. A vantagem é que
+fonte nova de dinheiro já nasce com som; a desvantagem é que o som não
+distingue duas causas do mesmo efeito, e por isso a ordem dos testes importa —
+roubo antes de venda, porque transferir mexe nos dois números.
+
+Os volumes moram em `iniciar › Sons e dispositivos de áudio`, um applet no
+formato do Painel de Controle da época, com a lista de eventos e botão de tocar
+cada um. Configuração de jogo dentro de um sistema operacional falso tem que
+morar onde a configuração moraria.
+
+Eles são guardados **numa chave separada da do save**: volume não é progresso, e
+começar uma partida nova não pode religar o som de quem desligou.
+
+E tudo degrada em silêncio. Sem Web Audio — navegador antigo, áudio bloqueado,
+os testes rodando em Node — as funções simplesmente não fazem nada. Som é
+enfeite: nada aqui pode derrubar o jogo por causa de um "toc" de tecla.
+
 ## Instalar, e não baixar um `.exe`
 
 O jogo se instala como **aplicativo** (PWA): ícone de verdade no sistema, janela

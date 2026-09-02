@@ -1,6 +1,7 @@
 /** Liga o id do app ao componente que desenha o miolo da janela. */
 
 import type { ComponentType } from 'react'
+import { Audio } from './Audio'
 import { Browser } from './Browser'
 import { DevTools } from './DevTools'
 import { Explorer } from './Explorer'
@@ -20,6 +21,7 @@ export const APP_COMPONENTS: Record<string, ComponentType<AppProps>> = {
   explorer: Explorer,
   notepad: Notepad,
   painel: Painel,
+  audio: Audio,
   status: Status,
   dev: DevTools,
   tutorial: Tutorial,

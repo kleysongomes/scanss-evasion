@@ -7,6 +7,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react'
+import { tecla } from '@/audio/sons'
 
 /** Milissegundos por caractere. */
 const POR_LETRA = 48
@@ -36,6 +37,10 @@ export function Datilografa({ texto, className, aoTerminar, pausaFinal = 0 }: Pr
       if (!vivo) return
       i++
       setN(i)
+
+      // Espaço e quebra de linha saem mudos: máquina de escrever que estala no
+      // espaço vira metralhadora.
+      if (/\S/.test(texto[i - 1] ?? '')) tecla()
 
       if (i >= texto.length) {
         id = window.setTimeout(() => fim.current?.(), pausaFinal)

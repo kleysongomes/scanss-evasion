@@ -7,8 +7,8 @@
  */
 
 import { beforeEach, describe, expect, it } from 'vitest'
-import { ROTEIRO, condicaoAtendida, lerArquivo, lerCondicao, pendentes, personalizar }
-  from './story'
+import { condicaoAtendida, pendentes } from './missions'
+import { ROTEIRO, lerArquivo, lerCondicao, personalizar } from './story'
 import { useGame } from './store'
 
 const g = () => useGame.getState()
@@ -65,7 +65,26 @@ describe('formato dos arquivos', () => {
     expect(lerCondicao('inicio')).toEqual({ tipo: 'inicio' })
     expect(lerCondicao('marco:transfer')).toEqual({ tipo: 'marco', valor: 'transfer' })
     expect(lerCondicao('rastro:55')).toEqual({ tipo: 'rastro', n: 55 })
+    expect(lerCondicao('abaixo:30')).toEqual({ tipo: 'abaixo', n: 30 })
+    expect(lerCondicao('roubado:5000')).toEqual({ tipo: 'roubado', n: 5000 })
+    expect(lerCondicao('tudo: missoes')).toEqual({ tipo: 'tudo', valor: 'missoes' })
     expect(lerCondicao('nao-existe:1')).toBeNull()
+    expect(lerCondicao('tudo:qualquer-coisa')).toBeNull()
+  })
+
+  // `ramo` e a unica condicao com dois argumentos; ela quebrou uma vez porque o
+  // interpretador partia a linha em TODOS os dois-pontos e perdia o nivel.
+  it('le condicao de dois argumentos sem perder o nivel', () => {
+    expect(lerCondicao('ramo:crypto:5')).toEqual({ tipo: 'ramo', valor: 'crypto', n: 5 })
+    expect(lerCondicao('ramo:crypto')).toBeNull()
+  })
+
+  it('todo e-mail que abre missao diz o que a conclui', () => {
+    for (const r of ROTEIRO) {
+      if (!r.objetivo) continue
+      expect(r.feito?.length, `${r.id}: tem objetivo e nao tem feito`)
+        .toBeGreaterThan(0)
+    }
   })
 })
 
@@ -105,10 +124,10 @@ describe('entrega', () => {
     expect(g().inbox.some((e) => e.id === '02-achou')).toBe(true)
   })
 
-  it('o e-mail que abre missao define o objetivo', () => {
+  it('o e-mail que abre missao poe a missao no quadro', () => {
     g().deliverMail()
-    expect(g().objetivo).toBeTruthy()
-    expect(g().objetivo).toMatch(/NetRipper|rede/i)
+    expect(g().missionsSeen).toContain('01-oi-sumido')
+    expect(g().missions).not.toContain('01-oi-sumido')
   })
 
   it('ler marca como lido e destrava o encadeamento', () => {

@@ -9,9 +9,18 @@
  *
  * O botao "Jogar" resolve de quebra um problema tecnico: ele e um gesto, entao
  * a aba do jogo ja abre com permissao para tela cheia.
+ *
+ * Os numeros da secao de beta (quantas missoes, quantos niveis) sao IMPORTADOS
+ * das regras do jogo em vez de escritos aqui. Custa alguns kB no pacote da
+ * landing e evita a bobagem classica de a vitrine prometer 14 missoes depois de
+ * alguem ter adicionado a 15a.
  */
 
 import { useEffect, useState } from 'react'
+import { DESAFIOS, GUIAS } from '@/game/missions'
+import { SKILLS } from '@/game/skills'
+import { ROTEIRO } from '@/game/story'
+import { BUILD, ETIQUETA } from '@/version'
 import { baixarAtalho, comoUsar, detectarSistema } from './atalho'
 
 /** A url exata do jogo - e ela que vai para o atalho. */
@@ -76,8 +85,25 @@ const PILARES = [
            'jogo entrando na casa dos outros sem pensar que a sua tem porta.' },
 ]
 
+/** O que existe hoje e o que ainda nao existe - a beta declarada. */
+const AGORA = [
+  `${ROTEIRO.length} e-mails do 3stagiario, contando a história enquanto você joga`,
+  `${GUIAS.length} missões de história e ${DESAFIOS.length} desafios, todos no quadro do webmail`,
+  `${SKILLS.length} níveis de programa, entre sete ferramentas de ataque e defesa`,
+  'Alvos, contas e loot sorteados: nenhuma partida repete a anterior',
+  'O fim de jogo — tela azul, micro apreendido, sem checkpoint',
+]
+
+const DEPOIS = [
+  'O convite do Coletivo, e o preço de aceitar',
+  'Contratos com prazo: alguém pagando para você invadir alguém',
+  'Quebra-cabeças de criptografia em vez de só nível de programa',
+  'Quem é o 3stagiario de verdade',
+]
+
 const GALERIA = [
-  '02-menu', '03-desktop', '07-darkmarket', '10-defesa', '09-manual',
+  '02-menu', '03-desktop', '08b-missoes', '07-darkmarket', '10-defesa',
+  '09-manual',
 ]
 
 export function Landing() {
@@ -110,6 +136,10 @@ export function Landing() {
       <header className="lp-topo">
         <div className="lp-largura lp-topo-linha">
           <span className="lp-marca">ScanSS<em>Evasion</em></span>
+          <span className="lp-build">
+            <b>{ETIQUETA}</b>
+            <span>build de {BUILD}</span>
+          </span>
           <a className="lp-botao pequeno" href="jogo/">Jogar</a>
         </div>
       </header>
@@ -215,6 +245,40 @@ export function Landing() {
         </div>
       </section>
 
+      {/* ====================================================== beta ====== */}
+      <section className="lp-beta">
+        <div className="lp-largura">
+          <p className="lp-etiqueta">em que pé está</p>
+          <h2>É uma beta, e a gente<br />conta o que falta.</h2>
+
+          <div className="lp-beta-colunas">
+            <div>
+              <h3>O que já está no jogo</h3>
+              <ul>
+                {AGORA.map((linha) => <li key={linha}>{linha}</li>)}
+              </ul>
+            </div>
+            <div className="depois">
+              <h3>Ainda não existe</h3>
+              <ul>
+                {DEPOIS.map((linha) => <li key={linha}>{linha}</li>)}
+              </ul>
+              <p className="lp-beta-aviso">
+                Quem fechar todas as missões e todos os níveis recebe um último
+                e-mail avisando que chegou ao fim da beta.
+              </p>
+            </div>
+          </div>
+
+          <p className="lp-beta-save">
+            O jogo salva no seu próprio navegador, sem cadastro e sem servidor.
+            Como ainda é beta, uma atualização grande nas regras pode aposentar
+            partidas antigas — quando isso acontece, o jogo começa uma nova em
+            vez de carregar um save que não faz mais sentido.
+          </p>
+        </div>
+      </section>
+
       {/* ===================================================== fecho ====== */}
       <section className="lp-fecho"
                style={{ backgroundImage: `url(${print('03-desktop')})` }}>
@@ -229,7 +293,10 @@ export function Landing() {
 
       <footer className="lp-rodape">
         <div className="lp-largura">
-          <p><b>ScanSS Evasion</b> — um jogo independente por Kleyson Gomes.</p>
+          <p>
+            <b>ScanSS Evasion</b> — um jogo independente por Kleyson Gomes.
+            {' '}{ETIQUETA}, build de {BUILD}.
+          </p>
           <p className="lp-ficcao">
             Jogo de ficção. Bancos, empresas, sites e pessoas são inventados —
             nenhuma rede real é acessada.

@@ -14,6 +14,7 @@
 import { useState } from 'react'
 import { totalEvidence } from '@/game/fs'
 import { clockOf, heatColor, useGame } from '@/game/store'
+import { BUILD, ETIQUETA } from '@/version'
 
 type Tela = 'menu' | 'novo' | 'ajuda' | 'creditos'
 
@@ -30,7 +31,7 @@ export function Lobby() {
             WinDoors<span className="xpzinho">XP</span>
           </div>
           <div className="sub">ScanSS Evasion</div>
-          <div className="versao">versão 2.0 · 2003</div>
+          <div className="versao">{ETIQUETA} · build {BUILD}</div>
         </div>
 
         <div className="lobby-divisor" />
@@ -47,6 +48,9 @@ export function Lobby() {
 
       {/* O aviso de ficção vive aqui e no manual, em nenhuma tela de jogo. */}
       <div className="lobby-nota">
+        Versão de {ETIQUETA.toLowerCase()} — os próximos capítulos ainda estão
+        sendo escritos.
+        <br />
         Jogo de ficção. Bancos, empresas, sites e pessoas são inventados —
         nenhuma rede real é acessada.
       </div>

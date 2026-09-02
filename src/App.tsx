@@ -27,6 +27,7 @@ export default function App() {
   const tick = useGame((s) => s.tick)
   const deliverMail = useGame((s) => s.deliverMail)
   const rollAttack = useGame((s) => s.rollAttack)
+  const checkMissions = useGame((s) => s.checkMissions)
 
   useEffect(() => {
     if (!started || busted || paused || prologue) return
@@ -37,10 +38,14 @@ export default function App() {
       // que o rastro daquele minuto ja esteja aplicado.
       deliverMail()
       rollAttack()
+      // E o quadro vem por ultimo, para uma missao de rastro fechar no mesmo
+      // minuto em que o rastro caiu.
+      checkMissions()
     }, TICK_MS)
 
     return () => clearInterval(id)
-  }, [started, busted, paused, prologue, tick, deliverMail, rollAttack])
+  }, [started, busted, paused, prologue, tick, deliverMail, rollAttack,
+      checkMissions])
 
   // O primeiro e-mail ("inicio") tem que chegar assim que a partida comeca,
   // sem esperar o primeiro tick.

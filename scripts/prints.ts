@@ -43,15 +43,18 @@ async function novaPartida(page: Page) {
 }
 
 /**
- * Fecha tudo que estiver cobrindo a tela: aviso de e-mail e balão do Klipe.
+ * Fecha tudo que estiver cobrindo a tela: aviso de e-mail, balão do Klipe e
+ * aviso de missão concluída.
  *
- * Em ciclo, porque um revela o outro — o jogo pausa no primeiro e-mail, e só
- * depois de dispensar esse aviso é que o Klipe aparece por baixo.
+ * Em ciclo, porque um revela o outro — o jogo pausa no primeiro e-mail; só
+ * depois de dispensar esse aviso é que o Klipe aparece por baixo, e o aviso de
+ * missão só surge quando o jogo volta a rodar.
  */
 async function limparAvisos(page: Page) {
   await respira(700)
   for (let volta = 0; volta < 6; volta++) {
     let fechou = false
+
     for (const rotulo of ['Depois', 'Agora não']) {
       const b = page.getByRole('button', { name: rotulo })
       if (await b.count()) {
@@ -60,6 +63,16 @@ async function limparAvisos(page: Page) {
         fechou = true
       }
     }
+
+    // Pelo seletor, e não pelo rótulo: "OK" é genérico demais para sair
+    // clicando em qualquer botão que tenha esse nome na tela.
+    const missao = page.locator('.mission-alert .xp')
+    if (await missao.count()) {
+      await missao.first().click().catch(() => {})
+      await respira(300)
+      fechou = true
+    }
+
     if (!fechou) return
   }
 }
@@ -148,6 +161,21 @@ async function main() {
   await barra.press('Enter')
   await respira(700)
   await foto(page, '08-vmail')
+
+  // --- o quadro de missoes -------------------------------------------------
+  // Fica na aba ao lado da caixa de entrada. O nome do arquivo tem "b" para
+  // ordenar junto do webmail sem renumerar os prints seguintes.
+  await page.locator('a', { hasText: /^Missões/ }).first().click()
+  await respira(400)
+
+  // Maximiza so para este print: o quadro tem duas tabelas, e na janela
+  // pequena a segunda fica cortada pela borda.
+  const chroma = page.locator('.window', { hasText: 'Chroma' }).first()
+  await chroma.locator('.title-btn.max').click()
+  await respira(500)
+  await foto(page, '08b-missoes')
+  await chroma.locator('.title-btn.restore').click()
+  await respira(400)
 
   // --- o manual ------------------------------------------------------------
   await abrirApp(page, 'Manual do Operador')

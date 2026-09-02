@@ -2,6 +2,8 @@ id: 03-vasculha
 assunto: agora vem a parte chata
 quando: marco:connect
 objetivo: Achar o arquivo de senhas e ler no Bloco de Notas
+onde: Meu Computador → Z: → Baixar → C:\Baixados
+feito: marco:creds
 ---
 Ta dentro. Agora vasculha.
 

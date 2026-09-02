@@ -9,6 +9,7 @@
  */
 
 import type { ComponentType, ReactNode } from 'react'
+import { DESAFIOS, missaoAtual, placar } from '@/game/missions'
 import { STEPS, isDone, progress } from '@/game/progress'
 import { BRANCHES, skillsOf } from '@/game/skills'
 import { evidenceHeatPerHour, useGame } from '@/game/store'
@@ -473,16 +474,32 @@ const Correio = () => {
 
       <h3>Missões</h3>
       <p>
-        Alguns e-mails abrem uma <b>missão</b>, que fica no topo do webmail. Não
-        existe botão de "entregar": a missão se cumpre jogando, e o próximo
-        e-mail chega quando você faz o que ele pediu.
+        No webmail existe uma aba <b>Missões</b>, ao lado da caixa de entrada.
+        Tudo que você já fez e tudo que ainda falta está lá, e o que está
+        cumprido aparece riscado — ninguém precisa lembrar de nada.
+      </p>
+      <p>
+        São duas famílias. As <b>missões da história</b> chegam por e-mail, uma
+        puxando a outra, e ensinam o jogo na ordem certa. Os <b>desafios</b> são
+        metas grandes — {DESAFIOS.length} delas — que você persegue no seu
+        ritmo: roubar tanto, invadir tantos, sobreviver a tanto rastro. Estes
+        pagam prêmio em VC quando fecham.
+      </p>
+      <p>
+        Não existe botão de "entregar". A missão se cumpre jogando, e o jogo
+        percebe sozinho — um aviso verde aparece no canto quando alguma fecha.
       </p>
 
       {game.inbox.length > 0 && (
         <Nota>
           Você tem <b>{game.inbox.length}</b> mensagem(ns) na caixa
           {game.inbox.some((e) => !e.lido) && ', e alguma ainda não foi lida'}.
-          {game.objetivo && <><br />Missão atual: <b>{game.objetivo}</b></>}
+          <br />
+          Missões: <b>{placar(game).feitas} de {placar(game).total}</b>{' '}
+          concluídas.
+          {missaoAtual(game) && (
+            <><br />Missão atual: <b>{missaoAtual(game)!.titulo}</b></>
+          )}
         </Nota>
       )}
     </>

@@ -6,6 +6,7 @@ import { APP_COMPONENTS, Missing } from '@/apps/registry'
 import { useGame } from '@/game/store'
 import { Assistant } from './Assistant'
 import { MailAlert } from './MailAlert'
+import { MissionAlert } from './MissionAlert'
 import { appLabel, launchApp } from './launch'
 import { Taskbar } from './Taskbar'
 import { Window } from './Window'
@@ -61,6 +62,11 @@ export function Desktop() {
 
       {/* O aviso de e-mail tem prioridade sobre o Klipe: o jogo esta parado. */}
       {paused ? <MailAlert /> : assistantOpen && <Assistant />}
+
+      {/* Sempre montado: ele mesmo decide quando aparecer (e se esconde na
+          pausa). Montar so fora da pausa faria o aviso perder justamente o
+          caso comum, em que a missao fecha junto com a chegada de um e-mail. */}
+      <MissionAlert />
 
       {!assistantOpen && !paused && (
         <div className="watermark">

@@ -1,7 +1,9 @@
 id: 01-oi-sumido
 assunto: e ai, sumido
 quando: inicio
-objetivo: Varrer a rede no NetRipper e achar o primeiro alvo
+objetivo: Varrer a rede e achar o primeiro alvo
+onde: NetRipper → Rastreador → "Varrer rede"
+feito: marco:scan
 ---
 Iae {apelido}, quanto tempo.
 

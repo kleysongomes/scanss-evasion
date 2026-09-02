@@ -168,6 +168,23 @@ export interface Player {
   muleAccount: string
 }
 
+/**
+ * Placar acumulado da partida. Nunca diminui.
+ *
+ * Existe porque as metricas obvias sao todas enganosas para medir missao:
+ * `balance` cai quando o jogador investe na arvore, e a lista de maquinas
+ * encolhe quando ele arruma o NetRipper (o botao "esquecer" apaga o host).
+ * Medir desafio por elas puniria justamente quem joga bem.
+ */
+export interface Recordes {
+  /** Total transferido para a conta laranja, somando a partida inteira. */
+  roubado: number
+  /** Quantas maquinas foram invadidas, mesmo as ja esquecidas. */
+  invasoes: number
+  /** O maior `tier` que o jogador ja arrombou. */
+  maiorAlvo: number
+}
+
 export interface GameState {
   /**
    * Existe partida salva para continuar?
@@ -191,8 +208,25 @@ export interface GameState {
   paused: boolean
   /** Caixa de entrada, do mais antigo ao mais recente. */
   inbox: Email[]
-  /** A missao aberta agora, vinda do ultimo e-mail que trouxe uma. */
-  objetivo: string | null
+  /**
+   * Ids das missoes ja concluidas (`game/missions.ts`).
+   *
+   * E estado salvo, e nao algo derivado das condicoes na hora de desenhar a
+   * tela, porque conclusao tem que ser DEFINITIVA: "derrubar o rastro abaixo de
+   * 30" e verdade por um instante, e uma missao que se desmarca sozinha quando
+   * o rastro sobe de novo nao e missao, e termometro.
+   */
+  missions: string[]
+  /**
+   * Ids das missoes que ja apareceram no quadro.
+   *
+   * Missao aberta nao fecha sozinha: sem esta memoria, um desafio como "passar
+   * de 70% de rastro e voltar para menos de 20%" sairia do quadro no meio do
+   * caminho, e nunca poderia ser concluido.
+   */
+  missionsSeen: string[]
+  /** Placar acumulado, para as missoes nao dependerem do estado volatil. */
+  recordes: Recordes
   /** Tentativas de invasao sofridas. */
   attacks: Attack[]
   player: Player

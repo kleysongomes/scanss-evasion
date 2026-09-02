@@ -115,7 +115,7 @@ progressão em vez dos **três roubos** que compravam a loja inteira na versão
 anterior. Os alvos gerados ficam sempre perto do seu alcance atual (andar do seu
 Rastreador, menos 0 a 2), então nem trivializa nem trava.
 
-## Invadir é clicar, não digitar## Invadir é clicar, não digitar
+## Invadir é clicar, não digitar
 
 A primeira versão fazia a invasão por linha de comando, com o jogador redigitando
 o IP em quatro comandos seguidos. Foi trocada pelo **NetRipper**: lista de hosts
@@ -267,6 +267,49 @@ momento em que a narrativa tem prioridade sobre a jogatina — e é justamente p
 isso que os textos precisam ser curtos. O jogador está parado esperando para
 voltar a jogar.
 
+### O quadro de missões
+
+O webmail tem uma segunda aba, **Missões**, com tudo que o jogador já fez e
+tudo que ainda falta. O que está cumprido aparece **riscado**, não desaparece:
+o valor da lista é justamente poder olhar para trás.
+
+São duas famílias no mesmo quadro:
+
+| | Missões da história | Desafios |
+|---|---|---|
+| **De onde vêm** | `story/*.txt`, por e-mail | `src/game/missions.ts` |
+| **Para que servem** | ensinar o jogo na ordem | dar meta grande e livre |
+| **Exemplo** | "monte o disco da vítima" | "roube 250.000 no total" |
+| **Pagam?** | não — quem paga é o roubo | sim, prêmio em VC |
+
+A divisão de arquivo segue a diferença de natureza: guia é prosa (e prosa se
+edita em `.txt`), desafio é número. Os prêmios dos 16 desafios somam menos de
+100 mil VC, contra milhões para fechar a árvore — são empurrão, não atalho, e
+existe um teste que trava essa proporção.
+
+Toda missão tem **duas** condições: `quando` (entra no quadro) e `feito` (fica
+concluída). São separadas porque muitas metas boas são impossíveis numa condição
+só — *"passou de 70% de rastro e voltou para menos de 20%"* tem as duas metades
+nunca verdadeiras ao mesmo tempo.
+
+Duas coisas são **estado salvo**, e não cálculo na hora de desenhar a tela:
+
+- **quais missões já apareceram** — sem essa memória, o desafio de rastro sairia
+  do quadro no caminho de volta e nunca poderia fechar;
+- **quais já foram concluídas** — conclusão é definitiva. Uma missão que se
+  desmarca quando o rastro sobe de novo não é missão, é termômetro.
+
+Pelo mesmo motivo existe um **placar acumulado** (`recordes`) para invasões,
+total roubado e maior alvo. As métricas óbvias enganam: o saldo cai quando o
+jogador investe na árvore, e a lista de máquinas encolhe quando ele arruma o
+NetRipper. Medir desafio por elas puniria justamente quem joga bem.
+
+### O fim da beta
+
+Quem fecha **todas** as missões e **todos** os 70 níveis recebe um último
+e-mail (`15-beta.txt`) dizendo que chegou ao fim da versão beta. É o único
+final "positivo" do jogo hoje — o outro é a tela azul.
+
 ### O tom
 
 O 3stagiario nunca dá ordem: sugere, alfineta e some. Piada de informática de
@@ -294,6 +337,11 @@ Um ataque que passa leva uma fatia do saldo e **soma rastro** — a invasão
 sofrida entra no log do ScanSS como qualquer outra ação.
 
 ## O que ainda não existe
+
+O jogo está em **beta**: o Capítulo 1 fecha, os capítulos 2 a 6 estão escritos
+em [`lore.md`](lore.md) mas não implementados. A versão e a data da build saem
+do `package.json` e do último commit, e aparecem no cabeçalho do site e no menu
+do jogo — nenhum número escrito na mão.
 
 Ordem sugerida para as próximas rodadas:
 

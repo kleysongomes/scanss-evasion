@@ -1,7 +1,9 @@
 id: 06-esquentou
 assunto: opa opa opa
 quando: rastro:55
-objetivo: Derrubar o rastro abaixo de 30%
+objetivo: Derrubar o rastro para 30% ou menos
+onde: NetRipper → Faxina → "Limpar logs"
+feito: abaixo:30
 ---
 {apelido}. Olha o escudo ali embaixo.
 

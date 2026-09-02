@@ -3,6 +3,9 @@ node_modules/
 dist/
 .vite/
 
+# Cache incremental do tsc (`tsc -b` no build)
+*.tsbuildinfo
+
 # Editores / IDE
 .vscode/
 .idea/

@@ -1,25 +1,40 @@
 /**
- * Carrega o roteiro de `story/*.txt` e decide quando cada e-mail chega.
+ * Le o roteiro de `story/*.txt`.
  *
- * Os textos ficam em arquivo, nao em codigo, para o roteiro poder ser escrito e
- * reescrito sem recompilar nada mentalmente. O formato esta documentado em
+ * Este arquivo so INTERPRETA: transforma texto em `Roteiro` e em `Condicao`.
+ * Quem decide se uma condicao esta atendida - e quando cada e-mail chega - e
+ * `missions.ts`, que enxerga tambem o quadro de missoes.
+ *
+ * Os textos ficam em arquivo, e nao em codigo, para o roteiro poder ser escrito
+ * e reescrito sem mexer em nada compilado. O formato esta documentado em
  * `story/LEIA-ME.md`.
  */
 
-import { levelOf } from './skills'
-import type { GameState } from './types'
-
-/** Uma condicao de entrega, ja interpretada. */
+/**
+ * Uma condicao de entrega, ja interpretada.
+ *
+ * Quase todas comparam por MAIOR-OU-IGUAL ("chegou em"). As duas excecoes sao
+ * `abaixo` e `evidencia`, que comparam por menor-ou-igual - sao elas que
+ * permitem missoes de recuar, e nao so de avancar.
+ */
 export type Condicao =
   | { tipo: 'inicio' }
   | { tipo: 'marco'; valor: string }
   | { tipo: 'email'; valor: string }
   | { tipo: 'invasoes'; n: number }
-  | { tipo: 'rastro'; n: number }
-  | { tipo: 'saldo'; n: number }
   | { tipo: 'contas'; n: number }
+  | { tipo: 'rastro'; n: number }
+  | { tipo: 'abaixo'; n: number }
+  | { tipo: 'evidencia'; n: number }
+  | { tipo: 'saldo'; n: number }
+  | { tipo: 'roubado'; n: number }
   | { tipo: 'defesa'; n: number }
+  | { tipo: 'ramo'; valor: string; n: number }
+  | { tipo: 'upgrades'; n: number }
   | { tipo: 'ataques'; n: number }
+  | { tipo: 'bloqueados'; n: number }
+  | { tipo: 'tier'; n: number }
+  | { tipo: 'tudo'; valor: 'upgrades' | 'missoes' | 'desafios' }
 
 export interface Roteiro {
   id: string
@@ -30,30 +45,67 @@ export interface Roteiro {
   quando: Condicao[]
   /** Missao que este e-mail abre, se abrir alguma. */
   objetivo?: string
-  /** O que fecha a missao. Sem isto, ela fica aberta ate o proximo objetivo. */
+  /** Onde se faz, em uma linha - o quadro de missoes mostra como dica. */
+  onde?: string
+  /** O que fecha a missao. Sem isto, ela nunca fica concluida. */
   feito?: Condicao[]
 }
 
 const REMETENTE_PADRAO = '3stagiario@vmail.vc'
+
+/** Parte um `chave: resto` no PRIMEIRO dois-pontos. */
+function partir(texto: string): [string, string] {
+  const corte = texto.indexOf(':')
+  if (corte < 0) return [texto.trim(), '']
+  return [texto.slice(0, corte).trim(), texto.slice(corte + 1).trim()]
+}
+
+/** As condicoes que sao so `chave: numero`. */
+const NUMERICAS = [
+  'invasoes', 'contas', 'rastro', 'abaixo', 'evidencia', 'saldo', 'roubado',
+  'defesa', 'upgrades', 'ataques', 'bloqueados', 'tier',
+] as const
+
+type Numerica = (typeof NUMERICAS)[number]
+
+const eNumerica = (chave: string): chave is Numerica =>
+  (NUMERICAS as readonly string[]).includes(chave)
 
 /** Interpreta uma linha de condicao. Devolve null se nao reconhecer. */
 export function lerCondicao(texto: string): Condicao | null {
   const limpo = texto.trim()
   if (limpo === 'inicio') return { tipo: 'inicio' }
 
-  const [chave, valor] = limpo.split(':').map((p) => p.trim())
+  const [chave, valor] = partir(limpo)
   if (!valor) return null
 
+  if (eNumerica(chave)) {
+    const n = Number(valor)
+    return Number.isFinite(n) ? { tipo: chave, n } : null
+  }
+
   switch (chave) {
-    case 'marco': return { tipo: 'marco', valor }
-    case 'email': return { tipo: 'email', valor }
-    case 'invasoes': return { tipo: 'invasoes', n: Number(valor) }
-    case 'rastro': return { tipo: 'rastro', n: Number(valor) }
-    case 'saldo': return { tipo: 'saldo', n: Number(valor) }
-    case 'contas': return { tipo: 'contas', n: Number(valor) }
-    case 'defesa': return { tipo: 'defesa', n: Number(valor) }
-    case 'ataques': return { tipo: 'ataques', n: Number(valor) }
-    default: return null
+    case 'marco':
+    case 'email':
+      return { tipo: chave, valor }
+
+    // `ramo:crypto:5` - a unica com dois argumentos.
+    case 'ramo': {
+      const [nome, nivel] = partir(valor)
+      const n = Number(nivel)
+      // `nivel` vazio nao pode virar zero: Number('') e 0, e um `ramo:crypto`
+      // sem nivel passaria como "nivel 0", que e sempre verdade.
+      if (!nome || !nivel || !Number.isFinite(n)) return null
+      return { tipo: 'ramo', valor: nome, n }
+    }
+
+    case 'tudo':
+      return valor === 'upgrades' || valor === 'missoes' || valor === 'desafios'
+        ? { tipo: 'tudo', valor }
+        : null
+
+    default:
+      return null
   }
 }
 
@@ -72,10 +124,8 @@ export function lerArquivo(texto: string): Roteiro | null {
   const feito: Condicao[] = []
 
   for (const linha of cabecalho.split('\n')) {
-    const corte = linha.indexOf(':')
-    if (corte < 0) continue
-    const chave = linha.slice(0, corte).trim()
-    const valor = linha.slice(corte + 1).trim()
+    if (!linha.includes(':')) continue
+    const [chave, valor] = partir(linha)
 
     if (chave === 'quando') {
       const c = lerCondicao(valor)
@@ -97,6 +147,7 @@ export function lerArquivo(texto: string): Roteiro | null {
     corpo: resto.join('---').trim(),
     quando,
     objetivo: campos.objetivo,
+    onde: campos.onde,
     feito: feito.length > 0 ? feito : undefined,
   }
 }
@@ -117,35 +168,6 @@ export const ROTEIRO: Roteiro[] = Object.entries(ARQUIVOS)
   .sort(([a], [b]) => a.localeCompare(b))
   .map(([, texto]) => lerArquivo(texto))
   .filter((r): r is Roteiro => r !== null)
-
-// ---------------------------------------------------------------------------
-
-/** O nivel de defesa e o melhor entre os dois ramos defensivos. */
-function nivelDeDefesa(s: GameState): number {
-  return Math.max(levelOf(s.skills, 'firewall'), levelOf(s.skills, 'antivirus'))
-}
-
-export function condicaoAtendida(c: Condicao, s: GameState): boolean {
-  switch (c.tipo) {
-    case 'inicio': return true
-    case 'marco': return s.milestones.includes(c.valor)
-    case 'email': return s.inbox.some((e) => e.id === c.valor && e.lido)
-    case 'invasoes': return s.machines.filter((m) => m.exploited).length >= c.n
-    case 'rastro': return s.player.heat >= c.n
-    case 'saldo': return s.player.balance >= c.n
-    case 'contas': return s.drained.length >= c.n
-    case 'defesa': return nivelDeDefesa(s) >= c.n
-    case 'ataques': return s.attacks.length >= c.n
-  }
-}
-
-/** Os e-mails que devem chegar agora - na ordem do roteiro. */
-export function pendentes(s: GameState): Roteiro[] {
-  return ROTEIRO.filter((r) => (
-    !s.inbox.some((e) => e.id === r.id) &&
-    r.quando.every((c) => condicaoAtendida(c, s))
-  ))
-}
 
 /** Troca {apelido} pelo nome que o jogador escolheu. */
 export function personalizar(texto: string, apelido: string): string {

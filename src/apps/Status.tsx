@@ -9,6 +9,7 @@
 
 import { useState } from 'react'
 import { totalEvidence } from '@/game/fs'
+import { missaoAtual, placar } from '@/game/missions'
 import { BRANCHES, cleanPower, levelOf, nextSkill, skillsOf } from '@/game/skills'
 import {
   clockOf, decayPerHour, evidenceHeatPerHour, heatColor, heatLevel, useGame,
@@ -33,8 +34,9 @@ export function Status() {
   const poderDeFaxina = cleanPower(game.skills)
   const liquido = porHora - queda
 
-  const invadidas = game.machines.filter((m) => m.exploited).length
   const naLista = game.machines.filter((m) => m.found).length
+  const missoes = placar(game)
+  const atual = missaoAtual(game)
 
   return (
     <div className="grow col scroll" style={{ gap: 4, padding: 6 }}>
@@ -134,6 +136,10 @@ export function Status() {
           <table className="manual-tabela" style={{ marginTop: 6 }}>
             <tbody>
               <tr><td>Sua conta laranja</td><td className="mono">{game.player.muleAccount}</td></tr>
+              <tr>
+                <td>Total roubado</td>
+                <td>{game.recordes.roubado.toLocaleString('pt-BR')} VC</td>
+              </tr>
               <tr><td>Contas zeradas</td><td>{game.drained.length}</td></tr>
               <tr><td>Senhas no navegador</td><td>{game.credentials.length}</td></tr>
               <tr><td>Experiência</td><td>{game.player.xp} XP</td></tr>
@@ -147,7 +153,13 @@ export function Status() {
             <tbody>
               <tr><td>Hora</td><td>{clockOf(game.minutes)}</td></tr>
               <tr><td>Hosts na lista</td><td>{naLista}</td></tr>
-              <tr><td>Máquinas invadidas</td><td>{invadidas}</td></tr>
+              <tr><td>Máquinas invadidas</td><td>{game.recordes.invasoes}</td></tr>
+              <tr>
+                <td>Maior alvo</td>
+                <td>{game.recordes.maiorAlvo > 0
+                  ? `nível ${game.recordes.maiorAlvo}`
+                  : <span className="muted">nenhum ainda</span>}</td>
+              </tr>
               <tr>
                 <td>Conectado agora</td>
                 <td>{game.connected()?.hostname ?? <span className="muted">nenhum</span>}</td>
@@ -156,6 +168,29 @@ export function Status() {
           </table>
         </fieldset>
       </div>
+
+      {/* missoes */}
+      <fieldset className="xp" style={{ margin: 0 }}>
+        <legend>Missões</legend>
+        <table className="manual-tabela">
+          <tbody>
+            <tr>
+              <td style={{ width: 190 }}>Concluídas</td>
+              <td><b>{missoes.feitas}</b> de {missoes.total}</td>
+            </tr>
+            <tr>
+              <td>Agora</td>
+              <td>{atual
+                ? <b>{atual.titulo}</b>
+                : <span className="muted">nada em aberto</span>}</td>
+            </tr>
+          </tbody>
+        </table>
+        <button className="xp" style={{ marginTop: 8 }}
+                onClick={() => launchApp('browser', { args: { url: 'vmail.vc' } })}>
+          Abrir o quadro de missões
+        </button>
+      </fieldset>
 
       {/* programas */}
       <fieldset className="xp" style={{ margin: 0 }}>

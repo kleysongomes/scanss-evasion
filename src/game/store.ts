@@ -18,7 +18,9 @@ import {
   levelOf, recoveryRate, shieldPower, skillsOf, targetCapacity,
 } from './skills'
 import { chance, int, pick } from './rng'
-import { pendentes, personalizar } from './story'
+import { pendentes, recemAbertas, recemConcluidas } from './missions'
+import type { Missao } from './missions'
+import { personalizar } from './story'
 import type {
   Attack, BankAccount, Branch, Credential, Email, GameState, HeatLevel,
   Machine, TrailEntry, VFile, VNode, VPath,
@@ -89,7 +91,9 @@ function initialState(): GameState {
     prologue: false,
     paused: false,
     inbox: [],
-    objetivo: null,
+    missions: [],
+    missionsSeen: [],
+    recordes: { roubado: 0, invasoes: 0, maiorAlvo: 0 },
     attacks: [],
     player: {
       handle: 'operador',
@@ -176,6 +180,9 @@ export function saveConsistente(s: Partial<GameState> | undefined): boolean {
   if (!s || !s.accounts || !Array.isArray(s.machines) || !Array.isArray(s.disk)) {
     return false
   }
+  // O quadro de missoes e o placar sao lidos direto, sem defesa, em todo tick.
+  if (!Array.isArray(s.missions) || !Array.isArray(s.missionsSeen)) return false
+  if (!s.recordes || typeof s.recordes.roubado !== 'number') return false
   const contas = new Set(Object.keys(s.accounts))
   const arvores = [...s.machines.map((m) => m.root), s.disk]
 
@@ -220,6 +227,12 @@ export interface GameActions {
   /** Entrega os e-mails cujo gatilho foi atendido. Pausa o jogo se entregar. */
   deliverMail: () => Email[]
   readMail: (id: string) => void
+
+  /**
+   * Abre as missoes que o jogador destravou e fecha as que ele cumpriu,
+   * pagando o premio. Devolve as que acabaram de fechar, para a UI avisar.
+   */
+  checkMissions: () => Missao[]
 
   /** Sorteia um ataque contra o jogador, se for a hora. */
   rollAttack: () => Attack | null
@@ -351,22 +364,43 @@ export const useGame = create<GameStore>()(
           lido: false,
         }))
 
-        // O objetivo do e-mail mais recente que trouxe um substitui o anterior.
-        const comObjetivo = [...novos].reverse().find((r) => r.objetivo)
-
-        set((s) => ({
-          inbox: [...s.inbox, ...emails],
-          paused: true,
-          objetivo: comObjetivo
-            ? personalizar(comObjetivo.objetivo!, apelido)
-            : s.objetivo,
-        }))
+        set((s) => ({ inbox: [...s.inbox, ...emails], paused: true }))
+        // O e-mail que traz `objetivo:` abre a missao dele; quem cuida disso e
+        // o quadro, que ve as duas familias de missao ao mesmo tempo.
+        get().checkMissions()
         return emails
       },
 
       readMail: (id) => set((s) => ({
         inbox: s.inbox.map((e) => (e.id === id ? { ...e, lido: true } : e)),
       })),
+
+      /**
+       * Roda a cada minuto de jogo. Duas passadas, nesta ordem:
+       *
+       *  1. ABRE o que foi destravado. Precisa vir antes, senao um desafio que
+       *     abre e fecha no mesmo instante ("deixar o disco sem evidencia")
+       *     nunca seria visto como aberto e nao pagaria.
+       *  2. FECHA o que foi cumprido e paga o premio.
+       */
+      checkMissions: () => {
+        const abrindo = recemAbertas(get())
+        if (abrindo.length > 0) {
+          set((s) => ({
+            missionsSeen: [...s.missionsSeen, ...abrindo.map((m) => m.id)],
+          }))
+        }
+
+        const fechando = recemConcluidas(get())
+        if (fechando.length === 0) return []
+
+        const premio = fechando.reduce((total, m) => total + m.premio, 0)
+        set((s) => ({
+          missions: [...s.missions, ...fechando.map((m) => m.id)],
+          player: { ...s.player, balance: s.player.balance + premio },
+        }))
+        return fechando
+      },
 
       /**
        * Um ataque contra o jogador. O Firewall segura pela forca; o Antivirus
@@ -568,6 +602,11 @@ export const useGame = create<GameStore>()(
         set((s) => ({
           machines: s.machines.map((x) => (x.id === m.id ? { ...x, exploited: true } : x)),
           player: { ...s.player, xp: s.player.xp + m.security * 10 },
+          recordes: {
+            ...s.recordes,
+            invasoes: s.recordes.invasoes + 1,
+            maiorAlvo: Math.max(s.recordes.maiorAlvo, m.tier),
+          },
         }))
         return ok(`Acesso obtido em ${m.hostname}.`)
       },
@@ -792,6 +831,7 @@ export const useGame = create<GameStore>()(
             xp: s.player.xp + Math.floor(amount / 100),
           },
           drained: amount >= acc.balance ? [...s.drained, fromUser] : s.drained,
+          recordes: { ...s.recordes, roubado: s.recordes.roubado + amount },
         }))
         return ok(`Transferência de ${amount} VC concluída.`)
       },
@@ -869,7 +909,7 @@ export const useGame = create<GameStore>()(
     {
       name: 'scanss-evasion-save',
       // ATENCAO: subir sempre que o formato de GameState mudar.
-      version: 5,
+      version: 6,
       storage: saveStorage,
       // Acoes nao vao pro localStorage - so o estado.
       partialize: (s): GameState => ({
@@ -890,7 +930,9 @@ export const useGame = create<GameStore>()(
         prologue: false,
         paused: false,
         inbox: s.inbox,
-        objetivo: s.objetivo,
+        missions: s.missions,
+        missionsSeen: s.missionsSeen,
+        recordes: s.recordes,
         attacks: s.attacks,
         drained: s.drained,
         trail: s.trail,

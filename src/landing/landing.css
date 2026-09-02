@@ -50,6 +50,21 @@ body {
 .lp-marca { font-weight: 800; letter-spacing: -.4px; font-size: 17px; }
 .lp-marca em { font-style: normal; color: var(--lp-amarelo); }
 
+/* Versao e data da build no cabecalho: quem chega sabe na primeira linha que
+   isto e uma beta, e de quando e a ultima mexida. */
+.lp-build {
+  margin-right: auto; padding-left: 16px;
+  display: flex; align-items: baseline; gap: 8px;
+  font-family: "Lucida Console", Consolas, monospace;
+  font-size: 11px; color: var(--lp-fraco);
+}
+.lp-build b {
+  padding: 2px 7px;
+  border: 1px solid var(--lp-amarelo);
+  color: var(--lp-amarelo);
+  letter-spacing: .5px; text-transform: uppercase;
+}
+
 /* ---------------------------------------------------------------- botoes -- */
 .lp-botao {
   display: inline-block;
@@ -265,6 +280,44 @@ body {
   scroll-snap-align: center;
 }
 
+/* ------------------------------------------------------------------ beta -- */
+.lp-beta {
+  padding: 96px 0;
+  background: var(--lp-fundo-2);
+  border-top: 1px solid var(--lp-borda);
+}
+.lp-beta h2 {
+  margin: 0 0 34px;
+  font-size: clamp(26px, 3.6vw, 42px);
+  line-height: 1.06; letter-spacing: -1.4px;
+}
+.lp-beta-colunas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1px;
+  background: var(--lp-borda);
+  border: 1px solid var(--lp-borda);
+}
+.lp-beta-colunas > div { padding: 26px; background: var(--lp-fundo-2); }
+.lp-beta-colunas h3 {
+  margin: 0 0 14px; font-size: 15px;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: #7fe08a;
+}
+.lp-beta-colunas .depois h3 { color: #e0a37f; }
+.lp-beta-colunas ul { margin: 0; padding-left: 18px; }
+.lp-beta-colunas li { margin-bottom: 8px; color: #b9c4d6; font-size: 15px; }
+.lp-beta-aviso {
+  margin: 18px 0 0; padding-top: 14px;
+  border-top: 1px solid var(--lp-borda);
+  color: var(--lp-fraco); font-size: 14px;
+}
+.lp-beta-save {
+  margin: 26px 0 0;
+  max-width: 74ch;
+  color: #6f7b8e; font-size: 14px;
+}
+
 /* ----------------------------------------------------------------- fecho -- */
 .lp-fecho {
   position: relative;
@@ -295,6 +348,11 @@ body {
 
 /* -------------------------------------------------------------- estreito -- */
 @media (max-width: 860px) {
+  /* No celular a data da build nao cabe ao lado do nome; fica so a etiqueta. */
+  .lp-build { padding-left: 10px; }
+  .lp-build span { display: none; }
+
+  .lp-beta { padding: 64px 0; }
   .lp-cena { padding: 70px 0; }
   .lp-cena-corpo,
   .lp-cena.dir .lp-cena-corpo { grid-template-columns: 1fr; gap: 28px; }

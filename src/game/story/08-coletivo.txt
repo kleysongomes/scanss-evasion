@@ -2,6 +2,8 @@ id: 08-coletivo
 assunto: pare de ler isso e escuta
 quando: contas:4
 objetivo: Comprar um Firewall antes que eles cheguem
+onde: darkmarket.vc → Defesa → Firewall
+feito: ramo:firewall:1
 ---
 {apelido}, presta atencao porque isso e serio.
 

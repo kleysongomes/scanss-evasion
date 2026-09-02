@@ -1,6 +1,23 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { execSync } from 'node:child_process'
 import { fileURLToPath, URL } from 'node:url'
+import pkg from './package.json'
+
+/**
+ * Data da build, para a landing mostrar "atualizado em".
+ *
+ * Prefere a data do ultimo commit: e ela que representa "quando o jogo mudou".
+ * A hora da maquina que compilou muda a cada `npm run build`, mesmo sem uma
+ * linha nova de codigo. Sem git (baixado como zip, por exemplo), cai para hoje.
+ */
+function dataDaBuild(): string {
+  try {
+    return execSync('git log -1 --format=%cI', { encoding: 'utf-8' }).trim()
+  } catch {
+    return new Date().toISOString()
+  }
+}
 
 /**
  * Duas páginas: a landing em `/` e o jogo em `/jogo/`.
@@ -11,6 +28,10 @@ import { fileURLToPath, URL } from 'node:url'
  */
 export default defineConfig({
   plugins: [react()],
+  define: {
+    __VERSAO__: JSON.stringify(pkg.version),
+    __BUILD__: JSON.stringify(dataDaBuild()),
+  },
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },

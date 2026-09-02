@@ -1,7 +1,9 @@
 id: 11-corre
 assunto: CORRE
 quando: rastro:85
-objetivo: Sobreviver: derrubar o rastro para menos de 60%
+objetivo: Sobreviver: derrubar o rastro para 60% ou menos
+onde: NetRipper → Faxina, e não toque em mais nada
+feito: abaixo:60
 ---
 NAO E BRINCADEIRA AGORA.
 

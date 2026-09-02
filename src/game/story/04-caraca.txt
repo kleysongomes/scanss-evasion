@@ -1,7 +1,9 @@
 id: 04-caraca
 assunto: CARACA FUNCIONOU
 quando: marco:transfer
-objetivo: Vender ou apagar o que ja usou, antes que pese
+objetivo: Vender ou apagar o que já usou, antes que pese
+onde: Meu Computador → C: → Vender ou Excluir
+feito: evidencia:0
 ---
 Eu vi o extrato. Voce e oficialmente um criminoso.
 

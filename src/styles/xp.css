@@ -306,6 +306,38 @@ html, body, #root {
 .mail-alert .acoes { display: flex; gap: 5px; }
 .mail-alert .acoes .xp { flex: 1; min-width: 0; }
 
+/* --------------------------------------------------------------------------
+   Aviso de missao concluida
+
+   Mesmo balao da bandeja, mas verde e sem o aviso de pausa: este nao para o
+   jogo, some sozinho e nao exige nada de ninguem.
+   -------------------------------------------------------------------------- */
+.mission-alert {
+  position: absolute; right: 14px; bottom: 38px;
+  width: 262px; z-index: 9700;
+  padding: 10px 12px;
+  background: #f2fbef;
+  border: 1px solid #000;
+  box-shadow: 3px 3px 10px rgba(0,0,0,.45);
+  animation: balao-entra .18s ease-out;
+}
+.mission-alert .cabeca {
+  display: flex; align-items: center; gap: 6px; margin-bottom: 7px;
+  color: #1d6b21;
+}
+.mission-alert .item {
+  padding: 3px 0 3px 12px;
+  color: #10254a; font-weight: bold;
+  text-indent: -12px;
+}
+.mission-alert .item::before { content: "› "; color: #7a9a7a; font-weight: normal; }
+.mission-alert .premio {
+  margin: 8px 0; padding: 4px 7px;
+  background: #e4f3df; border: 1px solid #8db884;
+  color: #2b5c2b;
+}
+.mission-alert .acoes { display: flex; justify-content: flex-end; }
+
 /* corpo do e-mail no webmail: texto puro, respeitando as quebras do arquivo */
 .vmail-corpo {
   white-space: pre-wrap;

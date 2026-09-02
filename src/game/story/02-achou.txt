@@ -1,7 +1,9 @@
 id: 02-achou
 assunto: viu so
 quando: marco:scan
-objetivo: Invadir uma maquina e montar o disco dela
+objetivo: Invadir uma máquina e montar o disco dela
+onde: NetRipper → Intrusão → Analisar, Invadir, Conectar
+feito: marco:connect
 ---
 Falei ou nao falei.
 

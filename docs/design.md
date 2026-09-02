@@ -446,12 +446,29 @@ coincidência: ela usava as três coisas que **formam** aquele som.
 Um micro de 2003 fazia o oposto: seno e triângulo, notas **tocadas juntas** em
 vez de uma correndo atrás da outra, e tudo com um resto de eco, porque saía de
 uma caixinha em cima de uma mesa. Por isso o motor tem uma "sala" — um atraso
-curto realimentado e filtrado no agudo, quarto pequeno e não catedral. Onde
-precisa de aspereza, o material é ruído filtrado e serra grave, que é som de
-máquina e não de melodia.
+curto realimentado e filtrado no agudo, quarto pequeno e não catedral.
 
-A onda quadrada sobreviveu em dois lugares, e nos dois é a certa: no erro (bipe
-de terminal recusando) e na tecla (estalo do teclado).
+Hoje não há uma onda quadrada nem uma serra no catálogo inteiro. O que dá peso
+onde precisa é **ruído filtrado** — o baque do ferrolho, o *kachunk* da compra,
+o estalo da tecla —, que é som de máquina e não de melodia.
+
+### Bom e ruim são o mesmo material
+
+A primeira família de sons negativos era toda serra desafinada, e serra
+desafinada zumbe. Zumbido cansa depois da terceira vez, e num jogo em que o
+rastro sobe o tempo todo o aviso toca muito mais de três vezes.
+
+Agora os sons ruins usam o mesmo material dos bons — seno e triângulo limpos,
+com cauda. O que separa os dois é o **desenho**, não o timbre:
+
+| | |
+|---|---|
+| **positivo** | nota parada, ou intervalo tocado junto, com brilho em cima |
+| **negativo** | nota descendo, no grave, sem nada acompanhando |
+
+É a mesma voz dizendo outra coisa, em vez de outra voz gritando. E como os
+quatro sons ruins compartilham o gesto, o jogador reconhece a família antes de
+entender qual é o aviso.
 
 A regra de desenho: som de jogo é pontuação, não trilha. Nada passa de meio
 segundo, exceto a sirene — o único aviso que precisa assustar, e mesmo ela
@@ -465,11 +482,21 @@ apertou antes de olhar o número.
 
 Quem dispara os sons é a interface, nunca as regras — `game/` não sabe que
 existe tela, e não pode passar a saber que existe alto-falante. Um componente
-(`os/Som.tsx`) assina o estado e compara o antes com o depois: roubo é o total
-roubado que subiu, prisão é o `busted` que virou verdadeiro. A vantagem é que
-fonte nova de dinheiro já nasce com som; a desvantagem é que o som não
-distingue duas causas do mesmo efeito, e por isso a ordem dos testes importa —
-roubo antes de venda, porque transferir mexe nos dois números.
+(`os/Som.tsx`) assina o estado, e uma **função pura** (`audio/reacoes.ts`)
+decide o que tocar comparando o antes com o depois: roubo é o total roubado que
+subiu, prisão é o `busted` que virou verdadeiro.
+
+A separação não é cerimônia. Enquanto a decisão morava dentro do componente,
+comprar no darkmarket tocava dois sons ao mesmo tempo — a compra **e** o
+dinheiro saindo —, porque comprar mexe nas duas coisas de uma vez, e um erro
+desses só aparecia com fone no ouvido. Como função pura, virou um teste de três
+linhas.
+
+A regra que resolve essa família inteira de bug: **dinheiro é consequência**.
+Quando outra coisa já explicou por que o saldo mexeu — uma compra, um prêmio de
+missão —, o som daquela coisa toca e o do dinheiro cala. A exceção é o roubo,
+que não é consequência de nada: é a ação em si, e o som que o jogador quer
+ouvir.
 
 Os volumes moram em `iniciar › Sons e dispositivos de áudio`, um applet no
 formato do Painel de Controle da época, com a lista de eventos e botão de tocar

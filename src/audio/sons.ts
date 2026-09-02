@@ -22,11 +22,13 @@
  * O que um micro de 2003 fazia era o oposto: seno e triângulo em vez de
  * quadrada, notas TOCADAS JUNTAS em vez de uma correndo atrás da outra, e tudo
  * com um resto de eco - porque saía de uma caixinha em cima de uma mesa, num
- * quarto. Onde precisa de aspereza, o material é ruído filtrado e serra grave,
- * que é som de máquina, não de melodia.
+ * quarto.
  *
- * A onda quadrada sobreviveu em dois lugares só, e nos dois ela é o certo: no
- * erro (bipe de terminal recusando) e na tecla (estalo do teclado).
+ * Hoje não sobrou nenhuma onda quadrada nem nenhuma serra no catálogo. O que dá
+ * peso e aspereza onde precisa é RUÍDO filtrado - o baque do ferrolho, o
+ * "kachunk" da compra, o estalo da tecla -, que é som de máquina, e não de
+ * melodia. Timbre sujo nunca foi necessário: quem diz se a notícia é boa ou
+ * ruim é o desenho da nota, não a aspereza dela.
  * ---------------------------------------------------------------------------
  */
 
@@ -63,34 +65,56 @@ export function moedinha(): void {
         sala: 0.4 })
 }
 
+/*
+ * ---------------------------------------------------------------------------
+ * A FAMÍLIA NEGATIVA
+ *
+ * Os quatro sons ruins eram todos serra desafinada, e serra desafinada zumbe.
+ * Zumbido cansa depois da terceira vez, e um jogo em que o rastro sobe o tempo
+ * todo toca o aviso muito mais de três vezes.
+ *
+ * O material passou a ser o MESMO dos sons bons - seno e triângulo limpos, com
+ * a cauda da sala. O que faz um soar ruim não é o timbre sujo: é o desenho.
+ *
+ *   positivo -> nota parada, ou intervalo tocado junto, com brilho em cima
+ *   negativo -> nota DESCENDO, no grave, e sem nada acompanhando
+ *
+ * É a mesma voz dizendo outra coisa, e não outra voz gritando.
+ * ---------------------------------------------------------------------------
+ */
+
 /**
  * Dinheiro saindo: golpe, ataque que passou.
  *
- * Serra grave escorregando para baixo, com um par desafinado por cima. Desafino
- * é o que dá o mal-estar; afinado soaria só triste.
+ * Duas notas limpas caindo, e um corpo grave por baixo. A queda é o que
+ * comunica; não precisa de aspereza nenhuma.
  */
 export function dinheiroSaindo(): void {
-  ruido({ dur: 0.1, ganho: 0.07, corte: 500 })
-  tom({ hz: 233, ate: 96, tipo: 'sawtooth', dur: 0.5, ganho: 0.11, sala: 0.25 })
-  tom({ hz: 228, ate: 93, tipo: 'sawtooth', dur: 0.5, ganho: 0.07 })
+  tom({ hz: 622, tipo: 'sine', dur: 0.26, ganho: 0.11, ataque: 0.008,
+        sala: 0.4 })
+  tom({ hz: 415, tipo: 'sine', dur: 0.8, ganho: 0.11, ataque: 0.01,
+        quando: 0.16, sala: 0.5 })
+  tom({ hz: 208, tipo: 'triangle', dur: 0.6, ganho: 0.05, ataque: 0.02,
+        quando: 0.16, sala: 0.3 })
 }
 
 /**
- * A sirene: eles estão perto.
+ * O alerta: eles estão perto.
  *
- * Duas serras desafinadas varrendo para cima e para baixo, no grave. Não é a
- * sirene de desenho animado - é o alarme de porta que alguém abriu.
+ * Três pares de bipes limpos caindo de quarta, um atrás do outro. Repetição é o
+ * que cria urgência - não aspereza. E o desenho é o mesmo dos outros sons
+ * ruins, então o jogador reconhece a família antes de entender o aviso.
  *
  * Meio segundo, e acabou: aviso de perigo que se arrasta vira irritação, e aí
  * o jogador desliga o som e deixa de ouvir justamente o que precisava.
  */
 export function sirene(): void {
   for (let i = 0; i < 3; i++) {
-    const q = i * 0.19
-    tom({ hz: 320, ate: 620, tipo: 'sawtooth', dur: 0.1, ganho: 0.1, quando: q })
-    tom({ hz: 620, ate: 320, tipo: 'sawtooth', dur: 0.1, ganho: 0.1,
-          quando: q + 0.09, sala: 0.3 })
-    tom({ hz: 316, ate: 612, tipo: 'sawtooth', dur: 0.1, ganho: 0.05, quando: q })
+    const q = i * 0.21
+    tom({ hz: 784, tipo: 'triangle', dur: 0.1, ganho: 0.1, ataque: 0.006,
+          quando: q, sala: 0.3 })
+    tom({ hz: 587, tipo: 'triangle', dur: 0.13, ganho: 0.1, ataque: 0.006,
+          quando: q + 0.1, sala: 0.35 })
   }
 }
 
@@ -113,11 +137,17 @@ export function acesso(): void {
   tom({ hz: 1320, tipo: 'sine', dur: 0.4, ganho: 0.05, quando: 0.1, sala: 0.5 })
 }
 
-/** Negado: senha errada, nível insuficiente, saldo que não dá. */
+/**
+ * Negado: senha errada, nível insuficiente, saldo que não dá.
+ *
+ * Dois toques iguais, curtos e graves - o "não" seco de um terminal. Iguais de
+ * propósito: recusa não é notícia, é porta fechando.
+ */
 export function negado(): void {
-  // Aqui a onda quadrada é a certa: é bipe de terminal recusando.
-  tom({ hz: 196, tipo: 'square', dur: 0.11, ganho: 0.1 })
-  tom({ hz: 185, tipo: 'square', dur: 0.2, ganho: 0.1, quando: 0.1 })
+  tom({ hz: 311, tipo: 'triangle', dur: 0.08, ganho: 0.11, ataque: 0.004,
+        sala: 0.25 })
+  tom({ hz: 311, tipo: 'triangle', dur: 0.16, ganho: 0.11, ataque: 0.004,
+        quando: 0.12, sala: 0.3 })
 }
 
 /**
@@ -172,9 +202,19 @@ export function ligar(): void {
   }))
 }
 
-/** Fim de jogo. Desce até o chão e chia. */
+/**
+ * Fim de jogo.
+ *
+ * A mesma queda dos outros sons ruins, esticada: três degraus limpos descendo,
+ * e o último segurando lá embaixo. Solene, e não estridente - a partida acabou,
+ * não há mais nada para avisar.
+ */
 export function travou(): void {
-  tom({ hz: 262, ate: 33, tipo: 'sawtooth', dur: 1.3, ganho: 0.15, sala: 0.3 })
-  tom({ hz: 259, ate: 31, tipo: 'sawtooth', dur: 1.3, ganho: 0.09 })
-  ruido({ dur: 0.8, ganho: 0.07, corte: 600, quando: 0.25 })
+  tom({ hz: 523, tipo: 'sine', dur: 0.45, ganho: 0.1, ataque: 0.01, sala: 0.5 })
+  tom({ hz: 415, tipo: 'sine', dur: 0.45, ganho: 0.1, ataque: 0.01,
+        quando: 0.3, sala: 0.5 })
+  tom({ hz: 311, tipo: 'sine', dur: 1.6, ganho: 0.1, ataque: 0.015,
+        quando: 0.6, sala: 0.6 })
+  tom({ hz: 156, tipo: 'triangle', dur: 1.8, ganho: 0.06, ataque: 0.05,
+        quando: 0.6, sala: 0.4 })
 }

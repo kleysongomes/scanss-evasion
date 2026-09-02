@@ -1,25 +1,24 @@
 /**
  * A landing: a vitrine do jogo, na url principal.
  *
+ * Duas regras que valem para tudo aqui.
+ *
  * O print nao e ilustracao ao lado do texto - ele e o CENARIO. Cada secao ocupa
  * a largura toda com uma tela do jogo ao fundo, escurecida, e o texto por cima.
  * A primeira versao era um site de empresa: bloco de texto, imagem ao lado,
  * repetir. Site de jogo funciona pelo avesso - a imagem manda e o texto se
  * encaixa nela.
  *
+ * E o texto NAO INVENTARIA. A versao anterior tinha duas colunas, "o que ja
+ * esta no jogo" e "ainda nao existe", com o roteiro dos proximos capitulos
+ * listado de graca para quem nem tinha comecado a jogar. Vitrine de jogo nao e
+ * catalogo: o que vem por ai entra como promessa curta e vaga.
+ *
  * O botao "Jogar" resolve de quebra um problema tecnico: ele e um gesto, entao
  * a aba do jogo ja abre com permissao para tela cheia.
- *
- * Os numeros da secao de beta (quantas missoes, quantos niveis) sao IMPORTADOS
- * das regras do jogo em vez de escritos aqui. Custa alguns kB no pacote da
- * landing e evita a bobagem classica de a vitrine prometer 14 missoes depois de
- * alguem ter adicionado a 15a.
  */
 
 import { useEffect, useState } from 'react'
-import { DESAFIOS, GUIAS } from '@/game/missions'
-import { SKILLS } from '@/game/skills'
-import { ROTEIRO } from '@/game/story'
 import { BUILD, ETIQUETA } from '@/version'
 import { baixarAtalho, comoUsar, detectarSistema } from './atalho'
 
@@ -35,75 +34,71 @@ interface Cena {
   texto: string
   /** De que lado fica o texto. */
   lado: 'esq' | 'dir'
-  /** Onde ancorar o fundo, para a parte interessante do print não sair. */
-  foco?: string
 }
 
 const CENAS: Cena[] = [
   {
     arquivo: '04-netripper', etiqueta: 'a ferramenta', lado: 'esq',
-    titulo: 'Sete programas.\nDez níveis cada.',
-    texto: 'Varra a rede, escolha um alvo, arrombe a porta. Cada programa que ' +
-           'você compra vira um módulo com painel próprio — e o nível seguinte ' +
-           'só abre depois do anterior.',
+    titulo: 'Tudo que você precisa\ncabe numa janela.',
+    texto: 'Varre a rede, escolhe quem deixou a porta aberta e entra. Sem ' +
+           'digitar comando nenhum: é clicar, ver a barrinha andar e torcer ' +
+           'para não ter ninguém do outro lado olhando.',
   },
   {
     arquivo: '05-explorer', etiqueta: 'o alvo', lado: 'dir',
     titulo: 'O computador\nde outra pessoa.',
-    texto: 'Pastas de verdade, cheias de foto de churrasco, MP3 gravado de CD ' +
-           'emprestado e trabalho de faculdade em três versões. A senha do ' +
-           'banco está enterrada em algum lugar aí.',
+    texto: 'Foto de churrasco, MP3 gravado de CD emprestado, trabalho de ' +
+           'faculdade em três versões. E, enterrada em algum lugar aí, a ' +
+           'senha do banco.',
   },
   {
     arquivo: '06-banco', etiqueta: 'o roubo', lado: 'esq',
     titulo: 'Invadir não\nte dá dinheiro.',
-    texto: 'O que você acha lá dentro é a senha do banco da vítima. Para virar ' +
-           'dinheiro, você abre o navegador, entra no site do banco fingindo ' +
-           'ser ela e faz a transferência com as suas próprias mãos.',
+    texto: 'Lá dentro você acha a senha. O dinheiro sai como sairia de ' +
+           'verdade: abrindo o site do banco, fingindo ser ela e apertando ' +
+           'confirmar com as suas próprias mãos.',
   },
   {
     arquivo: '08-vmail', etiqueta: 'a história', lado: 'dir',
     titulo: 'Alguém não para\nde te escrever.',
-    texto: 'Ele se chama 3stagiario. Ninguém sabe quem é, nem como sabe tanto ' +
-           'sobre o seu computador. Diz que instalou umas coisas nele semana ' +
-           'passada, quando você foi buscar café, e nunca explica isso.',
+    texto: 'Ele assina 3stagiario. Sabe coisa demais sobre o seu micro para ' +
+           'alguém que você nunca viu, e muda de assunto toda vez que você ' +
+           'pergunta como.',
   },
 ]
 
-const PILARES = [
+const REGRAS = [
   { titulo: 'O rastro sobe rápido e desce devagar',
-    texto: 'Cada ação deixa registro. Quanto mais quente você está, mais ' +
-           'devagar esfria — sair do vermelho só esperando leva horas.' },
+    texto: 'Cada coisa que você faz deixa registro. Quanto mais quente você ' +
+           'está, mais devagar esfria.' },
   { titulo: 'O que você guarda te queima',
-    texto: 'Arquivo roubado parado no seu disco continua gerando rastro ' +
-           'enquanto estiver lá. Apagar é jogada, não faxina.' },
-  { titulo: 'Alvos sorteados, sem garantia',
-    texto: 'Cada varredura traz máquinas novas. Uma em cada sete não tem nada ' +
-           'dentro — e é isso que faz a boa achada valer alguma coisa.' },
+    texto: 'Arquivo roubado parado no seu disco continua contando contra ' +
+           'você enquanto estiver lá.' },
+  { titulo: 'Nunca é a mesma partida',
+    texto: 'Alvos, contas e o que tem dentro deles são sorteados. Às vezes ' +
+           'não tem nada — e é isso que faz a boa achada valer alguma coisa.' },
   { titulo: 'Eles também invadem você',
-    texto: 'Depois de umas quantas contas zeradas, alguém nota. Você passou o ' +
-           'jogo entrando na casa dos outros sem pensar que a sua tem porta.' },
+    texto: 'Uma hora alguém nota. E aí você descobre que passou o jogo ' +
+           'inteiro sem pensar que a sua casa também tem porta.' },
 ]
 
-/** O que existe hoje e o que ainda nao existe - a beta declarada. */
-const AGORA = [
-  `${ROTEIRO.length} e-mails do 3stagiario, contando a história enquanto você joga`,
-  `${GUIAS.length} missões de história e ${DESAFIOS.length} desafios, todos no quadro do webmail`,
-  `${SKILLS.length} níveis de programa, entre sete ferramentas de ataque e defesa`,
-  'Alvos, contas e loot sorteados: nenhuma partida repete a anterior',
-  'O fim de jogo — tela azul, micro apreendido, sem checkpoint',
-]
-
-const DEPOIS = [
-  'O convite do Coletivo, e o preço de aceitar',
-  'Contratos com prazo: alguém pagando para você invadir alguém',
-  'Quebra-cabeças de criptografia em vez de só nível de programa',
-  'Quem é o 3stagiario de verdade',
+/**
+ * O que vem por ai: frase curta, sem explicar.
+ *
+ * A tentacao e detalhar - "o convite do Coletivo", "contratos com prazo",
+ * "quem e o 3stagiario de verdade". Isso e o roteiro dos proximos capitulos
+ * entregue de graca. Promessa boa da vontade sem contar o final.
+ */
+const PROMESSAS = [
+  'Um convite que é melhor recusar',
+  'Trabalho por encomenda, com hora marcada',
+  'Gente com nome e cara atrás de você',
+  'O motivo de ele saber tanto sobre o seu micro',
 ]
 
 const GALERIA = [
-  '02-menu', '03-desktop', '08b-missoes', '07-darkmarket', '10-defesa',
-  '09-manual',
+  '08b-missoes', '07-darkmarket', '10-defesa', '09-manual', '02-menu',
+  '03-desktop',
 ]
 
 export function Landing() {
@@ -181,8 +176,7 @@ export function Landing() {
         <section
           key={c.arquivo}
           className={`lp-cena ${c.lado}`}
-          style={{ backgroundImage: `url(${print(c.arquivo)})`,
-                   backgroundPosition: c.foco ?? 'center' }}
+          style={{ backgroundImage: `url(${print(c.arquivo)})` }}
         >
           <div className="lp-cena-veu" />
           <div className="lp-largura lp-cena-corpo">
@@ -199,15 +193,16 @@ export function Landing() {
         </section>
       ))}
 
-      {/* =================================================== pilares ====== */}
-      <section className="lp-pilares">
+      {/* =================================================== regras ======= */}
+      <section className="lp-regras">
         <div className="lp-largura">
-          <p className="lp-etiqueta">como o jogo aperta</p>
+          <p className="lp-etiqueta">as regras da casa</p>
           <div className="lp-grade">
-            {PILARES.map((p) => (
-              <div key={p.titulo}>
-                <h3>{p.titulo}</h3>
-                <p>{p.texto}</p>
+            {REGRAS.map((r, i) => (
+              <div key={r.titulo}>
+                <span className="lp-num">{String(i + 1).padStart(2, '0')}</span>
+                <h3>{r.titulo}</h3>
+                <p>{r.texto}</p>
               </div>
             ))}
           </div>
@@ -245,37 +240,28 @@ export function Landing() {
         </div>
       </section>
 
-      {/* ====================================================== beta ====== */}
-      <section className="lp-beta">
-        <div className="lp-largura">
-          <p className="lp-etiqueta">em que pé está</p>
-          <h2>É uma beta, e a gente<br />conta o que falta.</h2>
-
-          <div className="lp-beta-colunas">
-            <div>
-              <h3>O que já está no jogo</h3>
-              <ul>
-                {AGORA.map((linha) => <li key={linha}>{linha}</li>)}
-              </ul>
-            </div>
-            <div className="depois">
-              <h3>Ainda não existe</h3>
-              <ul>
-                {DEPOIS.map((linha) => <li key={linha}>{linha}</li>)}
-              </ul>
-              <p className="lp-beta-aviso">
-                Quem fechar todas as missões e todos os níveis recebe um último
-                e-mail avisando que chegou ao fim da beta.
-              </p>
-            </div>
+      {/* ============================================ em desenvolvimento == */}
+      <section className="lp-futuro"
+               style={{ backgroundImage: `url(${print('01-abertura')})` }}>
+        <div className="lp-futuro-veu" />
+        <div className="lp-largura lp-futuro-corpo">
+          <div>
+            <p className="lp-etiqueta">em desenvolvimento</p>
+            <h2>Ainda estão<br />escrevendo o resto.</h2>
+            <p className="lp-linha">
+              O que está no ar já se joga do começo ao fim. Mas a história chega
+              por e-mail, um capítulo por vez — e o 3stagiario ainda tem coisa
+              para contar.
+            </p>
+            <p className="lp-futuro-data">
+              última build · {BUILD} · sem data para a próxima
+            </p>
           </div>
 
-          <p className="lp-beta-save">
-            O jogo salva no seu próprio navegador, sem cadastro e sem servidor.
-            Como ainda é beta, uma atualização grande nas regras pode aposentar
-            partidas antigas — quando isso acontece, o jogo começa uma nova em
-            vez de carregar um save que não faz mais sentido.
-          </p>
+          <ul className="lp-promessas">
+            {PROMESSAS.map((p) => <li key={p}>{p}</li>)}
+            <li className="reticencias">e o resto você descobre sozinho</li>
+          </ul>
         </div>
       </section>
 
@@ -299,7 +285,9 @@ export function Landing() {
           </p>
           <p className="lp-ficcao">
             Jogo de ficção. Bancos, empresas, sites e pessoas são inventados —
-            nenhuma rede real é acessada.
+            nenhuma rede real é acessada. A partida fica salva no seu próprio
+            navegador; como ainda é beta, uma mudança grande nas regras pode
+            aposentar partidas antigas.
           </p>
         </div>
       </footer>

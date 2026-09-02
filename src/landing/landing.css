@@ -174,6 +174,16 @@ body {
   filter: blur(10px) saturate(1.05) brightness(.85);
   transform: scale(1.08);
 }
+/* Linha de varredura de monitor velho. Bem de leve: o suficiente para o fundo
+   parecer tela ligada, e não papel de parede esticado. */
+.lp-cena::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    0deg, rgba(0,0,0,.30) 0 1px, transparent 1px 3px);
+  opacity: .35;
+  pointer-events: none;
+}
 /* Escurece forte do lado do texto e deixa o cenário respirar do outro. */
 .lp-cena-veu {
   position: absolute; inset: 0;
@@ -188,11 +198,11 @@ body {
 /* O print manda: fica com quase dois terços da largura. */
 .lp-cena-corpo {
   display: grid;
-  grid-template-columns: minmax(260px, 30%) 1fr;
+  grid-template-columns: minmax(280px, 34%) 1fr;
   gap: 48px;
   align-items: center;
 }
-.lp-cena.dir .lp-cena-corpo { grid-template-columns: 1fr minmax(260px, 30%); }
+.lp-cena.dir .lp-cena-corpo { grid-template-columns: 1fr minmax(280px, 34%); }
 .lp-cena.dir .lp-cena-texto { order: 2; }
 
 .lp-cena h2 {
@@ -203,7 +213,7 @@ body {
   white-space: pre-line;
   text-shadow: 0 4px 24px rgba(0,0,0,.7);
 }
-.lp-cena-texto p:last-child { margin: 0; color: #b9c4d6; }
+.lp-cena-texto p:last-child { margin: 0; color: #b9c4d6; font-size: 16px; }
 
 .lp-cena-quadro {
   margin: 0;
@@ -217,8 +227,8 @@ body {
   aspect-ratio: 16 / 10;
 }
 
-/* --------------------------------------------------------------- pilares -- */
-.lp-pilares {
+/* ---------------------------------------------------------------- regras -- */
+.lp-regras {
   padding: 96px 0;
   background: var(--lp-fundo-2);
   border-top: 1px solid var(--lp-borda);
@@ -231,6 +241,12 @@ body {
   border: 1px solid var(--lp-borda);
 }
 .lp-grade > div { padding: 26px; background: var(--lp-fundo-2); }
+.lp-num {
+  display: block; margin-bottom: 14px;
+  font-family: "Lucida Console", Consolas, monospace;
+  font-size: 26px; line-height: 1;
+  color: var(--lp-borda);
+}
 .lp-grade h3 { margin: 0 0 10px; font-size: 17px; line-height: 1.3; }
 .lp-grade p { margin: 0; color: var(--lp-fraco); font-size: 15px; }
 
@@ -273,50 +289,69 @@ body {
 }
 .lp-tira img {
   flex: 0 0 auto;
-  height: clamp(180px, 26vw, 320px);
+  height: clamp(200px, 30vw, 380px);
   width: auto;
   aspect-ratio: 16 / 10;
   border: 1px solid var(--lp-borda);
   scroll-snap-align: center;
 }
 
-/* ------------------------------------------------------------------ beta -- */
-.lp-beta {
-  padding: 96px 0;
-  background: var(--lp-fundo-2);
+/* ------------------------------------------------------------ o que vem -- */
+/* Sobre a tela preta da abertura: e a imagem mais misteriosa que o jogo tem, e
+   e disso que esta secao trata - do que ainda nao da para ver. */
+.lp-futuro {
+  position: relative;
+  padding: 110px 0;
+  background-size: cover; background-position: center;
   border-top: 1px solid var(--lp-borda);
+  overflow: hidden;
 }
-.lp-beta h2 {
-  margin: 0 0 34px;
-  font-size: clamp(26px, 3.6vw, 42px);
-  line-height: 1.06; letter-spacing: -1.4px;
+.lp-futuro::before {
+  content: "";
+  position: absolute; inset: -30px;
+  background: inherit;
+  background-size: cover;
+  filter: blur(16px) brightness(.55);
+  transform: scale(1.06);
 }
-.lp-beta-colunas {
+.lp-futuro-veu {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(7,10,14,.82), rgba(7,10,14,.95));
+}
+.lp-futuro-corpo {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1px;
-  background: var(--lp-borda);
-  border: 1px solid var(--lp-borda);
+  grid-template-columns: 1fr minmax(280px, 42%);
+  gap: 56px; align-items: center;
 }
-.lp-beta-colunas > div { padding: 26px; background: var(--lp-fundo-2); }
-.lp-beta-colunas h3 {
-  margin: 0 0 14px; font-size: 15px;
-  letter-spacing: 1px; text-transform: uppercase;
-  color: #7fe08a;
+.lp-futuro h2 {
+  margin: 0 0 18px;
+  font-size: clamp(28px, 3.8vw, 44px);
+  line-height: 1.06; letter-spacing: -1.5px;
 }
-.lp-beta-colunas .depois h3 { color: #e0a37f; }
-.lp-beta-colunas ul { margin: 0; padding-left: 18px; }
-.lp-beta-colunas li { margin-bottom: 8px; color: #b9c4d6; font-size: 15px; }
-.lp-beta-aviso {
-  margin: 18px 0 0; padding-top: 14px;
+.lp-futuro-data {
+  margin: 22px 0 0;
+  font-family: "Lucida Console", Consolas, monospace;
+  font-size: 12px; letter-spacing: 1px;
+  color: #5f6b7e;
+}
+
+/* A lista de promessas: sem marcador de lista, sem numero, sem prazo. Cada
+   linha e uma porta fechada. */
+.lp-promessas { margin: 0; padding: 0; list-style: none; }
+.lp-promessas li {
+  padding: 13px 0 13px 26px;
   border-top: 1px solid var(--lp-borda);
-  color: var(--lp-fraco); font-size: 14px;
+  color: #cdd6e4; font-size: 16px;
+  position: relative;
 }
-.lp-beta-save {
-  margin: 26px 0 0;
-  max-width: 74ch;
-  color: #6f7b8e; font-size: 14px;
+.lp-promessas li:last-child { border-bottom: 1px solid var(--lp-borda); }
+.lp-promessas li::before {
+  content: "›";
+  position: absolute; left: 4px;
+  color: var(--lp-amarelo);
 }
+.lp-promessas .reticencias { color: #6f7b8e; font-style: italic; }
+.lp-promessas .reticencias::before { content: "…"; color: #4a5566; }
 
 /* ----------------------------------------------------------------- fecho -- */
 .lp-fecho {
@@ -352,7 +387,8 @@ body {
   .lp-build { padding-left: 10px; }
   .lp-build span { display: none; }
 
-  .lp-beta { padding: 64px 0; }
+  .lp-futuro { padding: 64px 0; }
+  .lp-futuro-corpo { grid-template-columns: 1fr; gap: 30px; }
   .lp-cena { padding: 70px 0; }
   .lp-cena-corpo,
   .lp-cena.dir .lp-cena-corpo { grid-template-columns: 1fr; gap: 28px; }

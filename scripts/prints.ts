@@ -77,6 +77,29 @@ async function limparAvisos(page: Page) {
   }
 }
 
+/**
+ * Fotografa uma janela ocupando a tela inteira, e devolve ela ao tamanho de
+ * antes.
+ *
+ * Print de janelinha no meio do papel de parede é 70% de nada: na landing, onde
+ * a imagem é o cenário da seção, o que aparece precisa ser INTERFACE.
+ * Restaurar no fim importa porque o próximo app é aberto pelo ícone da área de
+ * trabalho, que uma janela cheia esconderia.
+ */
+async function fotoCheia(page: Page, titulo: string, nome: string) {
+  // Pela BARRA DE TITULO, e nao pelo texto da janela inteira: procurar
+  // "Meu Computador" em qualquer lugar achava o NetRipper, que escreve
+  // "os arquivos estao no Meu Computador (Z:)" no proprio painel.
+  const janela = page.locator('.window').filter({
+    has: page.locator('.title-bar .text', { hasText: titulo }),
+  }).first()
+  await janela.locator('.title-btn.max').click()
+  await respira(450)
+  await foto(page, nome)
+  await janela.locator('.title-btn.restore').click()
+  await respira(350)
+}
+
 /** Abre um programa pelo ícone da área de trabalho. */
 async function abrirApp(page: Page, nome: string) {
   await page.getByRole('button', { name: new RegExp(nome, 'i') }).first().dblclick()
@@ -112,7 +135,7 @@ async function main() {
   await page.getByRole('button', { name: 'Varrer rede' }).click()
   await respira(2000)
   await limparAvisos(page)
-  await foto(page, '04-netripper')
+  await fotoCheia(page, 'NetRipper', '04-netripper')
 
   // --- o disco da vítima ---------------------------------------------------
   // Selecionar o host é no Rastreador; agir sobre ele é no módulo Intrusão.
@@ -139,6 +162,11 @@ async function main() {
 
   // Fica na raiz: a árvore de pastas é o que a legenda promete, e uma pasta
   // sorteada pode sair com um arquivo só.
+  //
+  // Este é o único print em janela, e não em tela cheia: a raiz de uma vítima
+  // tem cinco pastas, e esticadas numa tela de 1280 elas viram cinco linhas
+  // perdidas num campo branco. Em janela a densidade fecha - e a variação faz
+  // bem à página, que fica com telas cheias e telas de perto.
   await foto(page, '05-explorer')
 
   // --- o banco -------------------------------------------------------------
@@ -148,19 +176,19 @@ async function main() {
   await barra.press('Enter')
   await respira(700)
   await limparAvisos(page)
-  await foto(page, '06-banco')
+  await fotoCheia(page, 'Chroma', '06-banco')
 
   // --- a loja --------------------------------------------------------------
   await barra.fill('darkmarket.vc')
   await barra.press('Enter')
   await respira(700)
-  await foto(page, '07-darkmarket')
+  await fotoCheia(page, 'Chroma', '07-darkmarket')
 
   // --- o correio -----------------------------------------------------------
   await barra.fill('vmail.vc')
   await barra.press('Enter')
   await respira(700)
-  await foto(page, '08-vmail')
+  await fotoCheia(page, 'Chroma', '08-vmail')
 
   // --- o quadro de missoes -------------------------------------------------
   // Fica na aba ao lado da caixa de entrada. O nome do arquivo tem "b" para
@@ -168,25 +196,18 @@ async function main() {
   await page.locator('a', { hasText: /^Missões/ }).first().click()
   await respira(400)
 
-  // Maximiza so para este print: o quadro tem duas tabelas, e na janela
-  // pequena a segunda fica cortada pela borda.
-  const chroma = page.locator('.window', { hasText: 'Chroma' }).first()
-  await chroma.locator('.title-btn.max').click()
-  await respira(500)
-  await foto(page, '08b-missoes')
-  await chroma.locator('.title-btn.restore').click()
-  await respira(400)
+  await fotoCheia(page, 'Chroma', '08b-missoes')
 
   // --- o manual ------------------------------------------------------------
   await abrirApp(page, 'Manual do Operador')
   await respira(600)
-  await foto(page, '09-manual')
+  await fotoCheia(page, 'Manual do Operador', '09-manual')
 
   // --- a defesa ------------------------------------------------------------
   await page.locator('.task-button', { hasText: 'NetRipper' }).click()
   await page.locator('.modulo-item', { hasText: 'Firewall' }).click()
   await respira(500)
-  await foto(page, '10-defesa')
+  await fotoCheia(page, 'NetRipper', '10-defesa')
 
   // --- a tela azul ---------------------------------------------------------
   // Pelo modo desenvolvedor: e a unica forma de ver o fim de jogo sem jogar

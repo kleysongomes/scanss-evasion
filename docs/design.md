@@ -384,6 +384,27 @@ Ordem sugerida para as próximas rodadas:
 6. **Alvos gerados proceduralmente** em vez da lista fixa de `content.ts`.
 7. **Empacotar com Tauri** para gerar o `.exe` (precisa instalar o Rust).
 
+## A vitrine
+
+A landing (`src/landing/`) segue duas regras.
+
+**O print é o cenário, não a ilustração.** Cada seção ocupa a largura toda com
+uma tela do jogo ao fundo, desfocada, e o texto por cima. A primeira versão era
+um site de empresa — bloco de texto, imagem ao lado, repetir; site de jogo
+funciona pelo avesso. E os prints das cenas são tirados com a **janela
+maximizada**: janelinha no meio do papel de parede é 70% de nada, e a página
+inteira acabava parecendo um único desktop esticado. A exceção é o Explorer, que
+em tela cheia vira cinco pastas perdidas num campo branco.
+
+**O texto não inventaria.** Havia duas colunas, "o que já está no jogo" e "ainda
+não existe", com o roteiro dos próximos capítulos listado de graça para quem nem
+tinha começado a jogar. Virou uma seção "em desenvolvimento" com promessas
+curtas e vagas — *"um convite que é melhor recusar"* —, que dão vontade sem
+contar o final. Vitrine de jogo não é catálogo.
+
+O que fica explícito é o **estado**: versão e data da build no cabeçalho, vindas
+do `package.json` e do último commit.
+
 ## Uma janela por programa
 
 O Chroma é **janela única**, como quase todo app do jogo. Ele tem abas, então

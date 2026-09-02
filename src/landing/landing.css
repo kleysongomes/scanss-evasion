@@ -82,12 +82,20 @@ h1, h2, h3 { font-family: var(--lp-display); font-weight: 400; }
   display: flex; align-items: center; gap: 16px;
   padding: 9px 0;
 }
+/* A marca e a MESMA chapa do titulo, em miniatura. Logo que muda de forma
+   conforme o lugar nao e logo, e decoracao. */
 .lp-marca {
+  padding: 4px 9px 5px;
+  background: var(--lp-amarelo);
+  color: #0a0c0e;
   font-family: var(--lp-display);
-  font-size: 15px; letter-spacing: -.3px;
+  font-size: 14px; letter-spacing: -.3px;
   text-transform: uppercase;
+  box-shadow: 3px 3px 0 rgba(0,0,0,.55);
 }
-.lp-marca em { font-style: normal; color: var(--lp-amarelo); }
+/* Com as duas palavras em preto elas colavam numa so; o respiro faz o papel
+   que a cor amarela fazia antes. */
+.lp-marca em { font-style: normal; margin-left: .3em; }
 
 .lp-build {
   margin-right: auto;
@@ -125,7 +133,14 @@ h1, h2, h3 { font-family: var(--lp-display); font-weight: 400; }
 .lp-botao.grande { padding: 17px 38px; font-size: 15px; }
 .lp-botao.pequeno {
   padding: 7px 16px; font-size: 11px;
-  box-shadow: 2px 2px 0 rgba(0,0,0,.5);
+  background: transparent;
+  border-color: var(--lp-borda-viva);
+  color: var(--lp-texto);
+  box-shadow: none;
+}
+.lp-botao.pequeno:hover {
+  border-color: var(--lp-amarelo); color: var(--lp-amarelo);
+  filter: none; background: transparent;
 }
 .lp-botao.vazado {
   background: transparent;
@@ -179,22 +194,34 @@ h1, h2, h3 { font-family: var(--lp-display); font-weight: 400; }
   font-size: 13px; color: var(--lp-verde);
 }
 
+/*
+ * A logo: chapa amarela com o nome vazado em preto.
+ *
+ * `inline-block` para a chapa abraçar o texto em vez de esticar pela coluna, e
+ * a sombra dura é a mesma dos botões — é o que amarra a marca ao resto da
+ * página em vez de deixá-la parecendo um adesivo colado por cima.
+ */
 .lp-capa h1 {
+  display: inline-block;
   margin: 0;
-  font-size: clamp(46px, 7.6vw, 92px);
-  line-height: .92;
+  padding: .12em .22em .17em;
+  background: var(--lp-amarelo);
+  color: #0a0c0e;
+  font-size: clamp(42px, 7vw, 86px);
+  line-height: .94;
   letter-spacing: -2px;
   text-transform: uppercase;
-  text-shadow: 0 6px 40px rgba(0,0,0,.8);
+  box-shadow: 9px 9px 0 rgba(0,0,0,.6);
 }
-.lp-capa h1 span { display: block; color: var(--lp-amarelo); }
+.lp-capa h1 span { display: block; }
 
-/* O cursor do prólogo, aqui também. */
+/* O cursor do prólogo, aqui também. Herda a cor do texto para funcionar tanto
+   sobre a chapa quanto sobre fundo escuro. */
 .lp-cursor {
   display: inline-block;
   width: .42em; height: .1em;
   margin-left: .08em;
-  background: var(--lp-amarelo);
+  background: currentColor;
   animation: lp-pisca 1.05s step-end infinite;
 }
 @keyframes lp-pisca { 50% { opacity: 0 } }

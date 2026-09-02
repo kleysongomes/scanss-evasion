@@ -62,11 +62,15 @@
  * No tamanho pequeno a chapa ganha altura fixa em vez de respiro proporcional:
  * é ela que dita a altura das etiquetas ao lado (a de versão, no cabeçalho da
  * vitrine), e casar caixinhas por padding em `em` nunca fecha no pixel.
+ *
+ * A altura vem de `line-height`, e não de `align-items: center`: centralizando
+ * por flex o traço ia parar no meio da caixa e virava hífen. Alinhado pela
+ * linha de base, ele volta a ser underscore, que é o desenho da marca.
  */
 .logo.pequeno { font-size: 14px; }
 .logo.pequeno .logo-b {
-  display: inline-flex; align-items: center;
-  height: 26px; padding: 0 8px;
+  height: 26px; line-height: 26px;
+  padding: 0 8px;
   box-shadow: 2px 2px 0 rgba(0, 0, 0, .55);
 }
-.logo.pequeno .logo-traco { width: 6px; height: 3px; margin-left: 4px; }
+.logo.pequeno .logo-traco { width: 7px; height: 3px; margin-left: 4px; }

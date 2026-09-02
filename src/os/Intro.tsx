@@ -100,13 +100,17 @@ export function Intro({ onDone }: { onDone: () => void }) {
       )}
 
       {noFim && (
-        <div className="intro-titulo">
-          <Logo tamanho="medio" />
-          <div className="chamada">
+        <>
+          <div className="intro-titulo">
+            <Logo tamanho="medio" />
+          </div>
+          {/* Fora da cartela, colada no rodapé: instrução de tecla encostada na
+              marca rouba a cena do título. */}
+          <div className="intro-chamada">
             pressione qualquer tecla
             <span className="cursor" />
           </div>
-        </div>
+        </>
       )}
 
       {!noFim && !naEntrada && (

@@ -424,6 +424,37 @@ contar o final. Vitrine de jogo não é catálogo.
 O que fica explícito é o **estado**: versão e data da build no cabeçalho, vindas
 do `package.json` e do último commit.
 
+## Instalar, e não baixar um `.exe`
+
+O jogo se instala como **aplicativo** (PWA): ícone de verdade no sistema, janela
+sem barra de navegação e funciona sem rede.
+
+Não existe executável, e a decisão é deliberada. Um `.exe` sem assinatura
+digital leva bronca do Windows na primeira execução; antivírus implica com um
+programa cheio de "exploit", "scanner" e "keylogger" nos textos; e cada jogador
+ficaria **congelado na versão que baixou**, o que é grave num jogo em beta cujo
+save é aposentado quando as regras mudam. Some a isso empacotar com Rust para
+ganhar, no fim, só a sensação de "jogo de verdade".
+
+O trabalhador de serviço usa `registerType: 'autoUpdate'`: a build nova é
+buscada em segundo plano e assume no carregamento seguinte. É justamente o que o
+`.exe` não daria.
+
+Três detalhes que valem lembrar:
+
+- `start_url` aponta para `jogo/`, e não para a raiz — quem instalou já decidiu
+  que quer jogar, não ler a vitrine.
+- O registro é feito à mão nas duas entradas (`main.tsx`), porque são duas
+  páginas e a injeção automática só cuida da principal.
+- As fontes vêm de fora, então têm cache próprio. Sem isso, o jogo offline cairia
+  na fonte reserva e **a logo mudaria de cara** justamente quando o jogador está
+  sem rede.
+
+Os ícones saem de `npm run icones`, que desenha a marca num navegador e
+fotografa em cada tamanho — mesma ideia dos prints. Quando a logo mudar, um
+comando refaz o conjunto inteiro, em vez de sobrar um PNG velho contando a
+versão antiga da história.
+
 ## Uma janela por programa
 
 O Chroma é **janela única**, como quase todo app do jogo. Ele tem abas, então

@@ -158,10 +158,14 @@ html, body, #root {
   animation: intro-surge .5s ease-out;
 }
 
-/* A cartela do título mostra a LOGO (`styles/logo.css`), não o nome escrito. */
+/* A cartela do título mostra a LOGO (`styles/logo.css`), não o nome escrito.
+   Ela fica sozinha no centro da tela: é o momento da marca. */
 .intro-titulo { text-align: center; animation: intro-surge .7s ease-out; }
-.intro-titulo .chamada {
-  margin-top: 22px;
+
+/* A instrução vai para o rodapé, longe da logo. */
+.intro-chamada {
+  position: absolute; left: 0; right: 0; bottom: 42px;
+  text-align: center;
   font-size: 12px; letter-spacing: 1px;
   color: #7a7a72;
   animation: intro-respira 2s ease-in-out infinite;

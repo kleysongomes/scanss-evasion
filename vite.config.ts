@@ -75,6 +75,22 @@ export default defineConfig({
         ],
       },
 
+      /*
+       * O trabalhador tambem roda em desenvolvimento.
+       *
+       * Sem isto, `npm run dev` nao serve manifesto nem registra nada, entao o
+       * navegador nunca oferece instalar - e a pessoa testando conclui, com
+       * razao, que a instalacao nao funciona. O trabalhador de desenvolvimento
+       * nao guarda arquivo em cache, entao o recarregamento quente continua
+       * igual.
+       */
+      devOptions: {
+        enabled: true,
+        type: 'module',
+        navigateFallback: 'index.html',
+        suppressWarnings: true,
+      },
+
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,svg,webmanifest}'],
         // Duas páginas: as duas precisam abrir offline pelo endereço.

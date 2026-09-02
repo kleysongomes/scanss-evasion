@@ -94,3 +94,36 @@ export function comoUsar(sistema: Sistema): string {
              'dê dois cliques.'
   }
 }
+
+/**
+ * Como instalar na mao, quando o navegador nao oferece o convite.
+ *
+ * O evento `beforeinstallprompt` e so do Chrome e derivados - Firefox e Safari
+ * nunca disparam, e mesmo no Chrome ele as vezes demora. Um botao que depende
+ * so dele fica calado justamente para quem quer instalar, entao o texto abaixo
+ * cobre o caminho manual de cada navegador.
+ */
+export function comoInstalar(): string {
+  const ua = navigator.userAgent
+  const toque = /iPhone|iPad|Android/i.test(ua)
+  const safari = /Safari/i.test(ua) && !/Chrome|Chromium|Edg/i.test(ua)
+  const firefox = /Firefox/i.test(ua)
+
+  if (/iPhone|iPad/i.test(ua)) {
+    return 'No iPhone e no iPad: toque em Compartilhar e depois em ' +
+           '"Adicionar à Tela de Início".'
+  }
+  if (toque) {
+    return 'No celular: abra o menu do navegador (⋮) e toque em ' +
+           '"Instalar aplicativo".'
+  }
+  if (safari) {
+    return 'No Safari: menu Arquivo › "Adicionar à Dock".'
+  }
+  if (firefox) {
+    return 'O Firefox não instala sites como aplicativo. Use o atalho abaixo, ' +
+           'ou abra em um navegador que instale (Chrome, Edge, Brave).'
+  }
+  return 'Clique no ícone de instalar na barra de endereço — ou abra o menu ' +
+         'do navegador (⋮) e escolha "Instalar ScanSS Evasion".'
+}

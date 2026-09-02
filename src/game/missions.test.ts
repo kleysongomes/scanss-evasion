@@ -8,6 +8,8 @@
 
 import { beforeEach, describe, expect, it } from 'vitest'
 import { gerarAlvo } from './generator'
+import { DOWNLOADS } from './store'
+import type { VFile } from './types'
 import {
   DESAFIOS, GUIAS, MISSOES, condicaoAtendida, emAberto, missaoAtual, pendentes,
   placar, trancadas, visiveis,
@@ -171,6 +173,53 @@ describe('conclusao', () => {
     expect(g().missions).toContain('d-cinco-mil')
     expect(g().missions).toContain('d-cinquenta-mil')
     expect(g().missions).toContain('d-quarto-de-milhao')
+  })
+})
+
+/**
+ * A missão de limpar o disco foi reportada como bug: o jogador vendia e apagava
+ * arquivos e ela seguia aberta. Não era bug de código - era o título, que dizia
+ * "o que já usou" enquanto a condição exigia o disco INTEIRO limpo. Da poltrona
+ * as duas coisas são indistinguíveis.
+ */
+describe('limpar o disco', () => {
+  const arquivo = (nome: string, evidence: number, worth = 0): VFile => ({
+    type: 'file', name: nome, kind: 'text', size: 10, locked: 0,
+    content: 'x', evidence, worth,
+  })
+
+  const comDisco = (...arquivos: VFile[]) => {
+    useGame.setState({
+      disk: [{ type: 'folder', name: DOWNLOADS, children: arquivos }],
+    })
+    g().mark('transfer')          // é o que abre a missão
+  }
+
+  it('os dois caminhos que ela oferece fecham: apagar...', () => {
+    comDisco(arquivo('senhas.txt', 6))
+    g().checkMissions()
+    expect(g().missions).not.toContain('04-caraca')
+
+    g().remove([DOWNLOADS], 'senhas.txt')
+    g().checkMissions()
+    expect(g().missions).toContain('04-caraca')
+  })
+
+  it('...e vender', () => {
+    comDisco(arquivo('foto.jpg', 4, 80))
+    g().checkMissions()
+    expect(g().missions).not.toContain('04-caraca')
+
+    g().sell([DOWNLOADS], 'foto.jpg')
+    g().checkMissions()
+    expect(g().missions).toContain('04-caraca')
+  })
+
+  it('não fecha enquanto sobrar evidência em algum canto', () => {
+    comDisco(arquivo('a.txt', 6), arquivo('b.jpg', 4, 50))
+    g().sell([DOWNLOADS], 'b.jpg')
+    g().checkMissions()
+    expect(g().missions).not.toContain('04-caraca')
   })
 })
 

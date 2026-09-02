@@ -210,6 +210,25 @@ h1, h2, h3 { font-family: var(--lp-display); font-weight: 400; }
 
 .lp-nota { margin: 18px 0 0; color: #6d788a; font-size: 12px; max-width: 46ch; }
 
+/* O passo a passo de instalação, quando o navegador não oferece o convite. */
+.lp-ajuda {
+  margin: 20px 0 0;
+  padding: 14px 16px;
+  max-width: 52ch;
+  border: 1px solid var(--lp-borda-viva);
+  background: rgba(6, 8, 11, .72);
+  font-size: 13px;
+}
+.lp-ajuda p { margin: 0 0 8px; }
+.lp-ajuda .fraco { color: #6d788a; font-size: 12px; }
+.lp-link {
+  padding: 0; border: 0; background: none;
+  font: inherit; font-size: 12px;
+  color: var(--lp-amarelo);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .lp-capa-desce {
   position: absolute; left: 50%; bottom: 22px;
   transform: translateX(-50%);

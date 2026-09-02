@@ -27,7 +27,7 @@
 import { useEffect, useState } from 'react'
 import { Logo } from '@/ui/Logo'
 import { BUILD, ETIQUETA } from '@/version'
-import { baixarAtalho, comoUsar, detectarSistema } from './atalho'
+import { baixarAtalho, comoInstalar, comoUsar, detectarSistema } from './atalho'
 
 /** A url exata do jogo - e ela que vai para o atalho. */
 const URL_DO_JOGO = new URL('jogo/', window.location.href).href
@@ -114,6 +114,7 @@ const GALERIA = [
 export function Landing() {
   const [sistema] = useState(detectarSistema)
   const [instalar, setInstalar] = useState<(() => void) | null>(null)
+  const [ajuda, setAjuda] = useState(false)
   const [baixou, setBaixou] = useState(false)
 
   /**
@@ -130,8 +131,21 @@ export function Landing() {
     return () => window.removeEventListener('beforeinstallprompt', capturar)
   }, [])
 
-  function baixar() {
+  /**
+   * O botao diz "Instalar" sempre.
+   *
+   * Antes ele so virava "Instalar" quando o navegador oferecia o convite, e
+   * mostrava "Baixar atalho" no resto do tempo - ou seja, escondia a opcao boa
+   * de quase todo mundo, porque `beforeinstallprompt` e so do Chrome e
+   * derivados e mesmo la costuma demorar. Sem o convite, o clique abre o passo
+   * a passo do navegador da pessoa, com o atalho como ultimo recurso.
+   */
+  function aoInstalar() {
     if (instalar) return instalar()
+    setAjuda(true)
+  }
+
+  function baixar() {
     baixarAtalho(URL_DO_JOGO, sistema)
     setBaixou(true)
   }
@@ -166,12 +180,24 @@ export function Landing() {
 
             <div className="lp-acoes">
               <a className="lp-botao grande" href="jogo/">▶ Jogar agora</a>
-              <button className="lp-botao grande vazado" onClick={baixar}>
-                {instalar ? 'Instalar' : 'Baixar atalho'}
+              <button className="lp-botao grande vazado" onClick={aoInstalar}>
+                Instalar
               </button>
             </div>
 
-            {baixou && <p className="lp-nota">{comoUsar(sistema)}</p>}
+            {ajuda && (
+              <div className="lp-ajuda">
+                <p>{comoInstalar()}</p>
+                <p className="fraco">
+                  Instalado, ele ganha ícone no sistema, abre em janela própria
+                  e funciona sem internet.
+                </p>
+                <button className="lp-link" onClick={baixar}>
+                  ou baixe só um atalho para a área de trabalho
+                </button>
+                {baixou && <p className="fraco">{comoUsar(sistema)}</p>}
+              </div>
+            )}
           </div>
 
           {/* A capa tem que MOSTRAR o jogo, não só a paisagem dele. */}

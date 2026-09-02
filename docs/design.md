@@ -433,6 +433,26 @@ produto real — sairia estranho quebrar isso justamente no "toc" de uma tecla.
 De quebra, bipe de oscilador **é** o som da época, então a limitação vira
 sotaque, e não sobra nada para baixar nem para guardar em cache.
 
+### Por que não soa como videogame
+
+A primeira versão soava, e muito — moeda de plataforma dos anos 80. Não era
+coincidência: ela usava as três coisas que **formam** aquele som.
+
+1. **Onda quadrada em tudo** — é o timbre do chip de 8 bits.
+2. **Arpejo ascendente em acorde maior** (dó-mi-sol, rápido) — é o gesto de
+   "pegou item", e o ouvido reconhece na hora, venha de onde vier.
+3. **Nenhuma cauda** — bipe que corta seco só existe em console antigo.
+
+Um micro de 2003 fazia o oposto: seno e triângulo, notas **tocadas juntas** em
+vez de uma correndo atrás da outra, e tudo com um resto de eco, porque saía de
+uma caixinha em cima de uma mesa. Por isso o motor tem uma "sala" — um atraso
+curto realimentado e filtrado no agudo, quarto pequeno e não catedral. Onde
+precisa de aspereza, o material é ruído filtrado e serra grave, que é som de
+máquina e não de melodia.
+
+A onda quadrada sobreviveu em dois lugares, e nos dois é a certa: no erro (bipe
+de terminal recusando) e na tecla (estalo do teclado).
+
 A regra de desenho: som de jogo é pontuação, não trilha. Nada passa de meio
 segundo, exceto a sirene — o único aviso que precisa assustar, e mesmo ela
 dura 0,6s, porque alarme que se arrasta faz o jogador desligar o som e perder

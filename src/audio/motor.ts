@@ -27,6 +27,8 @@ interface Barramentos {
   mestre: GainNode
   musica: GainNode
   efeitos: GainNode
+  /** Entrada da "sala": um eco curto que dá cauda aos sons. */
+  sala: DelayNode
 }
 
 let barramentos: Barramentos | null = null
@@ -55,7 +57,29 @@ export function destravar(): void {
     musica.connect(mestre)
     efeitos.connect(mestre)
     mestre.connect(ctx.destination)
-    barramentos = { ctx, mestre, musica, efeitos }
+
+    /*
+     * A sala.
+     *
+     * Um atraso curto realimentado, filtrado no agudo - um eco de quarto
+     * pequeno, não de catedral. É o que mais separa "som de computador" de
+     * "som de console": bipe seco, sem nenhuma cauda, é a assinatura do
+     * videogame de 8 bits. Uma cauda de meio segundo põe o som numa mesa, num
+     * quarto, com um gabinete zunindo do lado.
+     */
+    const sala = ctx.createDelay(0.5)
+    sala.delayTime.value = 0.062
+    const realimenta = ctx.createGain()
+    realimenta.gain.value = 0.3
+    const abafa = ctx.createBiquadFilter()
+    abafa.type = 'lowpass'
+    abafa.frequency.value = 2400
+    sala.connect(abafa)
+    abafa.connect(realimenta)
+    realimenta.connect(sala)
+    abafa.connect(efeitos)
+
+    barramentos = { ctx, mestre, musica, efeitos, sala }
     aplicar(mixagem)
   }
 
@@ -102,6 +126,8 @@ export interface Nota {
   /** Atraso, em segundos, para montar sequências. */
   quando?: number
   canal?: 'musica' | 'efeitos'
+  /** Quanto do som vai para a sala, de 0 a 1. */
+  sala?: number
 }
 
 /** Uma nota com envelope. É o tijolo de quase tudo. */
@@ -132,13 +158,23 @@ export function tom(nota: Nota): void {
 
   osc.connect(env)
   env.connect(destino)
+  mandarParaSala(env, nota.sala)
   osc.start(t)
   osc.stop(t + dur + 0.02)
 }
 
+/** Manda uma cópia mais baixa do som para a sala. */
+function mandarParaSala(origem: GainNode, quanto = 0): void {
+  if (!barramentos || quanto <= 0) return
+  const envio = barramentos.ctx.createGain()
+  envio.gain.value = quanto
+  origem.connect(envio)
+  envio.connect(barramentos.sala)
+}
+
 /** Um chiado curto: clique de tecla, estática, disco rígido. */
 export function ruido(
-  { dur = 0.05, ganho = 0.15, corte = 3000, quando = 0 } = {},
+  { dur = 0.05, ganho = 0.15, corte = 3000, quando = 0, sala = 0 } = {},
 ): void {
   const barra = saida('efeitos')
   if (!barra) return
@@ -165,6 +201,7 @@ export function ruido(
   fonte.connect(filtro)
   filtro.connect(env)
   env.connect(destino)
+  mandarParaSala(env, sala)
   fonte.start(t)
   fonte.stop(t + dur)
 }

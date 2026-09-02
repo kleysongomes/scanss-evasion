@@ -10,6 +10,8 @@
  * `story/LEIA-ME.md`.
  */
 
+import type { EfeitoGolpe } from './types'
+
 /**
  * Uma condicao de entrega, ja interpretada.
  *
@@ -49,7 +51,14 @@ export interface Roteiro {
   onde?: string
   /** O que fecha a missao. Sem isto, ela nunca fica concluida. */
   feito?: Condicao[]
+  /** Texto do link nos e-mails de golpe (o `{isca}` do corpo). */
+  isca?: string
+  /** O que acontece com quem clica na isca. */
+  golpe?: EfeitoGolpe[]
 }
+
+/** Texto padrao do link, quando o arquivo nao diz qual e. */
+const ISCA_PADRAO = 'CLIQUE AQUI'
 
 const REMETENTE_PADRAO = '3stagiario@vmail.vc'
 
@@ -70,6 +79,23 @@ type Numerica = (typeof NUMERICAS)[number]
 
 const eNumerica = (chave: string): chave is Numerica =>
   (NUMERICAS as readonly string[]).includes(chave)
+
+/**
+ * Interpreta uma linha de `golpe:` - o estrago que a isca causa.
+ *
+ * Recusa numero zero ou negativo: golpe que nao tira nada de ninguem e erro de
+ * digitacao, nao golpe. Quem quer isca inofensiva escreve `golpe: nada`.
+ */
+export function lerEfeito(texto: string): EfeitoGolpe | null {
+  const limpo = texto.trim()
+  if (limpo === 'nada') return { tipo: 'nada' }
+
+  const [chave, valor] = partir(limpo)
+  const n = Number(valor)
+  if (!valor || !Number.isFinite(n) || n <= 0) return null
+  if (chave !== 'dinheiro' && chave !== 'rastro') return null
+  return { tipo: chave, n }
+}
 
 /** Interpreta uma linha de condicao. Devolve null se nao reconhecer. */
 export function lerCondicao(texto: string): Condicao | null {
@@ -122,6 +148,7 @@ export function lerArquivo(texto: string): Roteiro | null {
   const campos: Record<string, string> = {}
   const quando: Condicao[] = []
   const feito: Condicao[] = []
+  const golpe: EfeitoGolpe[] = []
 
   for (const linha of cabecalho.split('\n')) {
     if (!linha.includes(':')) continue
@@ -133,6 +160,9 @@ export function lerArquivo(texto: string): Roteiro | null {
     } else if (chave === 'feito') {
       const c = lerCondicao(valor)
       if (c) feito.push(c)
+    } else if (chave === 'golpe') {
+      const e = lerEfeito(valor)
+      if (e) golpe.push(e)
     } else {
       campos[chave] = valor
     }
@@ -149,6 +179,8 @@ export function lerArquivo(texto: string): Roteiro | null {
     objetivo: campos.objetivo,
     onde: campos.onde,
     feito: feito.length > 0 ? feito : undefined,
+    isca: golpe.length > 0 ? (campos.isca ?? ISCA_PADRAO) : undefined,
+    golpe: golpe.length > 0 ? golpe : undefined,
   }
 }
 

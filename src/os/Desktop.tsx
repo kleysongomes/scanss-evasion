@@ -5,6 +5,7 @@ import { APP_META } from '@/apps/catalog'
 import { APP_COMPONENTS, Missing } from '@/apps/registry'
 import { useGame } from '@/game/store'
 import { Assistant } from './Assistant'
+import { HeatBalloon } from './HeatBalloon'
 import { MailAlert } from './MailAlert'
 import { MissionAlert } from './MissionAlert'
 import { appLabel, launchApp } from './launch'
@@ -61,12 +62,21 @@ export function Desktop() {
       })}
 
       {/* O aviso de e-mail tem prioridade sobre o Klipe: o jogo esta parado. */}
-      {paused ? <MailAlert /> : assistantOpen && <Assistant />}
+      {paused ? null : assistantOpen && <Assistant />}
 
-      {/* Sempre montado: ele mesmo decide quando aparecer (e se esconde na
-          pausa). Montar so fora da pausa faria o aviso perder justamente o
-          caso comum, em que a missao fecha junto com a chegada de um e-mail. */}
-      <MissionAlert />
+      {/* A bandeja empilha os avisos em vez de deixar os tres brigarem pelo
+          mesmo canto - o balao do rastro chegava por cima do aviso de e-mail e
+          escondia os botoes dele, deixando a pausa sem saida visivel.
+
+          O de missao fica sempre montado: ele mesmo decide quando aparecer (e
+          se esconde na pausa). Monta-lo so fora da pausa faria o aviso perder
+          justamente o caso comum, em que a missao fecha junto com a chegada de
+          um e-mail. */}
+      <div className="bandeja-avisos">
+        <HeatBalloon />
+        <MissionAlert />
+        {paused && <MailAlert />}
+      </div>
 
       {!assistantOpen && !paused && (
         <div className="watermark">

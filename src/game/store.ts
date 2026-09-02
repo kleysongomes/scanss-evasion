@@ -26,6 +26,15 @@ import type {
   Machine, TrailEntry, VFile, VNode, VPath,
 } from './types'
 
+/**
+ * Piso do prejuizo de um golpe, em VC.
+ *
+ * Os golpes levam uma porcentagem do saldo, mas quem esta duro nao pode clicar
+ * de graca: sem piso, cair num golpe com 30 VC no bolso custaria 3 VC e nao
+ * ensinaria nada.
+ */
+const PISO_DO_GOLPE = 40
+
 /** Custo de rastreamento de cada acao (antes do Anonimato). */
 const HEAT = {
   scan: 1,
@@ -227,6 +236,10 @@ export interface GameActions {
   /** Entrega os e-mails cujo gatilho foi atendido. Pausa o jogo se entregar. */
   deliverMail: () => Email[]
   readMail: (id: string) => void
+  /**
+   * O jogador clicou na isca de um e-mail de golpe. Cobra o preco - uma vez so.
+   */
+  clicarIsca: (id: string) => Result
 
   /**
    * Abre as missoes que o jogador destravou e fecha as que ele cumpriu,
@@ -362,6 +375,9 @@ export const useGame = create<GameStore>()(
           corpo: personalizar(r.corpo, apelido),
           em: get().minutes,
           lido: false,
+          golpe: r.golpe
+            ? { isca: personalizar(r.isca!, apelido), efeitos: r.golpe }
+            : undefined,
         }))
 
         set((s) => ({ inbox: [...s.inbox, ...emails], paused: true }))
@@ -400,6 +416,47 @@ export const useGame = create<GameStore>()(
           player: { ...s.player, balance: s.player.balance + premio },
         }))
         return fechando
+      },
+
+      /**
+       * A isca dos e-mails de golpe.
+       *
+       * O estrago fica guardado no proprio e-mail, e nao numa mensagem solta na
+       * tela: reabrir a mensagem semanas depois tem que continuar mostrando o
+       * que aquele clique custou. E e o mesmo campo que impede clicar de novo -
+       * golpe nao e fonte de renda ao contrario.
+       */
+      clicarIsca: (id) => {
+        const email = get().inbox.find((e) => e.id === id)
+        if (!email?.golpe) return no('Este e-mail não tem link nenhum.')
+        if (email.golpe.estrago) return no('Você já clicou nisso.')
+
+        const partes: string[] = []
+        for (const efeito of email.golpe.efeitos) {
+          if (efeito.tipo === 'dinheiro') {
+            const saldo = get().player.balance
+            const perda = Math.min(
+              saldo,
+              Math.max(PISO_DO_GOLPE, Math.round(saldo * efeito.n / 100)))
+            set((s) => ({
+              player: { ...s.player, balance: s.player.balance - perda },
+            }))
+            partes.push(`−${perda.toLocaleString('pt-BR')} VC da sua conta`)
+          } else if (efeito.tipo === 'rastro') {
+            get().addHeat(efeito.n, `abriu um anexo de ${email.de}`)
+            partes.push(`+${efeito.n} de rastro`)
+          } else {
+            partes.push('nada — era spam de verdade, dessa vez')
+          }
+        }
+
+        const estrago = partes.join(' · ')
+        set((s) => ({
+          inbox: s.inbox.map((e) => (e.id === id && e.golpe
+            ? { ...e, golpe: { ...e.golpe, estrago } }
+            : e)),
+        }))
+        return ok(estrago)
       },
 
       /**

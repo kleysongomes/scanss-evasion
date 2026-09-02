@@ -11,7 +11,7 @@
 import type { ComponentType, ReactNode } from 'react'
 import { DESAFIOS, missaoAtual, placar } from '@/game/missions'
 import { STEPS, isDone, progress } from '@/game/progress'
-import { BRANCHES, skillsOf } from '@/game/skills'
+import { BRANCHES, MAX_LEVEL, skillsOf } from '@/game/skills'
 import { evidenceHeatPerHour, useGame } from '@/game/store'
 import { totalEvidence } from '@/game/fs'
 
@@ -460,6 +460,18 @@ const Correio = () => {
         <b> Chroma</b> e vá em <b>vmail.vc</b>.
       </p>
 
+      <h3>Nem todo e-mail é do 3stagiario</h3>
+      <p>
+        Chega spam também, e o spam de 2003 não era inofensivo. Se a mensagem
+        prometer prêmio, herança, emprego fácil ou disser que o seu micro tem
+        47 vírus, <b>o link no meio do texto funciona</b> — e clicar nele custa
+        dinheiro ou rastro. Uma vez cada, então não dá para desfazer.
+      </p>
+      <Aviso>
+        Regra simples, igual à da vida real: se o e-mail está gritando em
+        maiúsculas, não clique. Ler é de graça; clicar não.
+      </Aviso>
+
       <h3>O jogo pausa quando chega e-mail</h3>
       <Aviso>
         Quando uma mensagem nova chega, um aviso aparece no canto inferior
@@ -623,11 +635,12 @@ const Loja = () => {
       <h2>darkmarket.vc — a árvore de programas</h2>
       <p>
         Você não compra "mais um programa": compra o <b>próximo nível</b> de um
-        que já tem. São cinco programas, três níveis cada, e o nível seguinte só
-        abre depois do anterior.
+        que já tem. São <b>{BRANCHES.length} programas</b> de{' '}
+        <b>{MAX_LEVEL} níveis</b> cada, e o nível seguinte só abre depois do
+        anterior.
       </p>
 
-      <h3>Os cinco ramos</h3>
+      <h3>Os {BRANCHES.length} ramos</h3>
       <table className="manual-tabela">
         <thead>
           <tr><th style={{ width: 108 }}>Programa</th><th style={{ width: 46 }}>Seu</th>
@@ -681,7 +694,7 @@ const Painel = () => (
   <>
     <h2>Painel de Controle</h2>
     <p>
-      Mostra o nível de cada um dos seus cinco programas, quanto custa o próximo,
+      Mostra o nível de cada um dos seus programas, quanto custa o próximo,
       e quanta evidência está guardada no seu disco agora.
     </p>
     <p>
@@ -875,7 +888,7 @@ const Dev = () => (
     <Botoes linhas={[
       [<b>Dinheiro</b>, 'Somar valores redondos ou definir um saldo exato.'],
       [<b>Nível de procurado</b>, 'Um controle deslizante de 0 a 100, com atalhos para cada faixa — inclusive estourar e ver a tela azul.'],
-      [<b>Programas</b>, 'Subir ou descer o nível de cada um dos cinco ramos, ou jogar tudo no máximo.'],
+      [<b>Programas</b>, 'Subir ou descer o nível de cada ramo, ou jogar tudo no máximo.'],
       [<b>Rede</b>, 'Gerar alvos de qualquer andar e abrir tudo de uma vez (invadir + destrancar).'],
       [<b>Tempo</b>, 'Avançar 1, 6 ou 24 horas aplicando a queda de rastro e a evidência do disco.'],
       [<b>Estado bruto</b>, 'XP, evidência, credenciais, contas geradas e os marcos do tutorial.'],

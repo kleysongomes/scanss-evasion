@@ -8,7 +8,7 @@
 
 import { beforeEach, describe, expect, it } from 'vitest'
 import { condicaoAtendida, pendentes } from './missions'
-import { ROTEIRO, lerArquivo, lerCondicao, personalizar } from './story'
+import { ROTEIRO, lerArquivo, lerCondicao, lerEfeito, personalizar } from './story'
 import { useGame } from './store'
 
 const g = () => useGame.getState()
@@ -158,6 +158,79 @@ describe('pausa', () => {
     const minuto = g().minutes
     g().tick(10)
     expect(g().minutes).toBe(minuto + 10)
+  })
+})
+
+describe('golpes', () => {
+  const comGolpe = ROTEIRO.filter((r) => r.golpe)
+
+  it('a caixa tem uma variedade de spam', () => {
+    expect(comGolpe.length).toBeGreaterThanOrEqual(6)
+  })
+
+  /**
+   * Sem `{isca}` no corpo o link vai parar no fim do texto, solto. O e-mail
+   * ainda funciona, mas perde a graca: a isca tem que estar onde o golpe faz
+   * sentido, no meio da lorota.
+   */
+  it('todo e-mail com golpe tem a isca no lugar certo do corpo', () => {
+    for (const r of comGolpe) {
+      expect(r.isca, `${r.id}: sem isca`).toBeTruthy()
+      expect(r.corpo, `${r.id}: o corpo nao tem {isca}`).toContain('{isca}')
+    }
+  })
+
+  it('os golpes nao sao todos iguais', () => {
+    const tipos = new Set(comGolpe.flatMap((r) => r.golpe!).map((e) => e.tipo))
+    expect(tipos).toContain('dinheiro')
+    expect(tipos).toContain('rastro')
+    // Um inofensivo, para clicar ser aposta e nao imposto.
+    expect(tipos).toContain('nada')
+  })
+
+  it('le os efeitos e recusa numero sem sentido', () => {
+    expect(lerEfeito('nada')).toEqual({ tipo: 'nada' })
+    expect(lerEfeito('dinheiro:12')).toEqual({ tipo: 'dinheiro', n: 12 })
+    expect(lerEfeito('rastro:9')).toEqual({ tipo: 'rastro', n: 9 })
+    expect(lerEfeito('rastro:0')).toBeNull()
+    expect(lerEfeito('vida:3')).toBeNull()
+  })
+
+  it('clicar na isca custa dinheiro, e cobra uma vez so', () => {
+    g().mark('login')
+    g().deliverMail()
+    const spam = g().inbox.find((e) => e.id === '90-visitante')
+    expect(spam?.golpe).toBeTruthy()
+
+    const antes = g().player.balance
+    expect(g().clicarIsca(spam!.id).ok).toBe(true)
+    expect(g().player.balance).toBeLessThan(antes)
+
+    // O estrago fica no e-mail: reabrir a mensagem tem que continuar contando
+    // o que aquele clique custou.
+    const depois = g().inbox.find((e) => e.id === '90-visitante')!
+    expect(depois.golpe!.estrago).toBeTruthy()
+
+    const saldo = g().player.balance
+    expect(g().clicarIsca(spam!.id).ok).toBe(false)
+    expect(g().player.balance).toBe(saldo)
+  })
+
+  it('golpe de rastro queima o jogador e entra no log do ScanSS', () => {
+    g().mark('buy')
+    g().deliverMail()
+    const spam = g().inbox.find((e) => e.id === '94-acelerador')
+    expect(spam?.golpe).toBeTruthy()
+
+    const antes = g().player.heat
+    g().clicarIsca(spam!.id)
+    expect(g().player.heat).toBeGreaterThan(antes)
+    expect(g().trail.at(-1)?.text).toContain(spam!.de)
+  })
+
+  it('e-mail sem golpe nao tem link para clicar', () => {
+    g().deliverMail()
+    expect(g().clicarIsca('01-oi-sumido').ok).toBe(false)
   })
 })
 

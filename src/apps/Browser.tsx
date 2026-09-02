@@ -6,7 +6,7 @@
  * loja e o jornal sem perder o lugar vale mais que a fidelidade aqui.
  */
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { HOME, SITES } from '@/sites/registry'
 
 interface Props { args?: Record<string, unknown> }
@@ -67,6 +67,33 @@ export function Browser({ args }: Props) {
     setAbas((as) => [...as, nova])
     setAtiva(nova.id)
   }
+
+  /**
+   * Pedido vindo de fora ("abre o vmail", "vai ao darkmarket").
+   *
+   * O Chroma e janela unica, entao o pedido chega trocando os `args` da janela
+   * que ja existe - e por isso e um efeito, e nao so o estado inicial. Se ja
+   * houver aba naquele site, ela ganha o foco; senao abre uma nova. E o que um
+   * navegador faz, e evita empilhar cinco abas do mesmo webmail.
+   *
+   * A comparacao e pela IDENTIDADE de `args`, nao pela url: pedir duas vezes o
+   * mesmo endereco tem que funcionar das duas vezes. E o `useRef` segura o
+   * modo estrito do React, que roda o efeito duas vezes no desenvolvimento e
+   * abriria a aba em duplicata.
+   */
+  const ultimoPedido = useRef<unknown>(args)
+  useEffect(() => {
+    if (args === ultimoPedido.current) return
+    ultimoPedido.current = args
+
+    const pedido = args?.url
+    if (typeof pedido !== 'string') return
+
+    const alvo = normalizar(pedido)
+    const existente = abas.find((a) => a.historico[a.cursor] === alvo)
+    if (existente) setAtiva(existente.id)
+    else abrirAba(alvo)
+  })
 
   function fecharAba(id: number) {
     setAbas((as) => {

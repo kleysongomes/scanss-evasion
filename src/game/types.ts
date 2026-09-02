@@ -26,7 +26,7 @@ export interface VFile {
   kind: FileKind
   size: number
   /**
-   * Nivel de criptografia: 0 = aberto. 1..3 exigem o Decodificador naquele
+   * Nivel de criptografia: 0 = aberto. 1..10 exigem o Decodificador naquele
    * nivel para abrir ou baixar.
    */
   locked: number
@@ -108,7 +108,7 @@ export type Branch =
 export interface Skill {
   id: string
   branch: Branch
-  /** 1..3 - so da para comprar o nivel N depois do N-1. */
+  /** 1..10 - so da para comprar o nivel N depois do N-1. */
   level: number
   name: string
   price: number
@@ -132,6 +132,31 @@ export interface TrailEntry {
   heat: number
 }
 
+/**
+ * O que acontece com quem clica na isca de um e-mail de golpe.
+ *
+ * `dinheiro` e uma PORCENTAGEM do saldo, nao um valor fixo: golpe de 120 VC
+ * assusta no primeiro dia e vira piada com meio milhao no banco. Porcentagem
+ * continua doendo a partida inteira.
+ */
+export type EfeitoGolpe =
+  | { tipo: 'dinheiro'; n: number }
+  | { tipo: 'rastro'; n: number }
+  | { tipo: 'nada' }
+
+/** O anzol de um e-mail de golpe. */
+export interface Golpe {
+  /** O texto do link, no meio do corpo do e-mail. */
+  isca: string
+  efeitos: EfeitoGolpe[]
+  /**
+   * O que aconteceu depois do clique. Vazio = ainda nao clicaram.
+   * Fica guardado no e-mail porque o estrago tem que continuar visivel quando
+   * o jogador reabrir a mensagem - e porque golpe so pega uma vez.
+   */
+  estrago?: string
+}
+
 /** Um e-mail que chegou na caixa do jogador. */
 export interface Email {
   id: string
@@ -141,6 +166,8 @@ export interface Email {
   /** Minuto do jogo em que chegou. */
   em: number
   lido: boolean
+  /** Presente so nos e-mails de golpe. */
+  golpe?: Golpe
 }
 
 /** Uma tentativa de invasao CONTRA o jogador. */

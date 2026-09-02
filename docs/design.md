@@ -37,7 +37,7 @@ comando para roubar: precisa entender o sistema.
 |---|---|---|---|
 | **V-Coin** | dinheiro | transferências, venda de arquivos, carteiras | upgrades no darkmarket |
 | **Rastro** | atenção do ScanSS (0–100) | toda ação; **e a evidência parada no seu disco** | tempo (cada vez mais devagar) e o ramo Faxina |
-| **Níveis** | os cinco programas | comprar o nível seguinte de um ramo | — |
+| **Níveis** | os sete programas | comprar o nível seguinte de um ramo | — |
 
 Chegar a **100 de rastro** = tela azul e micro apreendido. É o único fim de jogo.
 
@@ -65,7 +65,8 @@ o botão *Excluir* do Explorer é uma jogada, não uma faxina cosmética.
 
 ## Progressão: a árvore de programas
 
-Cinco programas, **dez níveis cada**, e o nível N só abre depois do N−1. O
+Sete programas — cinco de ataque, dois de defesa —, **dez níveis cada**, e o
+nível N só abre depois do N−1. O
 jogador escolhe em qual ramo investir, e a escolha muda o que ele consegue
 fazer:
 
@@ -140,7 +141,7 @@ Clicar em qualquer parte da bandeja (relógio, saldo ou escudo) abre um resumo:
 o medidor de rastro em tamanho grande com o diagnóstico em texto, **a conta de
 quanto sobe e quanto desce por hora** (queda natural −15 contra a evidência do
 disco), dinheiro, contas zeradas, senhas guardadas, hosts na lista e o nível dos
-cinco programas.
+programas.
 
 O número que importa ali é o **saldo por hora**: se estiver positivo, o rastro
 está subindo sozinho e o jogador precisa limpar o disco. Era a informação mais
@@ -200,7 +201,7 @@ girando em círculo.
 ## Modo desenvolvedor
 
 Em **iniciar › 🛠️ Desenvolvedor** há um programa para inspecionar e forçar
-estados: dinheiro, nível de procurado, nível dos cinco programas, gerar alvos de
+estados: dinheiro, nível de procurado, nível de cada programa, gerar alvos de
 qualquer andar, abrir tudo e avançar o relógio.
 
 Ele tem uma **trava de ativação**, e a trava é de verdade: o store ignora toda
@@ -266,6 +267,33 @@ direito. O relógio para, o rastro não cai, ataques não acontecem. É o único
 momento em que a narrativa tem prioridade sobre a jogatina — e é justamente por
 isso que os textos precisam ser curtos. O jogador está parado esperando para
 voltar a jogar.
+
+A pausa **não é anunciada**. O balão dizia "o jogo está pausado até você ler", e
+ler que se está num jogo — dentro de um sistema operacional de mentira —
+quebrava a ilusão inteira por um aviso que ninguém pediu. Quem quiser continuar
+clica em "Depois" e o relógio volta a andar, sem explicação.
+
+Os três avisos do canto (e-mail, missão concluída e faixa de rastro) vivem numa
+**pilha**, e não cada um com o seu `position: absolute`. Antes o balão do rastro
+chegava por cima do aviso de e-mail e escondia os botões dele, deixando a pausa
+sem saída visível.
+
+### O spam morde
+
+Nem todo e-mail é do 3stagiario. Oito mensagens de golpe chegam ao longo da
+partida — prêmio de visitante, herança de parente distante, recadastramento do
+banco, acelerador de conexão, corrente da tia, vaga de "representante
+financeiro" — e o **link no meio do texto funciona**.
+
+Clicar cobra: uma porcentagem do saldo (piso de 40 VC) ou rastro, que entra no
+log do ScanSS como qualquer outra ação. É porcentagem e não valor fixo porque
+golpe de 120 VC assusta no primeiro dia e vira piada com meio milhão no banco.
+
+Um deles não faz nada. Isso é de propósito: se todo spam cobrasse, clicar
+deixaria de ser aposta e viraria imposto — e o jogador simplesmente pararia de
+abrir. O estrago fica guardado no próprio e-mail, então reabrir a mensagem
+semanas depois continua contando o que aquele clique custou, e o golpe só
+pega uma vez.
 
 ### O quadro de missões
 
@@ -355,6 +383,18 @@ Ordem sugerida para as próximas rodadas:
    que dê ao jogador alguns segundos para apagar o disco antes de ser pego.
 6. **Alvos gerados proceduralmente** em vez da lista fixa de `content.ts`.
 7. **Empacotar com Tauri** para gerar o `.exe` (precisa instalar o Rust).
+
+## Uma janela por programa
+
+O Chroma é **janela única**, como quase todo app do jogo. Ele tem abas, então
+"abrir o vmail" a partir de um aviso vira uma aba — e não a quinta janela igual
+na tela, que era o que acontecia: cada pedido de navegação abria um navegador
+novo.
+
+Como a janela já existe, o pedido chega trocando os `args` dela, o que exige um
+efeito no componente e não só o estado inicial. A comparação é pela identidade
+do objeto, e não pela url, porque pedir duas vezes o mesmo endereço tem que
+funcionar das duas vezes.
 
 ## Ambientação
 

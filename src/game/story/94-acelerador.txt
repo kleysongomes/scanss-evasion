@@ -1,0 +1,15 @@
+id: 94-acelerador
+assunto: sua conexao pode ser 300% mais rapida
+de: turbo@velocidademaxima.vc
+quando: marco:buy
+golpe: rastro:9
+isca: BAIXAR O ACELERADOR (gratis por hoje)
+---
+CANSADO DE ESPERAR A PAGINA CARREGAR???
+
+Nosso otimizador reconfigura seu modem e libera a velocidade que a
+operadora esconde de voce. Testado e aprovado por milhares de usuarios.
+
+{isca}
+
+Funciona com qualquer linha telefonica. Instalacao automatica.

@@ -1,0 +1,17 @@
+id: 96-emprego
+assunto: GANHE 2.000 POR MES SEM SAIR DE CASA
+de: rh@trabalheemcasa.vc
+quando: contas:3
+golpe: rastro:16
+isca: QUERO SER REPRESENTANTE FINANCEIRO
+---
+VAGA ABERTA: REPRESENTANTE FINANCEIRO
+
+Nao exige experiencia. Nao exige diploma. Trabalhe de casa!
+
+Sua funcao: receber depositos de clientes na SUA conta bancaria,
+descontar 10% de comissao e repassar o restante. Simples assim.
+
+{isca}
+
+Poucas vagas. Comece ainda hoje!

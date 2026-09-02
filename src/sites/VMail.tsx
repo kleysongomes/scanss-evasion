@@ -16,7 +16,7 @@ import {
 } from '@/game/missions'
 import type { Missao, TipoMissao } from '@/game/missions'
 import { clockOf, useGame } from '@/game/store'
-import type { GameState } from '@/game/types'
+import type { Email, GameState } from '@/game/types'
 import type { SiteProps } from './registry'
 
 const SITE = 'vmail.vc'
@@ -84,6 +84,32 @@ function Quadro({ estado, titulo, tipo, vazio }: {
   )
 }
 
+/**
+ * O corpo do e-mail, com a isca dos golpes no meio do texto.
+ *
+ * O `{isca}` do arquivo vira um link de verdade - e a graca do spam depender de
+ * o jogador clicar. Depois do clique ele fica riscado e morto, porque golpe
+ * pega uma vez so.
+ */
+function Corpo({ email, aoClicar }: { email: Email; aoClicar: () => void }) {
+  const golpe = email.golpe
+  if (!golpe) return <div className="vmail-corpo">{email.corpo}</div>
+
+  // Sem o marcador no texto, a isca vai para o fim - melhor um link fora do
+  // lugar do que um e-mail de golpe em que nao da para cair.
+  const [antes, ...resto] = email.corpo.split('{isca}')
+
+  return (
+    <div className="vmail-corpo">
+      {antes}
+      {golpe.estrago
+        ? <span className="vmail-isca morta">{golpe.isca}</span>
+        : <a className="vmail-isca" onClick={aoClicar}>{golpe.isca}</a>}
+      {resto.join('{isca}')}
+    </div>
+  )
+}
+
 export function VMail(_props: SiteProps) {
   const game = useGame()
   const naoLidos = game.inbox.filter((e) => !e.lido).length
@@ -103,6 +129,7 @@ export function VMail(_props: SiteProps) {
   const aberto = game.inbox.find((e) => e.id === sel) ?? null
 
   const readMail = useGame((s) => s.readMail)
+  const clicarIsca = useGame((s) => s.clicarIsca)
 
   // Abrir o webmail marca como lido o que esta na tela. Num efeito, nao no
   // render: marcar durante o render seria efeito colateral em render.
@@ -254,7 +281,13 @@ export function VMail(_props: SiteProps) {
                     </tbody>
                   </table>
 
-                  <div className="vmail-corpo">{aberto.corpo}</div>
+                  <Corpo email={aberto} aoClicar={() => clicarIsca(aberto.id)} />
+
+                  {aberto.golpe?.estrago && (
+                    <div className="alert-old err vmail-estrago">
+                      <b>Você clicou.</b> {aberto.golpe.estrago}
+                    </div>
+                  )}
 
                   <div style={{ marginTop: 12 }}>
                     <button className="btn-old" disabled>Responder</button>

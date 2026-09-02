@@ -7,7 +7,8 @@
  */
 
 import { useState } from 'react'
-import { BRANCHES, canBuy, levelOf, skillsOf } from '@/game/skills'
+import { ATAQUE, BRANCHES, DEFESA, MAX_LEVEL, canBuy, levelOf, skillsOf }
+  from '@/game/skills'
 import { useGame } from '@/game/store'
 import type { Branch, Skill } from '@/game/types'
 import type { SiteProps } from './registry'
@@ -76,8 +77,10 @@ export function DarkMarket(_props: SiteProps) {
         )}
 
         <div className="alert-old" style={{ background: '#eef2f7', borderColor: '#aab' }}>
-          Cada programa tem <b>3 níveis</b>. O seguinte só abre depois do
-          anterior — escolha bem em qual investir primeiro.
+          São <b>{ATAQUE.length} programas de ataque</b> e{' '}
+          <b>{DEFESA.length} de defesa</b>, com <b>{MAX_LEVEL} níveis</b> cada.
+          O seguinte só abre depois do anterior, e o preço mais que dobra a cada
+          nível — escolha bem em qual investir primeiro.
         </div>
 
         {ramos.map((b) => (

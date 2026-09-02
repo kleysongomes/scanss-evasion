@@ -1,0 +1,17 @@
+id: 90-visitante
+assunto: PARABENS!!! VOCE FOI O VISITANTE 1.000.000
+de: promocoes@ganhefacil.vc
+quando: marco:login
+golpe: dinheiro:12
+isca: >>> CLIQUE AQUI PARA RESGATAR SEU PREMIO <<<
+---
+*** VOCE E O VISITANTE NUMERO 1.000.000 DO NOSSO PORTAL ***
+
+Voce ganhou UM MICRO NOVO, uma impressora e 5.000 V-Coin!!!
+
+Para receber, basta confirmar seus dados e pagar a taxa simbolica de
+liberacao do premio. E rapido, e seguro, e voce nao vai acreditar.
+
+{isca}
+
+Nao responda este e-mail. Promocao valida por 24 horas.

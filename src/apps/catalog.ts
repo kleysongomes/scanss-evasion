@@ -23,7 +23,9 @@ export const APP_META: AppMeta[] = [
   {
     id: 'browser', name: 'Chroma', icon: '🌐',
     description: 'Navegador. É por aqui que o dinheiro sai do banco.',
-    size: { w: 860, h: 560 }, desktop: true, start: true,
+    // Janela unica: o Chroma tem abas, entao "abrir o vmail" pelo aviso de
+    // e-mail deve virar uma aba, e nao a quinta janela igual na tela.
+    size: { w: 860, h: 560 }, singleton: true, desktop: true, start: true,
   },
   {
     id: 'netripper', name: 'NetRipper', icon: '📡',

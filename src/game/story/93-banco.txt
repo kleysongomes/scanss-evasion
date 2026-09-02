@@ -1,0 +1,17 @@
+id: 93-banco
+assunto: RECADASTRAMENTO OBRIGATORIO - MODULO DE SEGURANCA
+de: seguranca@vbank-clientes.vc
+quando: saldo:3000
+golpe: dinheiro:25
+isca: ATUALIZAR MEUS DADOS AGORA
+---
+Prezado cliente V-Bank,
+
+Detectamos uma movimentacao atipica na sua conta. Por seguranca, o
+acesso sera BLOQUEADO em 24 horas caso o recadastramento nao seja feito.
+
+Confirme sua agencia, conta e senha no formulario abaixo.
+
+{isca}
+
+Este e um e-mail automatico do setor de seguranca. Nao responda.

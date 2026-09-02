@@ -1,8 +1,9 @@
 /**
- * Arvore de habilidades: cinco programas, dez niveis cada.
+ * Arvore de habilidades: sete programas, dez niveis cada - cinco de ataque e
+ * dois de defesa.
  *
  * Comprar nao te da "mais um icone": te da o nivel seguinte de um programa que
- * voce ja tem, e o nivel N exige o N-1. Como sao 50 upgrades com preco
+ * voce ja tem, e o nivel N exige o N-1. Como sao 70 upgrades com preco
  * exponencial, a economia nao satura - dá para jogar muito tempo sem "zerar a
  * loja".
  *
@@ -128,7 +129,7 @@ export function heatFactorAt(level: number): number {
   return Math.max(0.18, 1 - level * 0.085)
 }
 
-/** As 50 habilidades, montadas a partir dos ramos. */
+/** As 70 habilidades, montadas a partir dos ramos. */
 export const SKILLS: Skill[] = BRANCHES.flatMap((b) =>
   b.titles.map((title, i): Skill => {
     const level = i + 1

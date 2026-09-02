@@ -282,11 +282,25 @@ html, body, #root {
 }
 
 /* --------------------------------------------------------------------------
-   Aviso de e-mail (o jogo fica pausado enquanto ele esta na tela)
+   A bandeja: e-mail, missao e rastro empilhados no mesmo canto
+
+   Os tres nasceram cada um com o seu `position: absolute` no canto inferior
+   direito, e quando dois apareciam juntos o de cima cobria os botoes do de
+   baixo. Agora e uma pilha: o mais novo entra por baixo, perto da bandeja,
+   e empurra os outros para cima.
    -------------------------------------------------------------------------- */
+.bandeja-avisos {
+  position: absolute; right: 10px; bottom: 38px;
+  z-index: 9600;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
+  /* So os avisos recebem clique; o resto do canto continua sendo area util. */
+  pointer-events: none;
+}
+.bandeja-avisos > * { pointer-events: auto; }
+
+/* Aviso de e-mail (o jogo fica pausado enquanto ele esta na tela) */
 .mail-alert {
-  position: absolute; right: 14px; bottom: 38px;
-  width: 262px; z-index: 9600;
+  width: 262px;
   padding: 10px 12px;
   background: #ffffe1;
   border: 1px solid #000;
@@ -297,12 +311,7 @@ html, body, #root {
   display: flex; align-items: center; gap: 6px; margin-bottom: 7px;
 }
 .mail-alert .assunto { font-weight: bold; color: #10254a; }
-.mail-alert .de { color: #7a7a5e; margin-top: 1px; }
-.mail-alert .pausado {
-  margin: 9px 0; padding: 4px 7px;
-  background: #fff3d0; border: 1px solid #d9b64a;
-  color: #8a6a00;
-}
+.mail-alert .de { color: #7a7a5e; margin: 1px 0 10px; }
 .mail-alert .acoes { display: flex; gap: 5px; }
 .mail-alert .acoes .xp { flex: 1; min-width: 0; }
 
@@ -313,8 +322,7 @@ html, body, #root {
    jogo, some sozinho e nao exige nada de ninguem.
    -------------------------------------------------------------------------- */
 .mission-alert {
-  position: absolute; right: 14px; bottom: 38px;
-  width: 262px; z-index: 9700;
+  width: 262px;
   padding: 10px 12px;
   background: #f2fbef;
   border: 1px solid #000;
@@ -347,6 +355,24 @@ html, body, #root {
   border: 1px solid #d5d5c8;
   font-family: Verdana, Arial, sans-serif;
 }
+
+/* A isca dos e-mails de golpe: link azul de 1999, piscando de vontade de ser
+   clicado. Depois do clique fica morto - o golpe pega uma vez so. */
+.vmail-isca {
+  color: #0000cc;
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.vmail-isca:hover { color: #cc0000; }
+.vmail-isca.morta {
+  color: #999;
+  font-weight: normal;
+  text-decoration: line-through;
+  cursor: default;
+}
+
+.vmail-estrago { margin-top: 10px; }
 
 /* --------------------------------------------------------------------------
    Janela
@@ -691,15 +717,17 @@ fieldset.xp > legend { padding: 0 4px; color: #0046d5; font-weight: bold; }
 /* --------------------------------------------------------------------------
    Balao de notificacao da bandeja
    -------------------------------------------------------------------------- */
+/* O balao do rastro: mesma pilha, so que arredondado como os avisos de
+   sistema da epoca. */
 .balloon {
-  position: absolute; right: 8px; bottom: 38px;
   width: 268px; padding: 10px 12px;
   background: #ffffe1;
   border: 1px solid #000;
   border-radius: 6px;
   box-shadow: 2px 2px 8px rgba(0,0,0,.4);
-  z-index: 10002;
   font-size: 11px;
+  line-height: 1.5;
+  animation: balao-entra .18s ease-out;
 }
 .balloon .title { font-weight: bold; display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
 

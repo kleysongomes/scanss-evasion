@@ -1,0 +1,17 @@
+id: 97-antivirus
+assunto: !!! SEU COMPUTADOR ESTA INFECTADO (47 VIRUS) !!!
+de: suporte@escudototal.vc
+quando: rastro:40
+golpe: rastro:7
+golpe: dinheiro:8
+isca: LIMPAR MEU COMPUTADOR AGORA
+---
+ATENCAO! NOSSA VARREDURA ONLINE DETECTOU:
+
+  47 virus - 12 cavalos de troia - 3 programas espioes
+
+Seus arquivos pessoais estao em risco neste exato momento. Aja rapido.
+
+{isca}
+
+Licenca promocional. Aceitamos deposito.

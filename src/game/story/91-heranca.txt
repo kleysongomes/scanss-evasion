@@ -1,0 +1,19 @@
+id: 91-heranca
+assunto: proposta confidencial - urgente
+de: dr.mbaptista@escritoriolegal.vc
+quando: contas:1
+golpe: dinheiro:22
+isca: ACEITO. ENVIAR MEUS DADOS BANCARIOS
+---
+Prezado senhor(a),
+
+Sou advogado e localizei um cliente falecido de mesmo sobrenome que o
+seu, sem herdeiros. Ha 4.200.000 V-Coin parados num banco no exterior.
+
+Proponho declara-lo herdeiro. Divisao: 60% para o senhor, 40% para mim.
+Preciso apenas dos seus dados para abrir o processo. Discricao total.
+
+{isca}
+
+Atenciosamente,
+Dr. M. Baptista

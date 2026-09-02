@@ -1,0 +1,15 @@
+id: 92-cartao
+assunto: alguem te mandou um cartao virtual :)
+de: cartoes@amoreamizade.vc
+quando: invasoes:3
+golpe: rastro:12
+isca: VER QUEM ME MANDOU (cartao_surpresa.exe)
+---
+Voce recebeu um cartao virtual de um ADMIRADOR SECRETO!
+
+Ele preferiu nao se identificar, mas deixou uma mensagem e uma musica
+especial esperando por voce.
+
+{isca}
+
+Baixe o visualizador para abrir. Sao so 240 KB.

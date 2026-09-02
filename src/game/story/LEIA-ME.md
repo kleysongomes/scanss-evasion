@@ -31,6 +31,8 @@ Você é oficialmente um criminoso. Parabéns?
 | `onde` | não | Dica de uma linha, mostrada embaixo do título da missão. |
 | `feito` | não | O que **conclui** a missão. Pode repetir a linha (todas precisam valer). |
 | `de` | não | Remetente. O padrão é `3stagiario@vmail.vc`. |
+| `golpe` | não | Transforma o e-mail em golpe: o que acontece com quem clica. Pode repetir a linha. |
+| `isca` | não | O texto do link. O padrão é `CLIQUE AQUI`. |
 
 **Sem `feito`, a missão nunca fica concluída** — ela entra no quadro e fica lá
 para sempre. Todo `objetivo` precisa de um `feito`, e existe um teste que
@@ -71,6 +73,37 @@ permitem missão de recuar, e não só de avançar.
 
 `invasoes`, `roubado` e `tier` leem um placar acumulado que **nunca diminui**:
 gastar o dinheiro ou esquecer um host no NetRipper não desfaz progresso.
+
+## E-mails de golpe
+
+Um e-mail com `golpe:` ganha um **link clicável** no meio do texto. Escreva
+`{isca}` no corpo, na linha onde o link deve aparecer — é ali que ele entra.
+
+```
+id: 93-banco
+assunto: RECADASTRAMENTO OBRIGATORIO
+de: seguranca@vbank-clientes.vc
+quando: saldo:3000
+golpe: dinheiro:25
+isca: ATUALIZAR MEUS DADOS AGORA
+---
+Confirme sua agencia, conta e senha no formulario abaixo.
+
+{isca}
+```
+
+| Efeito | O que faz |
+|---|---|
+| `golpe: dinheiro:<n>` | Leva **n% do saldo**, com piso de 40 VC. |
+| `golpe: rastro:<n>` | Soma `n` de rastreamento e entra no log do ScanSS. |
+| `golpe: nada` | Não acontece nada. É a piada. |
+
+É porcentagem, e não valor fixo, porque golpe de 120 VC assusta no primeiro dia
+e vira piada com meio milhão no banco.
+
+Cada golpe pega **uma vez só**: depois do clique o link fica riscado e o e-mail
+passa a mostrar o estrago. E vale ter algum `golpe: nada` na mistura — se todo
+spam cobrar, clicar deixa de ser aposta e vira imposto.
 
 ## Missões da história × desafios
 

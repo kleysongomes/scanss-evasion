@@ -10,7 +10,7 @@
  * no mesmo lugar onde o 3stagiario pediu e o reflexo certo.
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   emAberto, foiConcluida, missaoAtual, placar, trancadas, visiveis,
 } from '@/game/missions'
@@ -22,6 +22,16 @@ import type { SiteProps } from './registry'
 const SITE = 'vmail.vc'
 
 type Aba = 'inbox' | 'missoes'
+type Filtro = 'todas' | 'nao-lidas'
+
+/**
+ * Mensagens por pagina.
+ *
+ * Doze cabe na janela sem rolagem e sem sobrar buraco. A caixa passa de vinte
+ * mensagens numa partida inteira, e uma lista rolando sem fim nao e so feia:
+ * ela empurra o corpo do e-mail para fora da tela.
+ */
+const POR_PAGINA = 12
 
 /**
  * Uma tabela de missoes.
@@ -125,17 +135,59 @@ export function VMail(_props: SiteProps) {
     const pendente = [...game.inbox].reverse().find((e) => !e.lido)
     return (pendente ?? game.inbox[game.inbox.length - 1])?.id ?? null
   })
+  const [filtro, setFiltro] = useState<Filtro>('todas')
+  const [pagina, setPagina] = useState(0)
 
   const aberto = game.inbox.find((e) => e.id === sel) ?? null
 
   const readMail = useGame((s) => s.readMail)
   const clicarIsca = useGame((s) => s.clicarIsca)
 
+  /**
+   * Mensagem nova pula para a frente.
+   *
+   * Sem isto, quem deixava o webmail aberto recebia e-mail e continuava vendo o
+   * anterior: a janela e unica, o componente nao remonta, e a selecao ficava
+   * onde estava. Pior na terceira pagina, onde a mensagem nova nem aparecia na
+   * lista.
+   */
+  const quantosAntes = useRef(game.inbox.length)
+  useEffect(() => {
+    if (game.inbox.length <= quantosAntes.current) {
+      quantosAntes.current = game.inbox.length
+      return
+    }
+    quantosAntes.current = game.inbox.length
+    setAba('inbox')
+    setPagina(0)
+    setSel(game.inbox[game.inbox.length - 1].id)
+  }, [game.inbox])
+
   // Abrir o webmail marca como lido o que esta na tela. Num efeito, nao no
   // render: marcar durante o render seria efeito colateral em render.
   useEffect(() => {
     if (aberto && !aberto.lido) readMail(aberto.id)
   }, [aberto, readMail])
+
+  /**
+   * A lista, ja do mais novo para o mais velho.
+   *
+   * O filtro de nao lidas mostra tambem a mensagem ABERTA agora, mesmo depois
+   * de ela virar lida - senao ela sumiria da lista no instante em que fosse
+   * clicada, e a linha selecionada saltaria sozinha.
+   */
+  const lista = [...game.inbox].reverse().filter((e) => (
+    filtro === 'todas' || !e.lido || e.id === sel
+  ))
+  const paginas = Math.max(1, Math.ceil(lista.length / POR_PAGINA))
+  const atualPagina = Math.min(pagina, paginas - 1)
+  const inicio = atualPagina * POR_PAGINA
+  const naTela = lista.slice(inicio, inicio + POR_PAGINA)
+
+  function trocarFiltro(novo: Filtro) {
+    setFiltro(novo)
+    setPagina(0)
+  }
 
   return (
     <div className="web" style={{ background: '#eef1f5' }}>
@@ -231,6 +283,45 @@ export function VMail(_props: SiteProps) {
           </div>
         ) : (
           <>
+            {/* A barra de exibição, como nos webmails da época: o filtro de um
+                lado, a contagem e a paginação do outro. */}
+            <div className="vmail-barra">
+              <span>
+                Exibir:{' '}
+                <a onClick={() => trocarFiltro('todas')}
+                   className={filtro === 'todas' ? 'ativo' : undefined}>
+                  todas
+                </a>
+                {' | '}
+                <a onClick={() => trocarFiltro('nao-lidas')}
+                   className={filtro === 'nao-lidas' ? 'ativo' : undefined}>
+                  não lidas{naoLidos > 0 && ` (${naoLidos})`}
+                </a>
+              </span>
+
+              <span className="vmail-paginacao">
+                {lista.length === 0
+                  ? 'nenhuma mensagem'
+                  : `${inicio + 1}–${Math.min(inicio + POR_PAGINA, lista.length)}` +
+                    ` de ${lista.length}`}
+                {paginas > 1 && (
+                  <>
+                    &nbsp;&nbsp;
+                    <button className="btn-old" disabled={atualPagina === 0}
+                            onClick={() => setPagina(atualPagina - 1)}>
+                      « Anterior
+                    </button>
+                    {' '}
+                    <button className="btn-old"
+                            disabled={atualPagina >= paginas - 1}
+                            onClick={() => setPagina(atualPagina + 1)}>
+                      Próxima »
+                    </button>
+                  </>
+                )}
+              </span>
+            </div>
+
             <table className="tbl-old" style={{ marginBottom: 12 }}>
               <thead>
                 <tr>
@@ -241,7 +332,7 @@ export function VMail(_props: SiteProps) {
                 </tr>
               </thead>
               <tbody>
-                {[...game.inbox].reverse().map((e) => (
+                {naTela.map((e) => (
                   <tr
                     key={e.id}
                     onClick={() => setSel(e.id)}
@@ -257,6 +348,13 @@ export function VMail(_props: SiteProps) {
                     <td>{clockOf(e.em)}</td>
                   </tr>
                 ))}
+                {naTela.length === 0 && (
+                  <tr>
+                    <td colSpan={4} style={{ color: '#666' }}>
+                      Nada por aqui — você leu tudo.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
 

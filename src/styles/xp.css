@@ -397,6 +397,18 @@ input[type="range"]::-moz-range-thumb {
   font-family: Verdana, Arial, sans-serif;
 }
 
+/* Barra de exibição do webmail: filtro à esquerda, contagem e páginas à
+   direita. Duas pontas na mesma linha, como se fazia. */
+.vmail-barra {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+  margin-bottom: 6px;
+  font-size: 11px; color: #555;
+}
+.vmail-barra a { cursor: pointer; }
+.vmail-barra a.ativo { font-weight: bold; color: #000; text-decoration: none; }
+.vmail-paginacao { display: flex; align-items: center; gap: 4px; }
+
 /* A isca dos e-mails de golpe: link azul de 1999, piscando de vontade de ser
    clicado. Depois do clique fica morto - o golpe pega uma vez so. */
 .vmail-isca {

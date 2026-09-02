@@ -82,20 +82,22 @@ h1, h2, h3 { font-family: var(--lp-display); font-weight: 400; }
   display: flex; align-items: center; gap: 16px;
   padding: 9px 0;
 }
-/* A marca e a MESMA chapa do titulo, em miniatura. Logo que muda de forma
-   conforme o lugar nao e logo, e decoracao. */
+/* A marca repete o MESMO desenho do título, em miniatura: primeira palavra
+   solta, segunda na chapa. Logo que muda de forma conforme o lugar não é logo,
+   é decoração. */
 .lp-marca {
-  padding: 4px 9px 5px;
-  background: var(--lp-amarelo);
-  color: #0a0c0e;
+  display: flex; align-items: center; gap: 5px;
   font-family: var(--lp-display);
   font-size: 14px; letter-spacing: -.3px;
   text-transform: uppercase;
-  box-shadow: 3px 3px 0 rgba(0,0,0,.55);
 }
-/* Com as duas palavras em preto elas colavam numa so; o respiro faz o papel
-   que a cor amarela fazia antes. */
-.lp-marca em { font-style: normal; margin-left: .3em; }
+.lp-marca em {
+  font-style: normal;
+  padding: 3px 7px 4px;
+  background: var(--lp-amarelo);
+  color: #0a0c0e;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.55);
+}
 
 .lp-build {
   margin-right: auto;
@@ -195,25 +197,34 @@ h1, h2, h3 { font-family: var(--lp-display); font-weight: 400; }
 }
 
 /*
- * A logo: chapa amarela com o nome vazado em preto.
+ * A logo: SCANSS solto em branco, EVASION numa chapa amarela.
  *
- * `inline-block` para a chapa abraçar o texto em vez de esticar pela coluna, e
- * a sombra dura é a mesma dos botões — é o que amarra a marca ao resto da
+ * Só a segunda palavra é chapada. Com as duas dentro do retângulo a marca
+ * virava um bloco só, sem hierarquia; assim a primeira linha respira e o olho
+ * cai na segunda, que é a que carrega a cor.
+ *
+ * A sombra dura é a mesma dos botões — é o que amarra a marca ao resto da
  * página em vez de deixá-la parecendo um adesivo colado por cima.
  */
 .lp-capa h1 {
-  display: inline-block;
   margin: 0;
-  padding: .12em .22em .17em;
-  background: var(--lp-amarelo);
-  color: #0a0c0e;
   font-size: clamp(42px, 7vw, 86px);
-  line-height: .94;
+  line-height: .96;
   letter-spacing: -2px;
   text-transform: uppercase;
-  box-shadow: 9px 9px 0 rgba(0,0,0,.6);
+  text-shadow: 0 6px 40px rgba(0,0,0,.85);
 }
-.lp-capa h1 span { display: block; }
+.lp-capa h1 span {
+  display: inline-block;
+  margin-top: .08em;
+  padding: .08em .18em .13em;
+  background: var(--lp-amarelo);
+  color: #0a0c0e;
+  box-shadow: 9px 9px 0 rgba(0,0,0,.6);
+  /* A sombra difusa serve para o branco sobre a imagem; sobre a chapa ela só
+     sujaria as letras pretas. */
+  text-shadow: none;
+}
 
 /* O cursor do prólogo, aqui também. Herda a cor do texto para funcionar tanto
    sobre a chapa quanto sobre fundo escuro. */

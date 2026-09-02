@@ -2,6 +2,8 @@
 node_modules/
 dist/
 .vite/
+# trabalhador de servico gerado para o modo de desenvolvimento
+dev-dist/
 
 # Cache incremental do tsc (`tsc -b` no build)
 *.tsbuildinfo
